@@ -1,0 +1,23 @@
+{
+  "name": "labs12-twitter-blocker-be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE/issues"
+  },
+  "homepage": "https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE#readme",
+  "dependencies": {
+    "express": "^4.16.4",
+    "nodemon": "^1.18.11"
+  }
+}
