@@ -5,7 +5,9 @@ module.exports = {
   development: {
     client: 'postgresql',
     connection: {
-      // filename: './dev.sqlite3'
+      database: 'twitter',
+      user:     'twitdev',
+      password: 'qxZVf5d9'
     },
     migrations: {
       directory: './data/migrations'
