@@ -84,6 +84,17 @@ Documentation for the endpoints on the backend server
 
 #########################################
 
+# Useful Twitter Endpoints
+
+## User
+
+Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials](https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials)
+
+**GET account/verify_credentials**
+
+Returns most of a users account data. Best to populate account. 
+
+#########################################
 
 # App Users Table Schema:
 | Schema Name             | Twitter API key | db name     | DataType  |
