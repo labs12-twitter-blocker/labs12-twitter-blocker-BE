@@ -80,3 +80,24 @@ Documentation for the endpoints on the backend server
 - DELETE
 
   User by ID
+
+
+#########################################
+
+
+# App Users Table Schema:
+| Schema Name             | Twitter API key | db name     | DataType  |
+| ----------------------- | --------------- | ----------- | --------- |
+| User ID	                |                 |	app_user_id	| uuid      |
+| (*FK) Twitter ID	      | id	            |twitter_id	  | string    |
+| Twitter Handle	        | screen_name     |	screen_name	| string    |
+| Sign Up Date	          |                 |	created_at  |	date/time 
+| Update Date             |                 |	updated_at  |	date/time |
+| Paying Customer	        |                 |	is_paying	  | bool      |
+| (*FK)Stripe Customer ID |                 |	stripe_id   |	int       |
+| Access Token?           |	                |	token	      | string    |
+| Total Upvote Points     |	                |	upvotes	    | int       |
+| Total Downvote Points   |	                |	downvotes   |	int       |
+| Email	                  |                 |	email	      | string    |
+| Is Admin	              |                 |	admin	      | bool      |
+| Deactivated             |                 |	deactivated |	bool      |
