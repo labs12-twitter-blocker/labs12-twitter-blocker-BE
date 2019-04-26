@@ -6,11 +6,8 @@
   "scripts": {
     "start": "nodemon server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE.git"
-  },
-  "author": "",
+  "repository": "git+https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE.git",
+  "author": "Erin Meredith <ekmeredith@att.net>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE/issues"
