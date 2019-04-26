@@ -1,3 +1,9 @@
+# ENV VARIABLES
+
+TWITTER_CONSUMER_KEY= twitter api key
+TWITTER_CONSUMER_SECRET= twitter api secret
+SESSION_SECRET= make it up
+
 # Endpoints
 
 Documentation for the endpoints on the backend server
