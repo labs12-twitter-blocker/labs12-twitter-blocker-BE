@@ -82,6 +82,7 @@ Documentation for the endpoints on the backend server
   User by ID
 
 
+
 #########################################
 
 
@@ -101,3 +102,21 @@ Documentation for the endpoints on the backend server
 | Email	                  |                 |	email	      | string    |
 | Is Admin	              |                 |	admin	      | bool      |
 | Deactivated             |                 |	deactivated |	bool      |
+
+---
+
+| Name                      | Twitter API name        | db name          | DataType  |
+| ------------------------- | ----------------------- | ---------------- | --------- |
+| \*Twitter Users ID        |                         | twitter_users_id | UUID      |
+| Twitter ID                | id_str                  | twitter_id       | string    |
+| Twitter Followers Count   | followers_count         | followers        | int       |
+| Twitter Friends Count     | friends_count           | friends          | int       |
+| Description               | description             | description      | string    |
+| Profile Image URL         | profile_image_url_https | profile_img      | string    |
+| Twitter handle            | screen_name             | screen_name      | string    |
+| Twitter Name              | name                    | name             | string    |
+| Location                  | location                | location         | string    |
+| Creation Date [Date/Time] | created_at              | created_at       | date/time |
+| Update Date [Date/Time]   |                         | updated_at       | date/time |
+| Protected                 | protected               | protected        | bool      |
+| Verified                  | verified                | verified         | bool      |
