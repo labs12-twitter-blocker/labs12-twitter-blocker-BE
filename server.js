@@ -18,6 +18,22 @@ app.get('/', (req, res) => {
     })
 })
 
+app.get('/:id', (req, res) => {
+    const id = req.params.id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    db('twitter_users as t')
+    .where('t.twitter_users_id', id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+})
+
 
 const port = process.env.PORT || 5000;
 
