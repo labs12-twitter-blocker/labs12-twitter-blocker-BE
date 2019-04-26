@@ -42,7 +42,9 @@ module.exports = {
     },
     migrations: {
       directory: './src/data/migrations'
-    }
+    },
+    seeds: {
+      directory: './src/data/seeds'
   }
 
 };

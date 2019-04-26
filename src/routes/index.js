@@ -2,6 +2,7 @@ const router = require('express').Router();
 const authRouter = require('./auth');
 
 router.use('/auth', authRouter);
+
 router.get('/', (req, res) => {
   res.send('Hello World!');
 });

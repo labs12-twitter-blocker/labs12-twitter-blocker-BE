@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
+    "server": "nodemon index.js"
+=======
     "server": "nodemon index.js",
     "start": "node index.js"
+>>>>>>> 622063655a4221f74eb0ea8fb0070576ab6575de
   },
   "repository": "git+https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE.git",
   "author": "Erin Meredith <ekmeredith@att.net>",
