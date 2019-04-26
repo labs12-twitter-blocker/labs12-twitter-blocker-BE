@@ -1,8 +1,11 @@
+// AUTH ROUTE FOR OAUTH AUTHORIZATION
 const router = require('express').Router();
 const passport = require('passport');
 const Strategy = require('passport-twitter').Strategy;
 
 require('dotenv').config();
+
+const FE_URL = process.env.FRONT_END_URL || 'http://localhost:5000/';
 
 passport.use(
   new Strategy(
@@ -35,7 +38,7 @@ router.get(
     failureRedirect: '/'
   }),
   function(req, res) {
-    res.redirect('/welcome');
+    res.redirect(FE_URL);
   }
 );
 module.exports = router;

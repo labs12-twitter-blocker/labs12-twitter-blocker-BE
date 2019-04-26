@@ -3,6 +3,8 @@
 TWITTER_CONSUMER_KEY= twitter api key
 TWITTER_CONSUMER_SECRET= twitter api secret
 SESSION_SECRET= make it up
+FRONT_END_URL=https://twitter-blocker.netlify.com
+CALLBACK_URL=https://twitter-blocker.netlify.com/auth/twitter/callback
 
 # Endpoints
 

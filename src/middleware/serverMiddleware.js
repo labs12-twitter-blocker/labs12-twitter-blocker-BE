@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const session = require('express-session');
 require('dotenv').config();
 
+//All Server Middleware should be applied here
 module.exports = server => {
   server.use(express.json());
   server.use(helmet());
@@ -15,7 +16,7 @@ module.exports = server => {
   server.use(passport.session());
   server.use(
     session({
-      secret: process.env.SESSION_SECRET || 'keep it secret',
+      secret: process.env.SESSION_SECRET,
       resave: true,
       saveUninitialized: true
     })
