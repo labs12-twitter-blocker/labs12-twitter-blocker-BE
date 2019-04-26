@@ -1,14 +1,18 @@
 // Update with your config settings.
+const localPg = {
+  host: 'localhost',
+  database: 'twitter',
+  user: 'twitdev',
+  password: 'qxZVf5d9'
+}
+
+const prodDbConnection = process.env.DATABASE_URL || localPg;
 
 module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: {
-      database: 'twitter',
-      user:     'twitdev',
-      password: 'qxZVf5d9'
-    },
+    connection: prodDbConnection,
     migrations: {
       directory: './src/data/migrations'
     },
@@ -19,11 +23,7 @@ module.exports = {
 
   staging: {
     client: 'postgresql',
-    connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
-    },
+    connection: prodDbConnection,
     pool: {
       min: 2,
       max: 10
@@ -35,11 +35,7 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: {
-      database: 'my_db',
-      user:     'username',
-      password: 'password'
-    },
+    connection: prodDbConnection,
     pool: {
       min: 2,
       max: 10
