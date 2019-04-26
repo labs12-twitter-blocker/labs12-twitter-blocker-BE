@@ -85,6 +85,7 @@ Documentation for the endpoints on the backend server
 
 #########################################
 
+
 # Useful Twitter Endpoints
 
 ## User
@@ -116,6 +117,7 @@ Deletes the specified list.
 Creates new list for authenticated user
 
 #########################################
+
 
 # App Users Table Schema:
 | Schema Name             | Twitter API key | db name     | DataType  |
