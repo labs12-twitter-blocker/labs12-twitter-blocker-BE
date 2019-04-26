@@ -23,7 +23,7 @@ module.exports = {
 
   staging: {
     client: 'postgresql',
-    connection: prodDbConnection
+    connection: prodDbConnection,
     pool: {
       min: 2,
       max: 10
@@ -35,7 +35,7 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: prodDbConnection
+    connection: prodDbConnection,
     pool: {
       min: 2,
       max: 10
