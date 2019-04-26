@@ -89,6 +89,61 @@ Documentation for the endpoints on the backend server
 
   User by ID
 
+
+
+#########################################
+
+
+# Useful Twitter Endpoints
+
+## User
+
+Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials](https://developer.twitter.com/en/docs/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials)
+
+**GET account/verify_credentials**
+
+Returns most of a users account data. Best to populate account. 
+
+## Lists
+
+Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference)
+
+**GET lists/members**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-members](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-members)
+
+Returns the members of the specified list
+
+**GET lists/list**:[https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-list](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-list)
+
+Returns all lists the authenticating or specified user subscribes to, including their own.
+
+**POST lists/destroy**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-destroy](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-destroy)
+
+Deletes the specified list.
+
+**POST list/create**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-create](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-create)
+
+Creates new list for authenticated user
+
+#########################################
+
+
+# App Users Table Schema:
+| Schema Name             | Twitter API key | db name     | DataType  |
+| ----------------------- | --------------- | ----------- | --------- |
+| User ID	                |                 |	app_user_id	| uuid      |
+| (*FK) Twitter ID	      | id	            |twitter_id	  | string    |
+| Twitter Handle	        | screen_name     |	screen_name	| string    |
+| Sign Up Date	          |                 |	created_at  |	date/time 
+| Update Date             |                 |	updated_at  |	date/time |
+| Paying Customer	        |                 |	is_paying	  | bool      |
+| (*FK)Stripe Customer ID |                 |	stripe_id   |	int       |
+| Access Token?           |	                |	token	      | string    |
+| Total Upvote Points     |	                |	upvotes	    | int       |
+| Total Downvote Points   |	                |	downvotes   |	int       |
+| Email	                  |                 |	email	      | string    |
+| Is Admin	              |                 |	admin	      | bool      |
+| Deactivated             |                 |	deactivated |	bool      |
+
 ---
 
 | Name                      | Twitter API name        | db name          | DataType  |
@@ -106,3 +161,4 @@ Documentation for the endpoints on the backend server
 | Update Date [Date/Time]   |                         | updated_at       | date/time |
 | Protected                 | protected               | protected        | bool      |
 | Verified                  | verified                | verified         | bool      |
+

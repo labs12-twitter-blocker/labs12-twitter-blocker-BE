@@ -10,10 +10,10 @@ module.exports = {
       password: 'qxZVf5d9'
     },
     migrations: {
-      directory: './data/migrations'
+      directory: './src/data/migrations'
     },
     seeds: {
-      directory: './data/seeds'
+      directory: './src/data/seeds'
     }
   },
 
@@ -29,7 +29,7 @@ module.exports = {
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      directory: './src/data/migrations'
     }
   },
 
@@ -45,7 +45,7 @@ module.exports = {
       max: 10
     },
     migrations: {
-      tableName: 'knex_migrations'
+      directory: './src/data/migrations'
     }
   }
 
