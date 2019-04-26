@@ -94,6 +94,26 @@ Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/manage-
 
 Returns most of a users account data. Best to populate account. 
 
+## Lists
+
+Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference)
+
+**GET lists/members**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-members](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-members)
+
+Returns the members of the specified list
+
+**GET lists/list**:[https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-list](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/get-lists-list)
+
+Returns all lists the authenticating or specified user subscribes to, including their own.
+
+**POST lists/destroy**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-destroy](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-destroy)
+
+Deletes the specified list.
+
+**POST list/create**: [https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-create](https://developer.twitter.com/en/docs/accounts-and-users/create-manage-lists/api-reference/post-lists-create)
+
+Creates new list for authenticated user
+
 #########################################
 
 # App Users Table Schema:
