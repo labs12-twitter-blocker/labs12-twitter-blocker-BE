@@ -5,16 +5,16 @@ const Strategy = require('passport-twitter').Strategy;
 
 require('dotenv').config();
 
-const FE_URL = process.env.FRONT_END_URL || 'http://localhost:5000/';
+const callback_url =
+  process.env.CALLBACK_URL || 'http://localhost:5000/auth/twitter/callback';
+const FE_URL = process.env.FRONT_END_URL || 'http://localhost:3000/';
 
 passport.use(
   new Strategy(
     {
       consumerKey: process.env.TWITTER_CONSUMER_KEY,
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-      callbackURL:
-        process.env.CALLBACK_URL ||
-        'http://localhost:5000/auth/twitter/callback'
+      callbackURL: callback_url
     },
     function(token, tokenSecret, profile, callback) {
       return callback(null, profile);
@@ -35,7 +35,7 @@ router.get('/twitter/login', passport.authenticate('twitter'));
 router.get(
   '/twitter/callback',
   passport.authenticate('twitter', {
-    failureRedirect: '/'
+    failureRedirect: FE_URL
   }),
   function(req, res) {
     res.redirect(FE_URL);
