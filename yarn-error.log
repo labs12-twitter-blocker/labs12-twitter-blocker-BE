@@ -1,0 +1,68 @@
+Arguments: 
+  /usr/local/Cellar/node/11.14.0_1/bin/node /usr/local/Cellar/yarn/1.15.2/libexec/bin/yarn.js install
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+Yarn version: 
+  1.15.2
+
+Node version: 
+  11.14.0
+
+Platform: 
+  darwin x64
+
+Trace: 
+  SyntaxError: /Users/brooksvinyard/Documents/lambda/twitter/labs12-twitter-blocker-BE/package.json: Unexpected token < in JSON at position 121
+      at JSON.parse (<anonymous>)
+      at /usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:304:30)
+      at /usr/local/Cellar/yarn/1.15.2/libexec/lib/cli.js:315:13
+
+npm manifest: 
+  {
+    "name": "labs12-twitter-blocker-be",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+  <<<<<<< HEAD
+      "server": "nodemon index.js"
+  =======
+      "server": "nodemon index.js",
+      "start": "node index.js"
+  >>>>>>> 622063655a4221f74eb0ea8fb0070576ab6575de
+    },
+    "repository": "git+https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE.git",
+    "author": "Erin Meredith <ekmeredith@att.net>",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE/issues"
+    },
+    "homepage": "https://github.com/labs12-twitter-blocker/labs12-twitter-blocker-BE#readme",
+    "dependencies": {
+      "axios": "^0.18.0",
+      "cors": "^2.8.5",
+      "dotenv": "^7.0.0",
+      "express": "^4.16.4",
+      "express-session": "^1.16.1",
+      "helmet": "^3.16.0",
+      "jest": "^24.7.1",
+      "knex": "^0.16.5",
+      "morgan": "^1.9.1",
+      "nodemon": "^1.18.11",
+      "passport": "^0.4.0",
+      "passport-twitter": "^1.0.4",
+      "pg": "^7.10.0",
+      "python-shell": "^1.0.7",
+      "supertest": "^4.0.2"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

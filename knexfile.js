@@ -45,6 +45,7 @@ module.exports = {
     },
     seeds: {
       directory: './src/data/seeds'
+    },
   }
 
 };

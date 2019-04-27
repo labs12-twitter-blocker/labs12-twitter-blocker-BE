@@ -20,7 +20,7 @@ exports.up = function(knex, Promise) {
       //tbl.increments();
       //tbl.uuid('id').unique().defaultTo(this.db.raw('public.gen_random_uuid()'))
       tbl.uuid("app_user_id").primary();
-      tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users");
+      tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
       tbl.string("twitter_id", 255).notNullable();
       tbl.string("screen_name", 50).notNullable();
 
