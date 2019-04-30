@@ -1,11 +1,21 @@
 const router = require('express').Router();
-
+const Users = require("./usersModel.js");
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
 
 // GET /users 
 // Get all users
+
+router.get("/", (req, res) => {
+  Users.find()
+    .then(users => {
+      res.status(200).json({ users });
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
 
 // GET /users/:user_id
 // Get a users by user_ID
