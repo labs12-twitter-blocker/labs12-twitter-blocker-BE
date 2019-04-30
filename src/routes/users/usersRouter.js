@@ -20,7 +20,7 @@ router.get("/", (req, res) => {
 // GET /users/:user_id
 // Get a users by user_ID
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", (req, res) => {
   Users.findById(req.params.id)
     .then(users => {
       res.status(200).json({ users });
@@ -41,6 +41,16 @@ router.get("/:id", async (req, res) => {
 
 // GET /users/premium
 // Get all paying users
+
+router.get("/premium", (req, res) => {
+  Users.findPremium()
+    .then(users => {
+      res.status(200.({ users }))
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////POST///////////////////////////////////////////
