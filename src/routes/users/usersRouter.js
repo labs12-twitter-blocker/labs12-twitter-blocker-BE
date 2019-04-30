@@ -81,4 +81,21 @@ router.get("/premium", (req, res) => {
 // DELETE /users/:user_id
 // Delete a user by user_ID
 
+router.delete('/:user_id', async (req, res) => {
+  try {
+    const user = await Users.deleteUser(req.params.id);
+    if (user) {
+      res.status(200).json({ message: 'User has been deleted' })
+    } else {
+      res.status(404).json({ error: 'User cannot be found' })
+    }
+  } catch (error) {
+    //console.log(error);
+    res.status(500).json({
+      error,
+      message: 'Error removing user'
+    })
+  }
+})
+
 module.exports = router;
