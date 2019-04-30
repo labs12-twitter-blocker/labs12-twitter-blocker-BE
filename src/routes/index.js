@@ -11,7 +11,6 @@ router.get('/welcome', (req, res) => {
   res.send('You are logged in');
 });
 
-<<<<<<< HEAD
 router.get('/', (req, res) => {
   db('twitter_users')
     .then(response => {
@@ -43,7 +42,5 @@ router.get('/:id', (req, res) => {
         .json({ error: 'The user information could not be retrieved.' });
     });
 });
-=======
->>>>>>> e778b810dfb15787abefbd217607d8142d5bac8a
 
 module.exports = router;
