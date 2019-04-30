@@ -7,21 +7,21 @@ get: function() {
 },
 
 // get /public
-get: function() {
+getPublic: function() {
     return db('lists')
     .where('public', true)
 },
 
 // get /private
-get: function() {
+getPrivate: function() {
     return db('lists')
     .where('public', false)
 },
 
 // get /:list_id
-get: function(listId) {
+getById: function(listId) {
     return db('lists')
-    .where('uuid', listId)
+    .where('uuid', listId).first()
 },
 
 
