@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const authRouter = require('./auth');
-const postTweetRoute = require('./postTweet');
+const postTweetRoute = require('./tweets/tweetsRouter');
 
 router.use('/auth', authRouter);
-router.use('/post-tweet', postTweetRoute);
+router.use('/tweet', postTweetRoute);
 router.get('/', (req, res) => {
   res.send('Hello World!');
 });

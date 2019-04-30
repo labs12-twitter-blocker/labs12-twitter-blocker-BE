@@ -12,6 +12,7 @@ passport.use(
       callbackURL: process.env.CALLBACK_URL
     },
     function(token, tokenSecret, profile, callback) {
+      console.log(token, tokenSecret);
       return callback(null, profile);
     }
   )

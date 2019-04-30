@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const Twitter = require('twitter');
 require('dotenv').config();
 
 /////////////////////////////////////////////////////////////////////
@@ -22,8 +23,7 @@ require('dotenv').config();
 // POST /tweets
 // Send a new Tweet
 
-let Twitter = require('twitter');
-var client = new Twitter({
+const client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
