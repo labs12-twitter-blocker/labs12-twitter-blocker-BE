@@ -1,5 +1,5 @@
 const router = require('express').Router();
-
+const data = require('./listsModel')
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
@@ -7,20 +7,80 @@ const router = require('express').Router();
 // GET /lists
 // Get all lists in our db
 
+router.get('/', (req, res) => {
+    data.get()
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The users information could not be retrieved.'})
+    })
+  })
+
 // GET /lists/public
 // Get All Public Lists in our db
+router.get('/public', (req, res) => {
+    data.getPublic()
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({Error: 'The users information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/private
 // Get All Private Lists in our db
+router.get('/private', (req, res) => {
+    data.getPrivate()
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({Error: 'The users information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/block
 // Get All Block Lists in our db
+router.get('/block', (req, res) => {
+    data.get()
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The users information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/cool
 // Get All Cool Lists in our db
+router.get('/cool', (req, res) => {
+    data.get()
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The users information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/:list_id
 // Get a Single List by List ID
+router.get('/:id', (req, res) => {
+    const id = req.params.id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.getById(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/creator/:user_id
 // Get All Lists Created by the user_ID
