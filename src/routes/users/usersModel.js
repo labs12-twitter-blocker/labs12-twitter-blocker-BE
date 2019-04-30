@@ -4,7 +4,9 @@ module.exports = {
   add,
   find,
   findBy,
-  findById
+  findById,
+  orderByDownVotes,
+  orderByUpVotes
 };
 
 function add(user) {
@@ -23,3 +25,10 @@ function findById(id) {
   return db("app_users").where({ id }).first();
 }
 
+function orderByUpVotes() {
+  return db("app_users").orderBy("upvotes")
+}
+
+function orderByDownVotes() {
+  return db("app_users").orderBy("downvotes")
+}
