@@ -246,15 +246,63 @@ router.post('/:list_id/follow/:user_id', (req, res) => {
 
 // PUT /lists/:list_id
 // Update a List by the list_id
+router.put('/:list_id', (req, res) => {
+    const listId = req.params.list_id
+    const list = req.body
+    if(!listId){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    data.updateList(listId, list)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'There was an error updating the list.'})
+    })
+})
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////DELETE/////////////////////////////////////////
 
 // DELETE /lists/:list_id 
 // Delete a list by the list_id
+router.delete('/:list_id', (req, res) => {
+    const listId = req.params.list_id
+    if(!listId){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    data.deleteList(listId)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'There was an error deleting the list.'})
+    })
+})
 
 // DELETE /lists/:list_id/unfollow/:user_id 
 // Unfollow a list by list_id and user_id
+router.delete('/:list_id/unfollow/:user_id', (req, res) => {
+    const listId = req.params.list_id
+    const userId = req.params.user_id
+    if(!listId){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    if(!userId){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.unfollowList(listId, userId)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'There was an error unfollowing the list.'})
+    })
+})
 
 
 
