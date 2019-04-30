@@ -81,7 +81,8 @@ function getAllByOrder() {
 function insertList(list) {
     return db('lists')
         .insert(list)
-        .then(ids => ({uuid: ids[0]}));
-        return query;
+        .then(ids => {return ids});
 }
+
+
 
