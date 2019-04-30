@@ -13,7 +13,7 @@ router.get('/', (req, res) => {
         res.status(200).json(response)
     })
     .catch(err => {
-        res.status(500).json({error: 'The users information could not be retrieved.'})
+        res.status(500).json({error: 'The lists information could not be retrieved.'})
     })
   })
 
@@ -25,7 +25,7 @@ router.get('/public', (req, res) => {
       res.status(200).json(response)
     })
     .catch(err => {
-      res.status(500).json({Error: 'The users information could not be retrieved.'})
+      res.status(500).json({Error: 'The lists information could not be retrieved.'})
     })
   })
 
@@ -37,7 +37,7 @@ router.get('/private', (req, res) => {
       res.status(200).json(response)
     })
     .catch(err => {
-      res.status(500).json({Error: 'The users information could not be retrieved.'})
+      res.status(500).json({Error: 'The lists information could not be retrieved.'})
     })
   })
 
@@ -49,7 +49,7 @@ router.get('/block', (req, res) => {
         res.status(200).json(response)
     })
     .catch(err => {
-        res.status(500).json({error: 'The users information could not be retrieved.'})
+        res.status(500).json({error: 'The lists information could not be retrieved.'})
     })
   })
 
@@ -61,19 +61,36 @@ router.get('/cool', (req, res) => {
         res.status(200).json(response)
     })
     .catch(err => {
-        res.status(500).json({error: 'The users information could not be retrieved.'})
+        res.status(500).json({error: 'The lists information could not be retrieved.'})
     })
   })
 
 // GET /lists/:list_id
 // Get a Single List by List ID
-router.get('/:id', (req, res) => {
-    const id = req.params.id;
+router.get('/:list_id', (req, res) => {
+    const id = req.params.list_id;
+    if(!id){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    data.getById(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The list information could not be retrieved.'})
+    })
+  })
+
+// GET /lists/creator/:user_id
+// Get All Lists Created by the user_ID
+router.get('/creator/:user_id', (req, res) => {
+    const id = req.params.user_id;
     if(!id){
         res.status(404).json({error: 'The user with the specified ID does not exist.'})
         return;
     }
-    data.getById(id)
+    data.getByUserCreated(id)
     .then(response => {
         res.status(200).json(response)
     })
@@ -82,26 +99,103 @@ router.get('/:id', (req, res) => {
     })
   })
 
-// GET /lists/creator/:user_id
-// Get All Lists Created by the user_ID
-
 // GET /lists/creator/public/:user_id 
 // Get All Public Lists by List Creator user_ID
+router.get('/creator/public/:user_id', (req, res) => {
+    const id = req.params.user_id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.getPublicByUserCreated(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/creator/private/:user_id 
 // Get All Private Lists by List Creator user_ID
+router.get('/creator/private/:user_id', (req, res) => {
+    const id = req.params.user_id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.getPrivateByUserCreated(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/creator/block/:user_id 
 // Get All Block Lists by List Creator user_ID
+router.get('/creator/block/:user_id', (req, res) => {
+    const id = req.params.user_id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.getByUserCreated(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+  })
+
 
 // GET /lists/creator/cool/:user_id 
 // Get All Cool Lists by List Creator user_ID
+router.get('/creator/cool/:user_id', (req, res) => {
+    const id = req.params.user_id;
+    if(!id){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    data.getByUserCreated(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The user information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/subscribers/:list_id 
 // Get all users subscribed to a list by list_ID
+router.get('/subscribers/:list_id', (req, res) => {
+    const id = req.params.list_id;
+    if(!id){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    data.getSubscribers(id)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The list information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/points 
 // Get All lists ordered by number of points
+router.get('/points', (req, res) => {
+    data.getAllByOrder()
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'The lists information could not be retrieved.'})
+    })
+  })
 
 // GET /lists/timeline/:list_id 
 // Gets the Twitter Timeline for the selected list_id
@@ -112,9 +206,39 @@ router.get('/:id', (req, res) => {
 
 // POST /lists/ - 
 // Create a new list (Create Block/Cool List; Public/Private List)**
+router.post('/', (req, res) => {
+    const list = req.body
+    data.insertList(list)
+    //TODO check for list content
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'There was an error adding the list.'})
+    })
+})
 
 // POST /lists/:list_id/follow/:user_id 
 // Send JSON with user_id to subscribe that user to a list by list_id**
+router.post('/:list_id/follow/:user_id', (req, res) => {
+    const listId = req.params.list_id
+    const userId = req.params.user_id
+    if(!userId){
+        res.status(404).json({error: 'The user with the specified ID does not exist.'})
+        return;
+    }
+    if(!listId){
+        res.status(404).json({error: 'The list with the specified ID does not exist.'})
+        return;
+    }
+    data.subscribeToList(listId, userId)
+    .then(response => {
+        res.status(200).json(response)
+    })
+    .catch(err => {
+        res.status(500).json({error: 'There was an error adding the list.'})
+    })
+})
 
 
 /////////////////////////////////////////////////////////////////////

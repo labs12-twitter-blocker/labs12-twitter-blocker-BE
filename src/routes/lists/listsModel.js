@@ -11,6 +11,10 @@ module.exports = {
     getSubscribers,
     getAllByOrder,
     insertList,
+    subscribeToList,
+    updateList,
+    deleteList,
+    unfollowList
 };
 //   get lists/, /cool, /block,
 function get() {
@@ -81,8 +85,33 @@ function getAllByOrder() {
 function insertList(list) {
     return db('lists')
         .insert(list)
-        .then(ids => {return ids});
+        .then(ids => {return ids})
 }
 
+function subscribeToList(listId, userId) {
+    return db('lists as l')
+    .join('twitter_users as tu', 'tu.twitter_id', 'l.twitter_id')
+    .where('tu.twitter_id', userId)
+    .insert(getById(listId))
+    .then(ids => {return ids})
+}   
 
+function updateList(listId, list) {
+    return db('lists as l')
+    .where('l.list_id', listId)
+    .update(list)
+}
+
+function deleteList(listId) {
+    return db('lists')
+    .where('list_id', listId)
+    .delete()
+}
+
+function unfollowList(listId, userId) {
+    return db('lists as l')
+    .join('twitter_users as tu', 'tu.twitter_id', 'l.twitter_id')
+    .where('tu.twitter_id', userId)
+    .delete(getById(listId))
+}
 
