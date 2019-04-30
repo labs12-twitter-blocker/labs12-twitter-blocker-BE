@@ -44,7 +44,7 @@ router.get('/private', (req, res) => {
 // GET /lists/block
 // Get All Block Lists in our db
 router.get('/block', (req, res) => {
-    data.get()
+    data.getBlocked()
     .then(response => {
         res.status(200).json(response)
     })

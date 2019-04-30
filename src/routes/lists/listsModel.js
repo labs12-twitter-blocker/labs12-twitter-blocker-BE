@@ -4,10 +4,12 @@ module.exports = {
     get,
     getPublic,
     getPrivate,
+    getBlocked,
     getById,
     getByUserCreated,
     getPublicByUserCreated,
     getPrivateByUserCreated,
+    getBlockByUserCreated,
     getSubscribers,
     getAllByOrder,
     insertList,
@@ -16,7 +18,7 @@ module.exports = {
     deleteList,
     unfollowList
 };
-//   get lists/, /cool, /block,
+//   get lists/, /cool
 function get() {
     return db('lists')
 }
@@ -32,6 +34,11 @@ function getPrivate() {
     return db('lists')
     .where('public', false)
 }
+// get /block
+function getBlocked() {
+    return db('lists')
+    .where('is_block_list', true)
+}
 
 // get /:list_id
 function getById(listId) {
@@ -39,7 +46,7 @@ function getById(listId) {
     .where('list_id', listId).first()
 }
 
-// get all/cool/block lists created by user
+// get all/cool lists created by user
 function getByUserCreated(userId) {
     return db('lists as l')
     .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
@@ -60,6 +67,14 @@ function getPrivateByUserCreated(userId) {
     .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
     .where('l.twitter_id', userId)
     .where('public', false)
+} 
+
+//get all /block lists created by user
+function getBlockByUserCreated(userId) {
+    return db('lists as l')
+    .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
+    .where('l.twitter_id', userId)
+    .where('is_block_list', true)
 } 
 
 // get /subscribers/:list_id - all USERS who have subscribed to list
