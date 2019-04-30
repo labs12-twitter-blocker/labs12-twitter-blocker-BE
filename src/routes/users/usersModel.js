@@ -5,6 +5,7 @@ module.exports = {
   find,
   findBy,
   findById,
+  findPremium,
   orderByDownVotes,
   orderByUpVotes
 };
@@ -23,6 +24,10 @@ function findBy(filter) {
 
 function findById(id) {
   return db("app_users").where({ id }).first();
+}
+
+function findPremium() {
+  return db("app_users").where("is_paying", true);
 }
 
 function orderByUpVotes() {
