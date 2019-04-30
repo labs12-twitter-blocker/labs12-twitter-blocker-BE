@@ -18,7 +18,8 @@ module.exports = {
     },
     seeds: {
       directory: './src/data/seeds'
-    }
+    },
+    debug: true
   },
 
   staging: {

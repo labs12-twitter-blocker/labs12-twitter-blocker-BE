@@ -8,7 +8,11 @@ module.exports = {
   findById,
   findPremium,
   orderByDownVotes,
-  orderByUpVotes
+  orderByUpVotes,
+  findTwitterUserByTwitterId,
+  insertMegaUser,
+  insertMegaUserList,
+  updateMegaUser
 };
 
 function add(user) {
@@ -41,4 +45,33 @@ function orderByUpVotes() {
 
 function orderByDownVotes() {
   return db("app_users").orderBy("downvotes")
+}
+
+function findTwitterUserByTwitterId(twitter_id) {
+  return db('twitter_users')
+    .where({ twitter_id })
+    .first();
+}
+
+function insertMegaUser(user) {
+  return db("twitter_users")
+    .insert(user)
+    .then(ids => {
+      return ids;
+    });
+}
+
+function insertMegaUserList(list) {
+  return db("lists")
+    .insert(list)
+    .then(ids => {
+      return ids;
+    });
+}
+
+function updateMegaUser(twitter_id, changes) {
+  return db("twitter_users")
+    .where({ twitter_id })
+    .update(changes)
+    .returning('*');
 }

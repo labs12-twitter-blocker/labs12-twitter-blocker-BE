@@ -1,8 +1,8 @@
 exports.up = function(knex, Promise) {
   return knex.schema
-
+  .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("twitter_users", tbl => {
-      tbl.uuid("twitter_users_id").primary();
+      tbl.string('twitter_users_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
       tbl.string("twitter_id", 255).notNullable().unique();
       tbl.integer("followers", 9);
       tbl.integer("friends", 9);
@@ -17,9 +17,7 @@ exports.up = function(knex, Promise) {
     })
 
     .createTable("app_users", tbl => {
-      //tbl.increments();
-      //tbl.uuid('id').unique().defaultTo(this.db.raw('public.gen_random_uuid()'))
-      tbl.uuid("app_user_id").primary();
+      tbl.string('app_user_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
       tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
       tbl.string("twitter_id", 255).notNullable();
       tbl.string("screen_name", 50).notNullable();
