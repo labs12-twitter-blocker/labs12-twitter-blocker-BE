@@ -20,7 +20,7 @@ function deleteUser(id) {
 }
 
 function find() {
-  return db("app_users").select("id", "screen_name");
+  return db("app_users").select("app_user_id", "screen_name");
 }
 
 function findBy(filter) {
