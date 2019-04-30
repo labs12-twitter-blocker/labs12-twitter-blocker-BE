@@ -20,6 +20,16 @@ router.get("/", (req, res) => {
 // GET /users/:user_id
 // Get a users by user_ID
 
+router.get("/:id", async (req, res) => {
+  Users.findById(req.params.id)
+    .then(users => {
+      res.status(200).json({ users });
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
+
 // GET /users/points/ 
 // Get all users ordered by number of points
 
