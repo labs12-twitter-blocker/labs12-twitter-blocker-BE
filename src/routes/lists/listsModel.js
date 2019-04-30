@@ -32,7 +32,7 @@ function getPrivate() {
 // get /:list_id
 function getById(listId) {
     return db('lists')
-    .where('uuid', listId).first()
+    .where('list_id', listId).first()
 }
 
 // get all/cool/block lists created by user
@@ -73,7 +73,7 @@ function getAllByOrder() {
 // get /timeline/:list_id - returns timeline of list
 // getListTimeline: function(listId) {
 //     return db('lists as l')
-//     .where('l.uuid', listId)
+//     .where('l.list_id', listId)
 //     .select('')
 // }
 
