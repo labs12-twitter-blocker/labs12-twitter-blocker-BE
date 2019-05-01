@@ -63,9 +63,10 @@ function updateMegaUser(twitter_id, changes) {
 }
 
 function removeAllListFollowers(twitter_list_id) {
-    console.log("*********************DELETE FUNCTION******************************");
-    console.log(twitter_list_id);
     return db("list_followers")
-      .where("twitter_list_id", 'like', `${twitter_list_id}` )
-      .del();
+      .where("twitter_list_id", 'like', twitter_list_id )
+      .del()
+      .then(count => {
+        console.log(count);
+      });
 }

@@ -196,8 +196,6 @@ function updateListFollowers(params) {
 
       // Remove all the followers from a list, then add them back
       Users.removeAllListFollowers(params.list_id);
-      console.log("params.list_id", params.list_id);
-      console.log("*********************DELETE******************************");
       // For every subscriber the list has, add the user_id to the DB.
       subscribers.users.map(follower => {
 
