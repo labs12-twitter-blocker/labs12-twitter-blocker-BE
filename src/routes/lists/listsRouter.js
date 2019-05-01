@@ -212,7 +212,7 @@ router.get('/timeline/:list_id', (req, res) => {
   // Fetch data from twitter api
   client.get("lists/statuses", params, function (error, response) {
     if (error) {
-      res.status(400).json('The kust information could not be retrieved from twitter');
+      res.status(400).json('The list information could not be retrieved from twitter');
     } else {
       (response => response.json(response))
       res.status(200).json(response)
