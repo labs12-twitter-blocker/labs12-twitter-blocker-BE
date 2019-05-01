@@ -12,16 +12,38 @@ let client = new Twitter({
   access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
+
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
 
 // GET /users
 // Get all users
 
+router.get("/", (req, res) => {
+  Users.find()
+    .then(users => {
+      res.status(200).json({ users });
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
+
 // GET /users/:user_id
 // Get a users by user_ID
 
-// GET /users/points/
+
+router.get("/:id", (req, res) => {
+  Users.findById(req.params.id)
+    .then(users => {
+      res.status(200).json({ users });
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
+
+// GET /users/points/ 
 // Get all users ordered by number of points
 
 // [X] GET /users/followers/:user_id
@@ -32,6 +54,16 @@ let client = new Twitter({
 
 // GET /users/premium
 // Get all paying users
+
+router.get("/premium", (req, res) => {
+  Users.findPremium()
+    .then(users => {
+      res.status(200.({ users }))
+    })
+    .catch(error => {
+      res.json(error);
+    })
+})
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////POST///////////////////////////////////////////
@@ -44,7 +76,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
   const params = { screen_name: req.params.twitter_handle };
 
   // Inserts the user into the twitter_users table
-  client.get("users/show", params, function(error, user, response) {
+  client.get("users/show", params, function (error, user, response) {
     // console.log(user);
     // console.log(response);
 
@@ -110,7 +142,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
   });
 });
 
-  // Inserts the user's lists into the lists table
+// Inserts the user's lists into the lists table
 function updateLists(params) {
   client.get("lists/list", params, function(error, lists, response) {
 
@@ -222,7 +254,6 @@ function updateListFollowers(params) {
 };
 
 
-
 // POST /users/
 // Add a new user
 
@@ -243,5 +274,22 @@ function updateListFollowers(params) {
 
 // DELETE /users/:user_id
 // Delete a user by user_ID
+
+router.delete('/:user_id', async (req, res) => {
+  try {
+    const user = await Users.deleteUser(req.params.id);
+    if (user) {
+      res.status(200).json({ message: 'User has been deleted' })
+    } else {
+      res.status(404).json({ error: 'User cannot be found' })
+    }
+  } catch (error) {
+    //console.log(error);
+    res.status(500).json({
+      error,
+      message: 'Error removing user'
+    })
+  }
+})
 
 module.exports = router;
