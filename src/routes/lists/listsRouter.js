@@ -71,27 +71,15 @@ router.get('/cool', (req, res) => {
     })
 })
 
-<<<<<<< HEAD
-// GET /lists/:list_id
-// Get a Single List by List ID
-router.get('/:list_id', (req, res) => {
-  const id = req.params.list_id;
+// GET /lists/:twitter_list_id
+// Get a Single List by twitter_list_id
+router.get('/:twitter_list_id', (req, res) => {
+  const id = req.params.twitter_list_id;
   if (!id) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
     return;
   }
   data.getById(id)
-=======
-// GET /lists/:twitter_list_id
-// Get a Single List by twitter_list_id
-router.get('/:twitter_list_id', (req, res) => {
-    const id = req.params.twitter_list_id;
-    if(!id){
-        res.status(404).json({error: 'The list with the specified ID does not exist.'})
-        return;
-    }
-    data.getById(id)
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
     .then(response => {
       res.status(200).json(response)
     })
@@ -154,21 +142,12 @@ router.get('/creator/private/:user_id', (req, res) => {
 // GET /lists/creator/block/:user_id
 // Get All Block Lists by List Creator user_ID
 router.get('/creator/block/:user_id', (req, res) => {
-<<<<<<< HEAD
   const id = req.params.user_id;
   if (!id) {
     res.status(404).json({ error: 'The user with the specified ID does not exist.' })
     return;
   }
-  data.getByUserCreated(id)
-=======
-    const id = req.params.user_id;
-    if(!id){
-        res.status(404).json({error: 'The user with the specified ID does not exist.'})
-        return;
-    }
-    data.getBlockByUserCreated(id)
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
+  data.getBlockByUserCreated(id)
     .then(response => {
       res.status(200).json(response)
     })
@@ -195,59 +174,34 @@ router.get('/creator/cool/:user_id', (req, res) => {
     })
 })
 
-<<<<<<< HEAD
-// GET /lists/subscribers/:list_id
-// Get all users subscribed to a list by list_ID
-router.get('/subscribers/:list_id', (req, res) => {
-  const id = req.params.list_id;
+// GET /lists/subscribers/:twitter_list_id
+// Get all users subscribed to a list by twitter_list_ID
+router.get('/subscribers/:twitter_list_id', (req, res) => {
+  const id = req.params.twitter_list_id;
   if (!id) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
     return;
   }
   data.getSubscribers(id)
-=======
-// GET /lists/subscribers/:twitter_list_id 
-// Get all users subscribed to a list by twitter_list_ID
-router.get('/subscribers/:twitter_list_id', (req, res) => {
-    const id = req.params.twitter_list_id;
-    if(!id){
-        res.status(404).json({error: 'The list with the specified ID does not exist.'})
-        return;
-    }
-    data.getSubscribers(id)
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
     .then(response => {
       res.status(200).json(response)
     })
     .catch(err => {
       res.status(500).json({ error: 'The list information could not be retrieved.' })
     })
-<<<<<<< HEAD
-})
-
-// GET /lists/points
-// Get All lists ordered by number of points
-router.get('/points', (req, res) => {
-  data.getAllByOrder()
-=======
 });
 
-// GET /lists/points/top 
+// GET /lists/points/top
 // Get All lists ordered by number of points
 router.get('/points/top', (req, res) => {
-    data.getAllByOrder()
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
+  data.getAllByOrder()
     .then(response => {
       res.status(200).json(response)
     })
     .catch(err => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
-<<<<<<< HEAD
-})
-=======
 });
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
