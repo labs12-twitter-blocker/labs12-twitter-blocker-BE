@@ -30,11 +30,10 @@ router.get("/", (req, res) => {
 })
 
 // GET /users/:user_id
-// Get a users by user_ID
+// Get a users by twitter_id
 
-
-router.get("/:id", (req, res) => {
-  Users.findById(req.params.id)
+router.get("/:twitter_id", (req, res) => {
+  Users.findById(req.params.twitter_id)
     .then(users => {
       res.status(200).json({ users });
     })
@@ -111,7 +110,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
               } else {
                 res.status(404).json({ message: "User not found." });
               }
-            })
+            }).then(done => { res.status(201).json(done); })  // Finished the functions on updated user so res.status
             .catch(error => {
               console.log("error: ", error);
               res.status(500).json({ message: "The user information could not be modified." });
@@ -126,7 +125,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
               // Also add the users lists to the DB
               updateLists(params);
               //////////////////////////////////////
-            })
+            }).then(done => { res.status(201).json(done); })  // Finished the functions on new user so res.status
             .catch(error => {
               console.log("error: ", error);
               res.status(500).json({ message: "There was an error while saving the user to the database" });
@@ -207,6 +206,7 @@ function updateLists(params) {
                 res.status(500).json({ message: "There was an error while saving the list to the database" });
               });
           }
+<<<<<<< HEAD
         })
         .catch(error => {
           console.log("error: ", error);
@@ -220,6 +220,62 @@ function updateLists(params) {
     }
   })
 
+=======
+          if(list.mode != "public") {
+            new_list.public = false
+          };
+
+          // First test if the list is already in our DB
+        Users.findListByTwitterListId(list.id_str)
+            .then(list => {
+              // If we find the list in our DB, update its info
+              if (list) {
+                Users.updateMegaList(list.twitter_list_id, new_list)
+                  .then(updated => {
+                    if (updated) {
+                      // res.status(201).json(user);
+
+                      ////////////////////////////////////////////////////////
+                      // Also update the members of the list
+                      updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
+                      ////////////////////////////////////////////////////////
+                    } else {
+                      res.status(404).json({ message: "List not found." });
+                    }
+                  })
+                  .catch(error => {
+                    console.log("error: ", error);
+                    res.status(500).json({ message: "The list information could not be modified." });
+                  });
+              } else {
+                  // No list found So go ahead and Add them to the DB
+                  Users.insertMegaUserList(new_list)
+                  .then(list => {
+                    // res.status(201).json(user);
+
+                    ////////////////////////////////////////////////////////
+                    // Also update the members of the list
+                    updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
+                    ////////////////////////////////////////////////////////
+                  })
+                  .catch(error => {
+                    console.log("error: ", error);
+                    res.status(500).json({ message: "There was an error while saving the list to the database"});
+                  });
+              }})
+            .catch(error => { 
+              console.log("error: ", error); 
+              res.status(500).json({ message: "There was an error while saving the list to the database" }); 
+            })
+            
+        })
+        
+        if (!error) { 
+          console.log(error); 
+        }
+      })
+      
+>>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
 };
 
 function updateListFollowers(params) {
@@ -240,6 +296,7 @@ function updateListFollowers(params) {
       Users.insertMegaUserListFollower(new_follower)
         .then(follower => {
           // res.status(201).json(user);
+          return
         })
         .catch(error => {
           console.log("error: ", error);
@@ -276,13 +333,13 @@ router.post()
 //////////////////////DELETE/////////////////////////////////////////
 
 // DELETE /users/:user_id
-// Delete a user by user_ID
+// Delete app_user by twitter_id
 
-router.delete('/:user_id', async (req, res) => {
+router.delete('/:twitter_id', async (req, res) => {
   try {
-    const user = await Users.deleteUser(req.params.id);
+    const user = await Users.deleteUser(req.params.twitter_id);
     if (user) {
-      res.status(200).json({ message: 'User has been deleted' })
+      res.status(204).json({ message: 'User has been deleted' })
     } else {
       res.status(404).json({ error: 'User cannot be found' })
     }

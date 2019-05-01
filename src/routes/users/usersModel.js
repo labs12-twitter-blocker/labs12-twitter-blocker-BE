@@ -25,8 +25,8 @@ function add(user) {
   return db("app_users").insert(user)
 }
 
-function deleteUser(id) {
-  return db('app_users').where({ id }).del();
+function deleteUser(twitter_id) {
+  return db('app_users').where({ twitter_id }).del();
 }
 
 function editUser(id, body) {
@@ -41,8 +41,8 @@ function findBy(filter) {
   return db("app_users").where(filter);
 }
 
-function findById(id) {
-  return db("app_users").where({ id }).first();
+function findById(twitter_id) {
+  return db("app_users").where({ twitter_id }).first();
 }
 
 function findPremium() {
