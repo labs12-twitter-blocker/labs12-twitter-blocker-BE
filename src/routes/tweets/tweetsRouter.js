@@ -35,13 +35,13 @@ router.post('/', (req, res) => {
 
   const status = req.body;
   // if (keepGoing == true) {
-  postTweet = setTimeout(function() {
+  postTweet = setTimeout(function () {
     client
       .post('statuses/update', status)
-      .then(function(tweet) {
+      .then(function (tweet) {
         res.status(201).json({ message: 'Post Successful' });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         res.status(400).json({ message: error });
       });
   }, 3 * 1000);
@@ -51,7 +51,7 @@ router.post('/', (req, res) => {
 });
 
 router.post('/cancel', (req, res) => {
-  keepGoing = false;
+  // keepGoing = false;
   stop();
   res.status(200).json({ message: 'tweet canceled.' });
 });
