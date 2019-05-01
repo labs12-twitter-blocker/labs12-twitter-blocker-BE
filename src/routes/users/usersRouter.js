@@ -30,11 +30,10 @@ router.get("/", (req, res) => {
 })
 
 // GET /users/:user_id
-// Get a users by user_ID
+// Get a users by twitter_id
 
-
-router.get("/:id", (req, res) => {
-  Users.findById(req.params.id)
+router.get("/:twitter_id", (req, res) => {
+  Users.findById(req.params.twitter_id)
     .then(users => {
       res.status(200).json({ users });
     })
@@ -111,7 +110,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
               } else {
                 res.status(404).json({ message: "User not found." });
               }
-            })
+            }).then(done => { res.status(201).json(done); })  // Finished the functions on updated user so res.status
             .catch(error => {
               console.log("error: ", error);
               res.status(500).json({ message: "The user information could not be modified." });
@@ -126,7 +125,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
               // Also add the users lists to the DB
               updateLists(params);
               //////////////////////////////////////
-            })
+            }).then(done => { res.status(201).json(done); })  // Finished the functions on new user so res.status
             .catch(error => {
               console.log("error: ", error);
               res.status(500).json({ message: "There was an error while saving the user to the database" });
@@ -212,7 +211,7 @@ function updateLists(params) {
               res.status(500).json({ message: "There was an error while saving the list to the database" }); 
             })
             
-        });
+        })
         
         if (!error) { 
           console.log(error); 
@@ -239,6 +238,7 @@ function updateListFollowers(params) {
         Users.insertMegaUserListFollower(new_follower)
         .then(follower => {
           // res.status(201).json(user);
+          return
         })
         .catch(error => {
           console.log("error: ", error);
@@ -273,13 +273,13 @@ function updateListFollowers(params) {
 //////////////////////DELETE/////////////////////////////////////////
 
 // DELETE /users/:user_id
-// Delete a user by user_ID
+// Delete app_user by twitter_id
 
-router.delete('/:user_id', async (req, res) => {
+router.delete('/:twitter_id', async (req, res) => {
   try {
-    const user = await Users.deleteUser(req.params.id);
+    const user = await Users.deleteUser(req.params.twitter_id);
     if (user) {
-      res.status(200).json({ message: 'User has been deleted' })
+      res.status(204).json({ message: 'User has been deleted' })
     } else {
       res.status(404).json({ error: 'User cannot be found' })
     }
