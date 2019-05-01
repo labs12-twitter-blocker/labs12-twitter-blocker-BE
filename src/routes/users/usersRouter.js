@@ -278,6 +278,20 @@ router.post("/", async (req, res) => {
 // PUT /users/:user_id
 // Edit a user by user_id
 
+router.put("/:twitter_id", async (req, res) => {
+  const changes = req.body;
+  try {
+    const updateUser = await Users.editUser(req.params.id, changes);
+    if (updateUser) {
+      res.status(200).json({ message: "User has been updated" })
+    } else {
+      res.status(404).json({ message: "User could not be found" })
+    }
+  } catch (error) {
+    res.status(500).json({ message: "There was an error updating the user" })
+  }
+})
+
 /////////////////////////////////////////////////////////////////////
 //////////////////////DELETE/////////////////////////////////////////
 
