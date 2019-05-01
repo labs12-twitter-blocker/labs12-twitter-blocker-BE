@@ -7,8 +7,9 @@ exports.up = function(knex, Promise) {
         tbl.string("list_name", 255);
         tbl.datetime("list_creation_date");
         tbl.integer("member_count", 9);
+        tbl.integer("subscriber_count", 9),
         tbl.boolean("public");
-        tbl.string("twitter_list_id", 100);
+        tbl.string("twitter_list_id", 100).unique();
         tbl.string("description", 255);
         // tbl.string("twitter_id").references("twitter_users.twitter_id"); // Took away (*FK)
         tbl.string("twitter_id");
@@ -35,8 +36,8 @@ exports.up = function(knex, Promise) {
     })
     .createTable("list_followers", tbl => {
         tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-        tbl.string("list_id", 36);
-        tbl.foreign("list_id").references("list_id").inTable("lists").onDelete('CASCADE');
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.string("twitter_user_id");
       });
 
