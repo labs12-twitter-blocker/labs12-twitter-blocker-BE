@@ -29,8 +29,8 @@ function deleteUser(twitter_id) {
   return db('app_users').where({ twitter_id }).del();
 }
 
-function editUser(id, body) {
-  return db("app_users").where({ id }).update(body)
+function editUser(twitter_id, body) {
+  return db("app_users").where({ twitter_id }).update(body)
 }
 
 function find() {
