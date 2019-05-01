@@ -1,14 +1,15 @@
 
 exports.up = function(knex, Promise) {
     return knex.schema
-
+    .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("lists", tbl => {
-        tbl.uuid("list_id").primary().unique();
+        tbl.string('list_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
         tbl.string("list_name", 255);
         tbl.datetime("list_creation_date");
         tbl.integer("member_count", 9);
+        tbl.integer("subscriber_count", 9),
         tbl.boolean("public");
-        tbl.string("twitter_list_id", 100);
+        tbl.string("twitter_list_id", 100).unique();
         tbl.string("description", 255);
         // tbl.string("twitter_id").references("twitter_users.twitter_id"); // Took away (*FK)
         tbl.string("twitter_id");
@@ -34,9 +35,9 @@ exports.up = function(knex, Promise) {
         tbl.timestamps(true, true);
     })
     .createTable("list_followers", tbl => {
-        tbl.uuid("list_followers_id").primary();
-        tbl.uuid("list_id");
-        tbl.foreign("list_id").references("list_id").inTable("lists").onDelete('CASCADE');
+        tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.string("twitter_user_id");
       });
 
@@ -44,6 +45,6 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
     return knex.schema
-      .dropTableIfExists("lists")
-      .dropTableIfExists("list_followers");
+        .dropTableIfExists("list_followers")
+        .dropTableIfExists("lists");
   };
