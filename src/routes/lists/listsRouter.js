@@ -205,16 +205,23 @@ router.get('/points/top', (req, res) => {
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
+
 router.get('/timeline/:list_id', (req, res) => {
   const id = req.params.list_id
   const params = { list_id: id }
-
   // Fetch data from twitter api
   client.get("lists/statuses", params, function (error, response) {
-    (response => response.json(response));
-    res.status(200).json(response);
-  })
+    if (error) {
+      res.status(400).json('The kust information could not be retrieved from twitter');
+    } else {
+      (response => response.json(response))
+      res.status(200).json(response)
+    }
+  });
+  // res.status(400).json(error);
 })
+
+
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////POST///////////////////////////////////////////
