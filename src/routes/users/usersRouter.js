@@ -308,19 +308,19 @@ router.put("/:twitter_id", async (req, res) => {
 // DELETE /users/:user_id
 // Delete app_user by twitter_id
 
-router.delete('/:twitter_id', async (req, res) => {
+router.delete("/:twitter_id", async (req, res) => {
   try {
     const user = await Users.deleteUser(req.params.twitter_id);
     if (user) {
-      res.status(204).json({ message: 'User has been deleted' })
+      res.status(204).json({ message: "User has been deleted" })
     } else {
-      res.status(404).json({ message: 'User cannot be found' })
+      res.status(404).json({ message: "User cannot be found" })
     }
   } catch (error) {
     //console.log(error);
     res.status(500).json({
       error,
-      message: 'Error removing user'
+      message: "There was an error removing user"
     })
   }
 })
