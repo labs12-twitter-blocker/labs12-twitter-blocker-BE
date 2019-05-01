@@ -206,7 +206,6 @@ function updateLists(params) {
                 res.status(500).json({ message: "There was an error while saving the list to the database" });
               });
           }
-<<<<<<< HEAD
         })
         .catch(error => {
           console.log("error: ", error);
@@ -219,63 +218,6 @@ function updateLists(params) {
       console.log(error);
     }
   })
-
-=======
-          if(list.mode != "public") {
-            new_list.public = false
-          };
-
-          // First test if the list is already in our DB
-        Users.findListByTwitterListId(list.id_str)
-            .then(list => {
-              // If we find the list in our DB, update its info
-              if (list) {
-                Users.updateMegaList(list.twitter_list_id, new_list)
-                  .then(updated => {
-                    if (updated) {
-                      // res.status(201).json(user);
-
-                      ////////////////////////////////////////////////////////
-                      // Also update the members of the list
-                      updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
-                      ////////////////////////////////////////////////////////
-                    } else {
-                      res.status(404).json({ message: "List not found." });
-                    }
-                  })
-                  .catch(error => {
-                    console.log("error: ", error);
-                    res.status(500).json({ message: "The list information could not be modified." });
-                  });
-              } else {
-                  // No list found So go ahead and Add them to the DB
-                  Users.insertMegaUserList(new_list)
-                  .then(list => {
-                    // res.status(201).json(user);
-
-                    ////////////////////////////////////////////////////////
-                    // Also update the members of the list
-                    updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
-                    ////////////////////////////////////////////////////////
-                  })
-                  .catch(error => {
-                    console.log("error: ", error);
-                    res.status(500).json({ message: "There was an error while saving the list to the database"});
-                  });
-              }})
-            .catch(error => { 
-              console.log("error: ", error); 
-              res.status(500).json({ message: "There was an error while saving the list to the database" }); 
-            })
-            
-        })
-        
-        if (!error) { 
-          console.log(error); 
-        }
-      })
-      
->>>>>>> 1bb60d1bea8a9710aa3f5b5e0c0b8128e65e694a
 };
 
 function updateListFollowers(params) {
@@ -315,7 +257,14 @@ function updateListFollowers(params) {
 // POST /users/
 // Add a new user
 
-router.post()
+router.post("/", async (req, res) => {
+  try {
+    const addUser = await Users.add(req.body)
+    res.status(201).json({ message: "User has been added" })
+  } catch (error) {
+    res.status(500).json({ message: "There was an error adding new user" })
+  }
+})
 
 // [X] POST /users/tweets/:twitter_handle
 // [X] Add all a users tweets to the tweets table
