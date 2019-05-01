@@ -38,5 +38,4 @@ router.get(
   }
 );
 
-//changing for deployment
 module.exports = router;
