@@ -41,9 +41,9 @@ function getBlocked() {
 }
 
 // get /:list_id
-function getById(listId) {
+function getById(twitter_list_id) {
     return db('lists')
-    .where('list_id', listId).first()
+    .where('twitter_list_id', twitter_list_id).first()
 }
 
 // get all/cool lists created by user
@@ -77,16 +77,18 @@ function getBlockByUserCreated(userId) {
     .where('is_block_list', true)
 } 
 
-// get /subscribers/:list_id - all USERS who have subscribed to list
-function getSubscribers(listId) {
+// get /subscribers/:twitter_list_id - all USERS who have subscribed to list
+function getSubscribers(twitter_list_id) {
     return db('list_followers as f')
-    .where('list_id', listId)
+    .where('twitter_list_id', twitter_list_id)
 }
 
 // get /points list in order of points (upvotes-downvotes)
 function getAllByOrder() {
-    return db('lists as l')
-    .orderBy('l.upvotes')
+    return db('lists')
+    .select('*')
+    .orderByRaw('(list_upvotes - list_downvotes) desc')
+
 }
 
 // get /timeline/:list_id - returns timeline of list

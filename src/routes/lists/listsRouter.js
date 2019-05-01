@@ -65,10 +65,10 @@ router.get('/cool', (req, res) => {
     })
   })
 
-// GET /lists/:list_id
-// Get a Single List by List ID
-router.get('/:list_id', (req, res) => {
-    const id = req.params.list_id;
+// GET /lists/:twitter_list_id
+// Get a Single List by twitter_list_id
+router.get('/:twitter_list_id', (req, res) => {
+    const id = req.params.twitter_list_id;
     if(!id){
         res.status(404).json({error: 'The list with the specified ID does not exist.'})
         return;
@@ -141,7 +141,7 @@ router.get('/creator/block/:user_id', (req, res) => {
         res.status(404).json({error: 'The user with the specified ID does not exist.'})
         return;
     }
-    data.getByUserCreated(id)
+    data.getBlockByUserCreated(id)
     .then(response => {
         res.status(200).json(response)
     })
@@ -168,10 +168,10 @@ router.get('/creator/cool/:user_id', (req, res) => {
     })
   })
 
-// GET /lists/subscribers/:list_id 
-// Get all users subscribed to a list by list_ID
-router.get('/subscribers/:list_id', (req, res) => {
-    const id = req.params.list_id;
+// GET /lists/subscribers/:twitter_list_id 
+// Get all users subscribed to a list by twitter_list_ID
+router.get('/subscribers/:twitter_list_id', (req, res) => {
+    const id = req.params.twitter_list_id;
     if(!id){
         res.status(404).json({error: 'The list with the specified ID does not exist.'})
         return;
@@ -183,11 +183,11 @@ router.get('/subscribers/:list_id', (req, res) => {
     .catch(err => {
         res.status(500).json({error: 'The list information could not be retrieved.'})
     })
-  })
+});
 
-// GET /lists/points 
+// GET /lists/points/top 
 // Get All lists ordered by number of points
-router.get('/points', (req, res) => {
+router.get('/points/top', (req, res) => {
     data.getAllByOrder()
     .then(response => {
         res.status(200).json(response)
@@ -195,7 +195,7 @@ router.get('/points', (req, res) => {
     .catch(err => {
         res.status(500).json({error: 'The lists information could not be retrieved.'})
     })
-  })
+});
 
 // GET /lists/timeline/:list_id 
 // Gets the Twitter Timeline for the selected list_id
