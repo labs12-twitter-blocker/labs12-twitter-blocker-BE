@@ -281,7 +281,7 @@ router.post("/", async (req, res) => {
 router.put("/:twitter_id", async (req, res) => {
   const changes = req.body;
   try {
-    const updateUser = await Users.editUser(req.params.id, changes);
+    const updateUser = await Users.editUser(req.params.twitter_id, changes);
     if (updateUser) {
       res.status(200).json({ message: "User has been updated" })
     } else {
