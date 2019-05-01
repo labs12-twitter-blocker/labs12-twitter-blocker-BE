@@ -45,6 +45,16 @@ router.get("/:twitter_id", (req, res) => {
 // GET /users/points/ 
 // Get all users ordered by number of points
 
+router.get("/points", (req, res) => {
+  Users.orderByUpVotes(req.params.upvotes)
+    .then(users => {
+      res.status(200).json({ users })
+    })
+    .catch(error => {
+      res.json(error)
+    })
+})
+
 // [X] GET /users/followers/:user_id
 // [X] Get all the followers of a user by user_id
 
@@ -304,7 +314,7 @@ router.delete('/:twitter_id', async (req, res) => {
     if (user) {
       res.status(204).json({ message: 'User has been deleted' })
     } else {
-      res.status(404).json({ error: 'User cannot be found' })
+      res.status(404).json({ message: 'User cannot be found' })
     }
   } catch (error) {
     //console.log(error);
