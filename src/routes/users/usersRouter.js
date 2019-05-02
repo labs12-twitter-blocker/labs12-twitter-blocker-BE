@@ -25,7 +25,7 @@ router.get("/", (req, res) => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving all users" });
     })
 })
 
@@ -38,7 +38,7 @@ router.get("/:twitter_id", (req, res) => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving user by twitter id" });
     })
 })
 
@@ -51,7 +51,7 @@ router.get("/points", (req, res) => {
       res.status(200).json({ users })
     })
     .catch(error => {
-      res.json(error)
+      res.status(400).json({ message: "There was an error retrieving users by points" })
     })
 })
 
@@ -67,10 +67,10 @@ router.get("/points", (req, res) => {
 router.get("/premium", (req, res) => {
   Users.findPremium()
     .then(users => {
-      res.status(200.({ users }))
+      res.status(200).json({ users })
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving premium users" });
     })
 })
 
@@ -207,8 +207,9 @@ function updateLists(params) {
                 // res.status(201).json(user);
 
                 ////////////////////////////////////////////////////////
-                // Also update the members of the list
+                // Also update the members and followers of the list
                 updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
+                updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
                 ////////////////////////////////////////////////////////
               })
               .catch(error => {
@@ -254,6 +255,43 @@ function updateListFollowers(params) {
           console.log("error: ", error);
           res.status(500).json({
             message: "There was an error while saving the list follower to the database"
+          });
+        })
+      if (!error) {
+        console.log(error);
+      }
+    })
+  })
+};
+
+function updateListMembers(params) {
+  client.get("lists/members", params, function (error, members, response) {
+    // console.log("lists/members params: ", params);
+    // console.log("members: ", members);
+
+    // Remove all the followers from a list, then add them back
+    Users.removeAllListMembers(params.list_id);
+    // For every member the list has, add the user_id and user info to the DB.
+    members.users.map(member => {
+
+      let new_member = {
+        "twitter_list_id": params.list_id,
+        "twitter_user_id": member.id_str,
+        "name": member.name,
+        "screen_name": member.screen_name,
+        "description": member.description,
+        "profile_img": member.profile_background_image_url_https
+      }
+
+      Users.insertMegaUserListMember(new_member)
+        .then(follower => {
+          // res.status(201).json(user);
+          return
+        })
+        .catch(error => {
+          console.log("error: ", error);
+          res.status(500).json({
+            message: "There was an error while saving the list member to the database"
           });
         })
       if (!error) {

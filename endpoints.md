@@ -17,7 +17,18 @@ _http method_: **[GET]**
 
 ```
 {
-    "users": [???]
+    "users": [
+        {
+            "app_user_id": "b247a1a5-e2fb-478e-b091-912e2470350b",
+            "twitter_id": "17813107591",
+            "screen_name": "rstace5"
+        },
+        {
+            "app_user_id": "5460d6f9-6cf4-4833-9d4c-d4db671d7389",
+            "twitter_id": "34519916395",
+            "screen_name": "eblees4"
+        }
+    ]
 }
 ```
 
@@ -35,12 +46,39 @@ _http method_: **[GET]**
 
 ```
 {
-    [???]
+    "users": {
+        "app_user_id": "5460d6f9-6cf4-4833-9d4c-d4db671d7389",
+        "twitter_id": "34519916395",
+        "screen_name": "eblees4",
+        "created_at": "2019-05-01T20:51:57.014Z",
+        "updated_at": "2019-05-01T20:51:57.014Z",
+        "is_paying": true,
+        "token": null,
+        "upvotes": null,
+        "downvotes": null,
+        "email": null,
+        "admin": null,
+        "deactivated": null
+    }
 }
 ```
+## **Get Users ordered by points**
 
-// GET /users/points/ 
-// Get all users ordered by number of points
+_url_: `/users/points`
+
+_http method_: **[GET]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example response
+
+```
+  {???}
+```
+
+
 
 // [X] GET /users/followers/:user_id
 // [X] Get all the followers of a user by user_id
@@ -85,6 +123,39 @@ _http method_: **[POST]**
 // POST /users/
 // Add a new user
 
+## **Add a new user **
+
+_url_: `/users/`
+
+_http method_: **[POST]**
+
+#### Response
+
+##### 201 (created)
+
+###### Example input
+
+```
+{
+	"twitter_id":"34519916395",
+	"screen_name":"eblees4",
+  "is_paying": true, //optional
+  "token": "[token goes here]",
+  "upvote": 5, //optional
+  "downvote": 2, //optional
+  "email": "email@email.com", //optional
+  "admin": true, //optional
+  "deactivated": true //optional
+}
+```
+
+###### Example response
+
+```
+{
+    "message": "User has been added"
+}
+```
 // [X] POST /users/tweets/:twitter_handle
 // [X] Add all a users tweets to the tweets table
 
@@ -92,8 +163,39 @@ _http method_: **[POST]**
 // [X] All all a users followers to the twitter_followers table
 
 
-// PUT /users/:user_id
-// Edit a user by user_id
+## **Edit a user by twitter id **
+
+_url_: `/users/:twitter_id`
+
+_http method_: **[PUT]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example input
+
+```
+{
+	"twitter_id":"34519916395",
+	"screen_name":"eblees4",
+  "is_paying": true, //optional
+  "token": "[token goes here]",
+  "upvote": 5, //optional
+  "downvote": 2, //optional
+  "email": "email@email.com", //optional
+  "admin": true, //optional
+  "deactivated": true //optional
+}
+```
+
+###### Example response
+
+```
+{
+    "message": "User has been updated"
+}
+```
 
 
 ## ** Delete App User by twitter_id **
@@ -109,7 +211,9 @@ _http method_: **[DELETE]**
 ###### Example response
 
 ```
-{}
+{
+    "message": "User has been deleted"
+}
 ```
 
 
@@ -558,8 +662,6 @@ _http method_: **[GET]**
 ]
 ```
 
-// GET /lists/subscribers/:list_id 
-// Get all users subscribed to a list by list_ID
 ## **Get All List Subscribers by twitter_list_id**
 
 _url_: `/lists/subscribers/:twitter_list_id`
@@ -588,6 +690,51 @@ _http method_: **[GET]**
         "list_followers_id": "997b63d7-ee98-4720-906c-3f0f25617ea7",
         "twitter_list_id": "870326828619014144",
         "twitter_user_id": "250274360"
+    },
+    ...
+]
+```
+
+## **Get List Members And Their Main Info by twitter_list_id**
+
+_url_: `/lists/members/:twitter_list_id`
+
+_http method_: **[GET]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example response
+
+```
+[
+    {
+        "list_members_id": "26a6d573-f4e5-4aed-9c68-f98153aafce7",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "2568108282",
+        "description": "Blockchain, cryptocurrency, and smart contracts pioneer. (RT/Fav/Follow does not imply endorsement). Blog: http://t.co/4Kr3OJmRUN",
+        "screen_name": "NickSzabo4",
+        "name": "Nick Szabo 🔑",
+        "profile_img": "https://abs.twimg.com/images/themes/theme1/bg.png"
+    },
+    {
+        "list_members_id": "19a68bbb-2b5b-4456-834c-70ca1ccadb8f",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "25552514",
+        "description": "capitalist. incentive analyst, tape reader, amateur technology historian, strategy game player",
+        "screen_name": "arjunblj",
+        "name": "Arjun Balaji",
+        "profile_img": "https://abs.twimg.com/images/themes/theme9/bg.gif"
+    },
+    {
+        "list_members_id": "64b3bf30-b6cb-402d-ab6f-61fff37f2aa2",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "5943622",
+        "description": "",
+        "screen_name": "pmarca",
+        "name": "Marc Andreessen",
+        "profile_img": "https://abs.twimg.com/images/themes/theme14/bg.gif"
     },
     ...
 ]
