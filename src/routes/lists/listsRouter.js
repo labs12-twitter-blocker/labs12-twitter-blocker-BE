@@ -251,7 +251,7 @@ router.post('/', (req, res) => {
   const user = req.user.screen_name
   const key = client.access_token_key 
   const secret = client.access_token_secret
-  let params = {user, key, secret, userInput, 20, 2, 50}
+  const params = {user, key, secret, userInput, 20, 2, 50}
 
 //POST req to DS server
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
