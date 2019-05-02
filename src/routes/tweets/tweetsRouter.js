@@ -31,10 +31,18 @@ const client = new Twitter({
 // Send a new Tweet
 
 router.post('/', (req, res) => {
-
   const status = req.body;
-  postTweet(status)
-  res.status(200).json({ message: 'tweet sent' })
+
+  postTweet = setTimeout(function () {
+    client
+      .post('statuses/update', status)
+      .then(function (tweet) {
+        res.status(204).json({ message: 'Post Successful' });
+      })
+      .catch(function (error) {
+        res.status(400).json({ message: error });
+      });
+  }, 10 * 1000);
 });
 
 router.post('/cancel', (req, res) => {
@@ -42,18 +50,6 @@ router.post('/cancel', (req, res) => {
   res.status(200).json({ message: 'tweet canceled.' });
 });
 
-function postTweet(status) {
-  setTimeout(function () {
-    client
-      .post('statuses/update', status)
-      .then(function (tweet) {
-        res.status(200).json({ message: 'Post Successful' });
-      })
-      .catch(function (error) {
-        res.status(400).json({ message: error });
-      });
-  }, 3 * 1000);
-}
 /////////////////////////////////////////////////////////////////////
 //////////////////////PUT////////////////////////////////////////////
 
@@ -67,40 +63,3 @@ function postTweet(status) {
 
 module.exports = router;
 
-// new rewrite strategy
-// Take in the text and Store in a post
-//send user a message "60 seconds to post"
-// set a timer and hand it the post
-// write a stop timer function
-// write endpoint to trigger stop timer
-// respond to user. timer stopped
-
-
-// router.post('/', async (req, res) => {
-//   try {
-//     status = req.body;
-//     console.log(status);
-//     await postThis(status);
-//     await res.status(203).json({ message: 'post will send in 60 seconds' });
-//   } catch (error) {
-//     res.status(400).json(error);
-//   }
-// });
-
-// router.post('/cancel', async (req, res) => {
-//   keepGoing = false;
-//   stop();
-//   res.status(200).json({ message: 'tweet canceled.' });
-// });
-
-// function postThis(status) {
-//   try {
-//     setTimeout(function () {
-//       client.post('status/update', status).then(function (tweet) {
-//         res.status(200).json({ message: 'posted' });
-//       });
-//     }, 10 * 1000);
-//   } catch (error) {
-//     res.status(400).json(error);
-//   }
-// }
