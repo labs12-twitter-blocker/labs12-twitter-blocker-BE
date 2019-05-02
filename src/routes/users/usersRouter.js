@@ -25,7 +25,7 @@ router.get("/", (req, res) => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving all users" });
     })
 })
 
@@ -38,7 +38,7 @@ router.get("/:twitter_id", (req, res) => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving user by twitter id" });
     })
 })
 
@@ -51,7 +51,7 @@ router.get("/points", (req, res) => {
       res.status(200).json({ users })
     })
     .catch(error => {
-      res.json(error)
+      res.status(400).json({ message: "There was an error retrieving users by points" })
     })
 })
 
@@ -67,10 +67,10 @@ router.get("/points", (req, res) => {
 router.get("/premium", (req, res) => {
   Users.findPremium()
     .then(users => {
-      res.status(200.({ users }))
+      res.status(200).json({ users })
     })
     .catch(error => {
-      res.json(error);
+      res.status(400).json({ message: "There was an error retrieving premium users" });
     })
 })
 

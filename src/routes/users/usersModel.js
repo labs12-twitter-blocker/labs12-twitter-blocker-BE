@@ -34,7 +34,7 @@ function editUser(twitter_id, body) {
 }
 
 function find() {
-  return db("app_users").select("app_user_id", "screen_name");
+  return db("app_users").select("app_user_id", "twitter_id", "screen_name");
 }
 
 function findBy(filter) {
