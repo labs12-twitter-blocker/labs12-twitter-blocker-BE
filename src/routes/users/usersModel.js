@@ -14,9 +14,11 @@ module.exports = {
   insertMegaUser,
   insertMegaUserList,
   insertMegaUserListFollower,
+  insertMegaUserListMember,
   orderByDownVotes,
   orderByUpVotes,
   removeAllListFollowers,
+  removeAllListMembers,
   updateMegaList,
   updateMegaUser,
 };
@@ -73,6 +75,14 @@ function insertMegaUserListFollower(follower) {
     });
 }
 
+function insertMegaUserListMember(members) {
+  return db("list_members")
+    .insert(members)
+    .then(ids => {
+      return ids;
+    });
+}
+
 function orderByDownVotes() {
   return db("app_users").orderBy("downvotes")
 }
@@ -83,6 +93,15 @@ function orderByUpVotes() {
 
 function removeAllListFollowers(twitter_list_id) {
   return db("list_followers")
+    .where("twitter_list_id", 'like', twitter_list_id)
+    .del()
+    .then(count => {
+      console.log(count);
+    });
+}
+
+function removeAllListMembers(twitter_list_id) {
+  return db("list_members")
     .where("twitter_list_id", 'like', twitter_list_id)
     .del()
     .then(count => {

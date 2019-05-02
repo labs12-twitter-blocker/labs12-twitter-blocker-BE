@@ -45,6 +45,10 @@ exports.up = function(knex, Promise) {
         tbl.string("twitter_list_id", 100);
         tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.string("twitter_user_id");
+        tbl.string("description", 255);
+        tbl.string("screen_name", 16);
+        tbl.string("name", 55);
+        tbl.string("profile_img", 255);
       });
 
 };
