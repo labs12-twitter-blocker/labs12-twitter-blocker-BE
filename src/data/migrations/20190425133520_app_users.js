@@ -14,8 +14,6 @@ exports.up = function(knex, Promise) {
       tbl.datetime("created_at");
       tbl.boolean("protected");
       tbl.boolean("verified");
-      tbl.string("token", 55);
-      tbl.string("token_secret", 55);
     })
 
     .createTable("app_users", tbl => {
@@ -40,6 +38,7 @@ exports.up = function(knex, Promise) {
       // tbl.integer("stripe_id", 6);
 
       tbl.string("token", 255);
+      tbl.string("token_secret", 55);
       tbl.integer("upvotes", 6);
       tbl.integer("downvotes", 6);
       tbl.string("email", 255);
