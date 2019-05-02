@@ -2,6 +2,7 @@ const db = require('../../data/db.js');
 
 module.exports = {
   add,
+  editUser,
   deleteUser,
   find,
   findBy,
@@ -26,6 +27,10 @@ function add(user) {
 
 function deleteUser(twitter_id) {
   return db('app_users').where({ twitter_id }).del();
+}
+
+function editUser(twitter_id, body) {
+  return db("app_users").where({ twitter_id }).update(body)
 }
 
 function find() {
@@ -61,11 +66,11 @@ function insertMegaUserList(list) {
 }
 
 function insertMegaUserListFollower(follower) {
-    return db("list_followers")
-      .insert(follower)
-      .then(ids => {
-        return ids;
-      });
+  return db("list_followers")
+    .insert(follower)
+    .then(ids => {
+      return ids;
+    });
 }
 
 function orderByDownVotes() {
@@ -77,18 +82,18 @@ function orderByUpVotes() {
 }
 
 function removeAllListFollowers(twitter_list_id) {
-    return db("list_followers")
-      .where("twitter_list_id", 'like', twitter_list_id )
-      .del()
-      .then(count => {
-        console.log(count);
-      });
+  return db("list_followers")
+    .where("twitter_list_id", 'like', twitter_list_id)
+    .del()
+    .then(count => {
+      console.log(count);
+    });
 }
 
 function findListByTwitterListId(twitter_list_id) {
-    return db('lists')
-      .where({ twitter_list_id })
-      .first();
+  return db('lists')
+    .where({ twitter_list_id })
+    .first();
 }
 
 function findTwitterUserByTwitterId(twitter_id) {
@@ -98,10 +103,10 @@ function findTwitterUserByTwitterId(twitter_id) {
 }
 
 function updateMegaList(twitter_list_id, changes) {
-    return db("lists")
-      .where({ twitter_list_id })
-      .update(changes)
-      .returning('*');
+  return db("lists")
+    .where({ twitter_list_id })
+    .update(changes)
+    .returning('*');
 }
 
 function updateMegaUser(twitter_id, changes) {
