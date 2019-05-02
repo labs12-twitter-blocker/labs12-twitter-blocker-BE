@@ -1,12 +1,13 @@
-const router = require('express').Router();
+const router = require('express').Router()
 const data = require('./listsModel')
-let Twitter = require("twitter");
+const axios = require('axios')
+let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.ACCESS_TOKEN_KEY,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET
-});
+})
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
 
@@ -189,7 +190,7 @@ router.get('/subscribers/:twitter_list_id', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The list information could not be retrieved.' })
     })
-});
+})
 
 // GET /lists/points/top
 // Get All lists ordered by number of points
@@ -201,7 +202,7 @@ router.get('/points/top', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
-});
+})
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
@@ -229,16 +230,37 @@ router.get('/timeline/:list_id', (req, res) => {
 // POST /lists/ -
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
-  const list = req.body
-  data.insertList(list)
-    //TODO check for list content
+  const userInput = req.body
+
+  //POST req to DS server
+
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', 
+        {//{username,
+        client.access_token_key, 
+        client.access_token_secret, 
+        userInput,
+        20, 
+        2, 
+        50)}
+  .then(response => {
+    res.status(200).json(response)
+    const list = response.data.ranked_results
+    data.insertList(list)
+    if(!list) {
+      res.status(404).json({ error: 'No lists returned.' })
+    }
     .then(response => {
-      res.status(200).json(response)
+      res.status(201).json(response)
     })
     .catch(err => {
       res.status(500).json({ error: 'There was an error adding the list.' })
     })
+  })
+  .catch(err => {
+    res.status(500).json({ error: 'There was an error creating the list.' })
+  })
 })
+
 
 // POST /lists/:list_id/follow/:user_id
 // Send JSON with user_id to subscribe that user to a list by list_id**
