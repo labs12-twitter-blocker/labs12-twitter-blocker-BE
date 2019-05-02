@@ -39,6 +39,12 @@ exports.up = function(knex, Promise) {
         tbl.string("twitter_list_id", 100);
         tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.string("twitter_user_id");
+    })
+    .createTable("list_members", tbl => {
+        tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.string("twitter_user_id");
       });
 
 };

@@ -14,6 +14,8 @@ exports.up = function(knex, Promise) {
       tbl.datetime("created_at");
       tbl.boolean("protected");
       tbl.boolean("verified");
+      tbl.string("token", 55);
+      tbl.string("token_secret", 55);
     })
 
     .createTable("app_users", tbl => {
