@@ -4,7 +4,10 @@ const router = require('express').Router();
 const passport = require('passport');
 const Strategy = require('passport-twitter').Strategy;
 const Users = require("./users/usersModel");
+const axios = require("axios")
 
+
+const url = "http://localhost:5000"
 passport.use(
   new Strategy(
     {
@@ -13,9 +16,36 @@ passport.use(
       callbackURL: process.env.CALLBACK_URL
     }, //passportSuccessCallback
     function (token, tokenSecret, profile, callback) {
-      console.log(token, tokenSecret);
-      console.log(profile)
+      // console.log(token, tokenSecret);
+      // console.log(profile)
+      // console.log(profile.screen_name)
 
+      //insert user info into app user db
+      let newUser = {
+        twitter_id: profile.id,
+        screen_name: profile.username,
+        token: token,
+        token_secret: tokenSecret,
+        upvotes: 0,
+        downvotes: 0,
+        admin: false,
+        deactivated: false,
+        email: null,
+        is_paying: false
+      }
+      // console.log(profile.username)
+      console.log(newUser)
+      Users.add(newUser)
+      //post /users/mega with screen_name
+      // axios.post(`${url}/users/mega/${profile.screen_name}`)
+      //   .then(res => {
+      //     res.status(200).json({ message: 'User added' })
+      //   }).catch(error => {
+      //     res.status(400).json({ message: error })
+      //   })
+      // .then(res.status(200)).catch(error => {
+      // res.status(400).json(error)
+      // })
       return callback(null, profile);
     }
   )
