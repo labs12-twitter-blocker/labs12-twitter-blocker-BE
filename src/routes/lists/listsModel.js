@@ -11,6 +11,7 @@ module.exports = {
     getPrivateByUserCreated,
     getBlockByUserCreated,
     getSubscribers,
+    getMembers,
     getAllByOrder,
     insertList,
     subscribeToList,
@@ -80,6 +81,12 @@ function getBlockByUserCreated(userId) {
 // get /subscribers/:twitter_list_id - all USERS who have subscribed to list
 function getSubscribers(twitter_list_id) {
     return db('list_followers as f')
+    .where('twitter_list_id', twitter_list_id)
+}
+
+// get /members/:twitter_list_id - all members of a list
+function getMembers(twitter_list_id) {
+    return db('list_members')
     .where('twitter_list_id', twitter_list_id)
 }
 
