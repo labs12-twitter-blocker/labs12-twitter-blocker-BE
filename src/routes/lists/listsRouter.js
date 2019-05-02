@@ -191,6 +191,23 @@ router.get('/subscribers/:twitter_list_id', (req, res) => {
     })
 });
 
+// GET /lists/members/:twitter_list_id
+// Get all members of a list and some of their info by twitter_list_ID
+router.get('/members/:twitter_list_id', (req, res) => {
+  const id = req.params.twitter_list_id;
+  if (!id) {
+    res.status(404).json({ error: 'The list with the specified ID does not exist.' })
+    return;
+  }
+  data.getMembers(id)
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The list members could not be retrieved.' })
+    })
+});
+
 // GET /lists/points/top
 // Get All lists ordered by number of points
 router.get('/points/top', (req, res) => {

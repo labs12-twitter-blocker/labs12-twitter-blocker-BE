@@ -7,13 +7,15 @@ exports.up = function(knex, Promise) {
       tbl.integer("followers", 9);
       tbl.integer("friends", 9);
       tbl.string("description", 255);
-      tbl.string("profile_img", 255);
+      tbl.string("profile_img", 255); //url to profile image
       tbl.string("screen_name", 16); //Twitter Handle
       tbl.string("name", 55);
       tbl.string("location", 55);
       tbl.datetime("created_at");
       tbl.boolean("protected");
       tbl.boolean("verified");
+      tbl.string("token", 55);
+      tbl.string("token_secret", 55);
     })
 
     .createTable("app_users", tbl => {

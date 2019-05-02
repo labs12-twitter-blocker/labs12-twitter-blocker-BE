@@ -662,8 +662,6 @@ _http method_: **[GET]**
 ]
 ```
 
-// GET /lists/subscribers/:list_id 
-// Get all users subscribed to a list by list_ID
 ## **Get All List Subscribers by twitter_list_id**
 
 _url_: `/lists/subscribers/:twitter_list_id`
@@ -692,6 +690,51 @@ _http method_: **[GET]**
         "list_followers_id": "997b63d7-ee98-4720-906c-3f0f25617ea7",
         "twitter_list_id": "870326828619014144",
         "twitter_user_id": "250274360"
+    },
+    ...
+]
+```
+
+## **Get List Members And Their Main Info by twitter_list_id**
+
+_url_: `/lists/members/:twitter_list_id`
+
+_http method_: **[GET]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example response
+
+```
+[
+    {
+        "list_members_id": "26a6d573-f4e5-4aed-9c68-f98153aafce7",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "2568108282",
+        "description": "Blockchain, cryptocurrency, and smart contracts pioneer. (RT/Fav/Follow does not imply endorsement). Blog: http://t.co/4Kr3OJmRUN",
+        "screen_name": "NickSzabo4",
+        "name": "Nick Szabo 🔑",
+        "profile_img": "https://abs.twimg.com/images/themes/theme1/bg.png"
+    },
+    {
+        "list_members_id": "19a68bbb-2b5b-4456-834c-70ca1ccadb8f",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "25552514",
+        "description": "capitalist. incentive analyst, tape reader, amateur technology historian, strategy game player",
+        "screen_name": "arjunblj",
+        "name": "Arjun Balaji",
+        "profile_img": "https://abs.twimg.com/images/themes/theme9/bg.gif"
+    },
+    {
+        "list_members_id": "64b3bf30-b6cb-402d-ab6f-61fff37f2aa2",
+        "twitter_list_id": "870326828619014144",
+        "twitter_user_id": "5943622",
+        "description": "",
+        "screen_name": "pmarca",
+        "name": "Marc Andreessen",
+        "profile_img": "https://abs.twimg.com/images/themes/theme14/bg.gif"
     },
     ...
 ]
