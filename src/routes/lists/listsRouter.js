@@ -248,17 +248,13 @@ router.get('/timeline/:list_id', (req, res) => {
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
   const userInput = req.body
+  const user = req.user.screen_name
+  const key = client.access_token_key 
+  const secret = client.access_token_secret
+  const params = {user, key, secret, userInput, 20, 2, 50}
 
-  //POST req to DS server
-
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', 
-        {//{username,
-        client.access_token_key, 
-        client.access_token_secret, 
-        userInput,
-        20, 
-        2, 
-        50)}
+//POST req to DS server
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
   .then(response => {
     res.status(200).json(response)
     const list = response.data.ranked_results
