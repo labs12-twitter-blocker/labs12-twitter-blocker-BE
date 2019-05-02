@@ -11,18 +11,18 @@ passport.use(
       consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
       callbackURL: process.env.CALLBACK_URL
     },
-    function(token, tokenSecret, profile, callback) {
+    function (token, tokenSecret, profile, callback) {
       console.log(token, tokenSecret);
       return callback(null, profile);
     }
   )
 );
 
-passport.serializeUser(function(user, callback) {
+passport.serializeUser(function (user, callback) {
   callback(null, user);
 });
 
-passport.deserializeUser(function(obj, callback) {
+passport.deserializeUser(function (obj, callback) {
   callback(null, obj);
 });
 
@@ -33,8 +33,9 @@ router.get(
   passport.authenticate('twitter', {
     failureRedirect: process.env.FRONT_END_URL
   }),
-  function(req, res) {
-    res.redirect(`${process.env.FRONT_END_URL}/welcome`);
+  function (req, res) {
+    res.redirect(`${process.env.FRONT_END_URL}/test`);
   }
 );
+
 module.exports = router;

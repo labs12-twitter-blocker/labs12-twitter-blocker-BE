@@ -31,31 +31,28 @@ const client = new Twitter({
 // Send a new Tweet
 
 router.post('/', (req, res) => {
-  status = req.body;
+  const status = req.body;
 
-  postTweet = setTimeout(function() {
+  postTweet = setTimeout(function () {
     client
       .post('statuses/update', status)
-      .then(function(tweet) {
-        console.log(tweet);
-        res.status(201).json({ message: 'Post Successful' });
+      .then(function (tweet) {
+        res.status(204).json({ message: 'Post Successful' });
       })
-      .catch(function(error) {
+      .catch(function (error) {
         res.status(400).json({ message: error });
       });
-  }, 3 * 1000);
+  }, 10 * 1000);
 });
+
 router.post('/cancel', (req, res) => {
   clearTimeout(postTweet);
-  res.status(200).json({ message: 'Tweet Canceled' });
+  res.status(200).json({ message: 'tweet canceled.' });
 });
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////PUT////////////////////////////////////////////
-// router.post('/cancel', (req, res) => {
-//   clearTimeout(postTweet);
-//   res.status(200).json({ message: 'Tweet Canceled' });
-// });
+
 // No edit button
 
 /////////////////////////////////////////////////////////////////////
@@ -65,3 +62,4 @@ router.post('/cancel', (req, res) => {
 // Delete a tweet by tweet_id
 
 module.exports = router;
+

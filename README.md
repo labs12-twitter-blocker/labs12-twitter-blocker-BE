@@ -7,7 +7,7 @@ FRONT_END_URL=https://twitter-blocker.netlify.com
 CALLBACK_URL=https://twitter-blocker.netlify.com/auth/twitter/callback
 
 # Endpoints
-
+[Endpoint Documentation](endpoints.md)
 Documentation for the endpoints on the backend server
 
 # USERS:
@@ -102,7 +102,7 @@ Documentation: [https://developer.twitter.com/en/docs/accounts-and-users/manage-
 
 **GET account/verify_credentials**
 
-Returns most of a users account data. Best to populate account. 
+Returns most of a users account data. Best to populate account.
 
 ## Lists
 
@@ -133,7 +133,7 @@ Creates new list for authenticated user
 | User ID	                |                 |	app_user_id	| uuid      |
 | (*FK) Twitter ID	      | id	            |twitter_id	  | string    |
 | Twitter Handle	        | screen_name     |	screen_name	| string    |
-| Sign Up Date	          |                 |	created_at  |	date/time 
+| Sign Up Date	          |                 |	created_at  |	date/time
 | Update Date             |                 |	updated_at  |	date/time |
 | Paying Customer	        |                 |	is_paying	  | bool      |
 | (*FK)Stripe Customer ID |                 |	stripe_id   |	int       |
@@ -161,4 +161,6 @@ Creates new list for authenticated user
 | Update Date [Date/Time]   |                         | updated_at       | date/time |
 | Protected                 | protected               | protected        | bool      |
 | Verified                  | verified                | verified         | bool      |
+
+
 
