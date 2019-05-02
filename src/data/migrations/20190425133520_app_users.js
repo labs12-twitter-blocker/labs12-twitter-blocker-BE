@@ -18,7 +18,7 @@ exports.up = function (knex, Promise) {
 
     .createTable("app_users", tbl => {
       tbl.string('app_user_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-      tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
+      // tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
       tbl.string("twitter_id", 255).notNullable();
       tbl.string("screen_name", 50).notNullable();
 
