@@ -264,10 +264,10 @@ router.post('/', (req, res) => {
   .then(response => {
     res.status(200).json(response)
     const list = response.data.ranked_results
-    data.insertList(list)
     if(!list) {
       res.status(404).json({ error: 'No lists returned.' })
     }
+    data.insertList(list)
     .then(response => {
       res.status(201).json(response)
     })
