@@ -251,7 +251,13 @@ router.post('/', (req, res) => {
   const user = req.user.screen_name
   const key = client.access_token_key 
   const secret = client.access_token_secret
-  let params = {user, key, secret, userInput, 20, 2, 50}
+  let params = {original_user: user, 
+              "TWITTER_ACCESS_TOKEN": key, 
+              "TWITTER_ACCESS_TOKEN_SECRET": secret, 
+              "search_users": userInput, 
+              "return_limit": 20, 
+              "last_level": 2, 
+              "no_of_results": 50 }
 
 //POST req to DS server
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
