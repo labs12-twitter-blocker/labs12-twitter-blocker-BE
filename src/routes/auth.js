@@ -85,7 +85,7 @@ router.get(
   }),
   function (req, res) {
 
-    res.redirect(`${process.env.FRONT_END_URL}/test`);
+    res.redirect(`${process.env.FRONT_END_URL}`);
     // console.log(token)
   }
 );
