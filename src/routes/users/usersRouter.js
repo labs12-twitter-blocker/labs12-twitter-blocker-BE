@@ -191,6 +191,7 @@ function updateLists(params) {
                   ////////////////////////////////////////////////////////
                   // Also update the members of the list
                   updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
+                  updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
                   ////////////////////////////////////////////////////////
                 } else {
                   res.status(404).json({ message: "List not found." });
@@ -236,8 +237,14 @@ function updateListFollowers(params) {
     // console.log("lists/subscribers params: ", params);
     // console.log("subscribers: ", subscribers);
 
+    //////////////////////////////////JSON//////////////////////
+    Users.removeAllListFollowersJSON(params.list_id);
+    Users.insertMegaUserListFollowerJSON(params.list_id, subscribers.users);
+    //////////////////////////////////JSON//////////////////////
+
     // Remove all the followers from a list, then add them back
     Users.removeAllListFollowers(params.list_id);
+
     // For every subscriber the list has, add the user_id to the DB.
     subscribers.users.map(follower => {
 
@@ -268,6 +275,11 @@ function updateListMembers(params) {
   client.get("lists/members", params, function (error, members, response) {
     // console.log("lists/members params: ", params);
     // console.log("members: ", members);
+
+    //////////////////////////////////JSON//////////////////////
+    Users.removeAllListMembersJSON(params.list_id);
+    Users.insertMegaUserListMemberJSON(params.list_id, members.users);
+    //////////////////////////////////JSON//////////////////////
 
     // Remove all the followers from a list, then add them back
     Users.removeAllListMembers(params.list_id);

@@ -49,12 +49,26 @@ exports.up = function(knex, Promise) {
         tbl.string("screen_name", 16);
         tbl.string("name", 55);
         tbl.string("profile_img", 255);
+      })
+    .createTable("list_followers_json", tbl => {
+        tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.jsonb("list_followers");
+    })
+    .createTable("list_members_json", tbl => {
+        tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.jsonb("list_members");
       });
 
 };
 
 exports.down = function(knex, Promise) {
     return knex.schema
+        .dropTableIfExists("list_followers_json")
+        .dropTableIfExists("list_members_json")
         .dropTableIfExists("list_followers")
         .dropTableIfExists("list_members")
         .dropTableIfExists("lists");

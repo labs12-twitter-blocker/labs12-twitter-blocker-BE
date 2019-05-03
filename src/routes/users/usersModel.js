@@ -14,11 +14,15 @@ module.exports = {
   insertMegaUser,
   insertMegaUserList,
   insertMegaUserListFollower,
+  insertMegaUserListFollowerJSON,
   insertMegaUserListMember,
+  insertMegaUserListMemberJSON,
   orderByDownVotes,
   orderByUpVotes,
   removeAllListFollowers,
+  removeAllListFollowersJSON,
   removeAllListMembers,
+  removeAllListMembersJSON,
   updateMegaList,
   updateMegaUser,
 };
@@ -74,10 +78,25 @@ function insertMegaUserListFollower(follower) {
       return ids;
     });
 }
+function insertMegaUserListFollowerJSON(twitter_list_id, json) {
+  return db("list_followers_json")
+    .insert({"twitter_list_id":twitter_list_id,  "list_followers": JSON.stringify(json)})
+    .then(ids => {
+      return ids;
+    });
+}
 
 function insertMegaUserListMember(members) {
   return db("list_members")
     .insert(members)
+    .then(ids => {
+      return ids;
+    });
+}
+
+function insertMegaUserListMemberJSON(twitter_list_id, json) {
+  return db("list_members_json")
+    .insert({"twitter_list_id":twitter_list_id,  "list_members":  JSON.stringify(json)})
     .then(ids => {
       return ids;
     });
@@ -100,8 +119,26 @@ function removeAllListFollowers(twitter_list_id) {
     });
 }
 
+function removeAllListFollowersJSON(twitter_list_id) {
+  return db("list_followers_json")
+    .where("twitter_list_id", 'like', twitter_list_id)
+    .del()
+    .then(count => {
+      console.log(count);
+    });
+}
+
 function removeAllListMembers(twitter_list_id) {
   return db("list_members")
+    .where("twitter_list_id", 'like', twitter_list_id)
+    .del()
+    .then(count => {
+      console.log(count);
+    });
+}
+
+function removeAllListMembersJSON(twitter_list_id) {
+  return db("list_members_json")
     .where("twitter_list_id", 'like', twitter_list_id)
     .del()
     .then(count => {
