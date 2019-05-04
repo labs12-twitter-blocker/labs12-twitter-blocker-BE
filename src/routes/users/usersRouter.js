@@ -231,38 +231,38 @@ function updateLists(params) {
   })
 };
 
-function updateListFollowers(params) {
-  client.get("lists/subscribers", params, function (error, subscribers, response) {
-    // console.log("lists/subscribers params: ", params);
-    // console.log("subscribers: ", subscribers);
+// function updateListFollowers(params) {
+//   client.get("lists/subscribers", params, function (error, subscribers, response) {
+//     // console.log("lists/subscribers params: ", params);
+//     // console.log("subscribers: ", subscribers);
 
-    // Remove all the followers from a list, then add them back
-    Users.removeAllListFollowers(params.list_id);
-    // For every subscriber the list has, add the user_id to the DB.
-    subscribers.users.map(follower => {
+//     // Remove all the followers from a list, then add them back
+//     Users.removeAllListFollowers(params.list_id);
+//     // For every subscriber the list has, add the user_id to the DB.
+//     subscribers.users.map(follower => {
 
-      let new_follower = {
-        "twitter_list_id": params.list_id,
-        "twitter_user_id": follower.id_str,
-      }
+//       let new_follower = {
+//         "twitter_list_id": params.list_id,
+//         "twitter_user_id": follower.id_str,
+//       }
 
-      Users.insertMegaUserListFollower(new_follower)
-        .then(follower => {
-          // res.status(201).json(user);
-          return
-        })
-        .catch(error => {
-          console.log("error: ", error);
-          res.status(500).json({
-            message: "There was an error while saving the list follower to the database"
-          });
-        })
-      if (!error) {
-        console.log(error);
-      }
-    })
-  })
-};
+//       Users.insertMegaUserListFollower(new_follower)
+//         .then(follower => {
+//           // res.status(201).json(user);
+//           return
+//         })
+//         .catch(error => {
+//           console.log("error: ", error);
+//           res.status(500).json({
+//             message: "There was an error while saving the list follower to the database"
+//           });
+//         })
+//       if (!error) {
+//         console.log(error);
+//       }
+//     })
+//   })
+// };
 
 function updateListMembers(params) {
   client.get("lists/members", params, function (error, members, response) {
