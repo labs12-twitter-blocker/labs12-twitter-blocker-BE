@@ -249,35 +249,37 @@ router.get('/timeline/:list_id', (req, res) => {
 router.post('/', (req, res) => {
   const userInput = req.body
   const user = req.user.screen_name
-  const key = client.access_token_key 
+  const key = client.access_token_key
   const secret = client.access_token_secret
-  let params = {original_user: user, 
-              "TWITTER_ACCESS_TOKEN": key, 
-              "TWITTER_ACCESS_TOKEN_SECRET": secret, 
-              "search_users": userInput, 
-              "return_limit": 20, 
-              "last_level": 2, 
-              "no_of_results": 50 }
+  let params = {
+    original_user: user,
+    "TWITTER_ACCESS_TOKEN": key,
+    "TWITTER_ACCESS_TOKEN_SECRET": secret,
+    "search_users": userInput,
+    "return_limit": 20,
+    "last_level": 2,
+    "no_of_results": 50
+  }
 
-//POST req to DS server
+  //POST req to DS server
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
-  .then(response => {
-    res.status(200).json(response)
-    const list = response.data.ranked_results
-    if(!list) {
-      res.status(404).json({ error: 'No lists returned.' })
-    }
-    data.insertList(list)
     .then(response => {
-      res.status(201).json(response)
+      res.status(200).json(response)
+      const list = response.data.ranked_results
+      if (!list) {
+        res.status(404).json({ error: 'No lists returned.' })
+      }
+      data.insertList(list)
+        .then(response => {
+          res.status(201).json(response)
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'There was an error adding the list.' })
+        })
     })
     .catch(err => {
-      res.status(500).json({ error: 'There was an error adding the list.' })
+      res.status(500).json({ error: 'There was an error creating the list.' })
     })
-  })
-  .catch(err => {
-    res.status(500).json({ error: 'There was an error creating the list.' })
-  })
 })
 
 
@@ -363,7 +365,7 @@ router.delete('/:list_id/unfollow/:user_id', (req, res) => {
       res.status(200).json(response)
     })
     .catch(err => {
-      res.status(500).json({ error: 'There was an error unfollowing the list.' })
+      res.status(500).json({ error: 'There was an error un-following the list.' })
     })
 })
 
