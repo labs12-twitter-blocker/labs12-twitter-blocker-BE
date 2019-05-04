@@ -58,7 +58,7 @@ passport.use(
               .put(`${url}/users/${profile.id}`, modifiedUser).then(
                 axios.post(`${url}/users/mega/${profile.username}`))
           }).catch(error => {
-            res.status(400).json(error)
+            // res.status(400).json(error)
           })
         }
         return callback(null, profile);

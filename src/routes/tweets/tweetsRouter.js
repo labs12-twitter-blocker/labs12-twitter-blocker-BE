@@ -50,7 +50,7 @@ function postTweet(status) {
       // res.status(200).json({ message: 'Post Successful' });
     })
     .catch(function (error) {
-      res.status(400).json({ message: error });
+      // res.status(400).json({ message: error });
     });
 }
 
