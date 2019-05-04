@@ -7,8 +7,7 @@ const Users = require("./users/usersModel");
 const axios = require("axios")
 
 // url for testing
-const url = "http://localhost:5000"
-
+const url = process.env.BACKEND_URL;
 passport.use(
   new Strategy(
     {
