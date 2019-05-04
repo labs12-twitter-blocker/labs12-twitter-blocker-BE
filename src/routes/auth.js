@@ -18,51 +18,51 @@ passport.use(
     },
     function (token, tokenSecret, profile, callback) {
 
-      // //search app users table for twitter id
-      // Users.findById(profile.id).then(user => {
-      //   if (!user) {
+      //search app users table for twitter id
+      Users.findById(profile.id).then(user => {
+        if (!user) {
 
-      //     //insert new user info into app user db
-      //     let newUser = {
-      //       "twitter_id": profile.id,
-      //       "screen_name": profile.username,
-      //       "token": token,
-      //       "token_secret": tokenSecret,
-      //       "upvotes": 0,
-      //       "downvotes": 0,
-      //       "admin": false,
-      //       "deactivated": false,
-      //       "email": null,
-      //       "is_paying": false
-      //     }
+          //insert new user info into app user db
+          let newUser = {
+            "twitter_id": profile.id,
+            "screen_name": profile.username,
+            "token": token,
+            "token_secret": tokenSecret,
+            "upvotes": 0,
+            "downvotes": 0,
+            "admin": false,
+            "deactivated": false,
+            "email": null,
+            "is_paying": false
+          }
 
-      //     axios
-      //       .post(`${url}/users`, newUser).then(
+          axios
+            .post(`${url}/users`, newUser).then(
 
-      //         // post /users/mega with screen_name
-      //         axios.post(`${url}/users/mega/${profile.username}`))
+              // post /users/mega with screen_name
+              axios.post(`${url}/users/mega/${profile.username}`))
 
-      //     // If user exists it will trigger the else function
-      //   } else {
+          // If user exists it will trigger the else function
+        } else {
 
-      //     //GET /users/:twitter_id
-      //     axios.get(`${url}/users/${profile.id}`).then(res => {
+          //GET /users/:twitter_id
+          axios.get(`${url}/users/${profile.id}`).then(res => {
 
-      //       let modifiedUser = {
-      //         "screen_name": profile.username,
-      //         "token": token,
-      //         "token_secret": tokenSecret,
-      //       }
-      //       // axios put by twitter id insert modified user
-      //       axios
-      //         .put(`${url}/users/${profile.id}`, modifiedUser).then(
-      //           axios.post(`${url}/users/mega/${profile.username}`))
-      //     }).catch(error => {
-      //       // res.status(400).json(error)
-      //     })
-      //   }
-      return callback(null, profile);
-      // })
+            let modifiedUser = {
+              "screen_name": profile.username,
+              "token": token,
+              "token_secret": tokenSecret,
+            }
+            // axios put by twitter id insert modified user
+            axios
+              .put(`${url}/users/${profile.id}`, modifiedUser).then(
+                axios.post(`${url}/users/mega/${profile.username}`))
+          }).catch(error => {
+            // res.status(400).json(error)
+          })
+        }
+        return callback(null, profile);
+      })
     }));
 
 passport.serializeUser(function (user, callback) {
