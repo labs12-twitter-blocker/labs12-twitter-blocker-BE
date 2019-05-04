@@ -61,7 +61,7 @@ passport.use(
       //       // res.status(400).json(error)
       //     })
       //   }
-      //   return callback(null, profile);
+      return callback(null, profile);
       // })
     }));
 
