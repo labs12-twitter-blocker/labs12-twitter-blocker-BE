@@ -5,8 +5,8 @@ let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 })
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
@@ -245,6 +245,38 @@ router.get('/timeline/:list_id', (req, res) => {
 //////////////////////POST///////////////////////////////////////////
 
 // POST /lists/ -
+
+// POST /lists/create
+
+// Takes in the post from the Front end
+router.post('/create', (req, res) => {
+  if (req.body.name) {
+    let params = {
+      name: req.body.name,
+      mode: req.body.mode,
+      description: req.body.description
+    }
+    // Executes the function to create the list on twitter
+    createList(params);
+    res.status(200).json({ message: "List Created" })
+  } else {
+    res.status(400).json({ message: "Please enter a name for your list" })
+  }
+})
+
+// Creates the list on twitter
+function createList(params) {
+  client.post("/lists/create", params, function (error, response) {
+    if (error) {
+      return error
+    } else {
+      return response
+    }
+  })
+}
+// Add a list of users to a list with the twitter api
+// Delete a list with the twitter api
+
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
   const userInput = req.body
@@ -252,7 +284,7 @@ router.post('/', (req, res) => {
   const key = client.access_token_key
   const secret = client.access_token_secret
   let params = {
-    original_user: user,
+    "original_user": user,
     "TWITTER_ACCESS_TOKEN": key,
     "TWITTER_ACCESS_TOKEN_SECRET": secret,
     "search_users": userInput,

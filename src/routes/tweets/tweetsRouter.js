@@ -46,11 +46,7 @@ router.post('/cancel', (req, res) => {
 function postTweet(status) {
   client
     .post('statuses/update', status)
-    .then(function (tweet) {
-      // res.status(200).json({ message: 'Post Successful' });
-    })
     .catch(function (error) {
-      // res.status(400).json({ message: error });
     });
 }
 
