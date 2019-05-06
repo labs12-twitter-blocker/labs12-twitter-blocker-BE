@@ -274,7 +274,28 @@ function createList(params) {
     }
   })
 }
+
 // Add a list of users to a list with the twitter api
+
+// POST lists/members/create_all
+router.post('/members/create_all', (req, res) => {
+  const params = {
+    list_id: req.body.list_id,
+    screen_name: req.body.screen_name
+  }
+  addMembers(params);
+  res.status(200);
+})
+
+function addMembers(params) {
+  client.post('/lists/members/create_all', params, function (error, response) {
+    if (error) {
+      return error
+    } else {
+      return response
+    }
+  })
+}
 // Delete a list with the twitter api
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
