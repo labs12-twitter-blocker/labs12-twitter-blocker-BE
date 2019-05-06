@@ -13,15 +13,11 @@ module.exports = {
   insertMegaUser,
   insertMegaUserList,
   insertMegaUserListFollower,
-  // insertMegaUserListFollowerJSON,
   insertMegaUserListMember,
-  // insertMegaUserListMemberJSON,
   orderByDownVotes,
   orderByUpVotes,
   removeAllListFollowers,
-  // removeAllListFollowersJSON,
   removeAllListMembers,
-  // removeAllListMembersJSON,
   updateMegaList,
   updateMegaUser,
 };
@@ -70,13 +66,6 @@ function insertMegaUserList(list) {
     });
 }
 
-// function insertMegaUserListFollower(follower) {
-//   return db("list_followers")
-//     .insert(follower)
-//     .then(ids => {
-//       return ids;
-//     });
-// }
 function insertMegaUserListFollower(twitter_list_id, json) {
   return db("list_followers")
     .insert({"twitter_list_id":twitter_list_id,  "list_followers": JSON.stringify(json)})
@@ -84,14 +73,6 @@ function insertMegaUserListFollower(twitter_list_id, json) {
       return ids;
     });
 }
-
-// function insertMegaUserListMember(members) {
-//   return db("list_members")
-//     .insert(members)
-//     .then(ids => {
-//       return ids;
-//     });
-// }
 
 function insertMegaUserListMember(twitter_list_id, json) {
   return db("list_members")
@@ -118,15 +99,6 @@ function removeAllListFollowers(twitter_list_id) {
     });
 }
 
-// function removeAllListFollowersJSON(twitter_list_id) {
-//   return db("list_followers_json")
-//     .where("twitter_list_id", 'like', twitter_list_id)
-//     .del()
-//     .then(count => {
-//       console.log(count);
-//     });
-// }
-
 function removeAllListMembers(twitter_list_id) {
   return db("list_members")
     .where("twitter_list_id", 'like', twitter_list_id)
@@ -135,15 +107,6 @@ function removeAllListMembers(twitter_list_id) {
       console.log(count);
     });
 }
-
-// function removeAllListMembersJSON(twitter_list_id) {
-//   return db("list_members_json")
-//     .where("twitter_list_id", 'like', twitter_list_id)
-//     .del()
-//     .then(count => {
-//       console.log(count);
-//     });
-// }
 
 function findListByTwitterListId(twitter_list_id) {
   return db('lists')
