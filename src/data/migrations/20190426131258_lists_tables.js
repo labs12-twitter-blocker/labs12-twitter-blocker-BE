@@ -34,23 +34,34 @@ exports.up = function (knex, Promise) {
       tbl.json("created_with_category_json");
       tbl.timestamps(true, true);
     })
+    // .createTable("list_followers", tbl => {
+    //     tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    //     tbl.string("twitter_list_id", 100);
+    //     tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+    //     tbl.string("twitter_user_id");
+    // })
+    // .createTable("list_members", tbl => {
+    //     tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+    //     tbl.string("twitter_list_id", 100);
+    //     tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+    //     tbl.string("twitter_user_id");
+    //     tbl.string("description", 255);
+    //     tbl.string("screen_name", 16);
+    //     tbl.string("name", 55);
+    //     tbl.string("profile_img", 255);
+    //   })
     .createTable("list_followers", tbl => {
-      tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-      tbl.string("twitter_list_id", 100);
-      tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
-      tbl.string("twitter_user_id");
+        tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.jsonb("list_followers");
     })
     .createTable("list_members", tbl => {
-      tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-      tbl.string("twitter_list_id", 100);
-      tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
-      tbl.string("twitter_user_id");
-      tbl.string("description", 255);
-      tbl.string("screen_name", 16);
-      tbl.string("name", 55);
-      tbl.string("profile_img", 255);
-    });
-
+        tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id", 100);
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.jsonb("list_members");
+      });
 };
 
 exports.down = function (knex, Promise) {

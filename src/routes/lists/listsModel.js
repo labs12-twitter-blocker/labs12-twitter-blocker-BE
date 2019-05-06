@@ -80,7 +80,7 @@ function getBlockByUserCreated(userId) {
 
 // get /subscribers/:twitter_list_id - all USERS who have subscribed to list
 function getSubscribers(twitter_list_id) {
-    return db('list_followers as f')
+    return db('list_followers')
     .where('twitter_list_id', twitter_list_id)
 }
 
