@@ -8,21 +8,20 @@ module.exports = {
   findBy,
   findById,
   findPremium,
-  findTwitterUserByTwitterId,
   findListByTwitterListId,
   findTwitterUserByTwitterId,
   insertMegaUser,
   insertMegaUserList,
   insertMegaUserListFollower,
-  insertMegaUserListFollowerJSON,
+  // insertMegaUserListFollowerJSON,
   insertMegaUserListMember,
-  insertMegaUserListMemberJSON,
+  // insertMegaUserListMemberJSON,
   orderByDownVotes,
   orderByUpVotes,
   removeAllListFollowers,
-  removeAllListFollowersJSON,
+  // removeAllListFollowersJSON,
   removeAllListMembers,
-  removeAllListMembersJSON,
+  // removeAllListMembersJSON,
   updateMegaList,
   updateMegaUser,
 };
@@ -71,31 +70,31 @@ function insertMegaUserList(list) {
     });
 }
 
-function insertMegaUserListFollower(follower) {
+// function insertMegaUserListFollower(follower) {
+//   return db("list_followers")
+//     .insert(follower)
+//     .then(ids => {
+//       return ids;
+//     });
+// }
+function insertMegaUserListFollower(twitter_list_id, json) {
   return db("list_followers")
-    .insert(follower)
-    .then(ids => {
-      return ids;
-    });
-}
-function insertMegaUserListFollowerJSON(twitter_list_id, json) {
-  return db("list_followers_json")
     .insert({"twitter_list_id":twitter_list_id,  "list_followers": JSON.stringify(json)})
     .then(ids => {
       return ids;
     });
 }
 
-function insertMegaUserListMember(members) {
-  return db("list_members")
-    .insert(members)
-    .then(ids => {
-      return ids;
-    });
-}
+// function insertMegaUserListMember(members) {
+//   return db("list_members")
+//     .insert(members)
+//     .then(ids => {
+//       return ids;
+//     });
+// }
 
-function insertMegaUserListMemberJSON(twitter_list_id, json) {
-  return db("list_members_json")
+function insertMegaUserListMember(twitter_list_id, json) {
+  return db("list_members")
     .insert({"twitter_list_id":twitter_list_id,  "list_members":  JSON.stringify(json)})
     .then(ids => {
       return ids;
@@ -119,14 +118,14 @@ function removeAllListFollowers(twitter_list_id) {
     });
 }
 
-function removeAllListFollowersJSON(twitter_list_id) {
-  return db("list_followers_json")
-    .where("twitter_list_id", 'like', twitter_list_id)
-    .del()
-    .then(count => {
-      console.log(count);
-    });
-}
+// function removeAllListFollowersJSON(twitter_list_id) {
+//   return db("list_followers_json")
+//     .where("twitter_list_id", 'like', twitter_list_id)
+//     .del()
+//     .then(count => {
+//       console.log(count);
+//     });
+// }
 
 function removeAllListMembers(twitter_list_id) {
   return db("list_members")
@@ -137,14 +136,14 @@ function removeAllListMembers(twitter_list_id) {
     });
 }
 
-function removeAllListMembersJSON(twitter_list_id) {
-  return db("list_members_json")
-    .where("twitter_list_id", 'like', twitter_list_id)
-    .del()
-    .then(count => {
-      console.log(count);
-    });
-}
+// function removeAllListMembersJSON(twitter_list_id) {
+//   return db("list_members_json")
+//     .where("twitter_list_id", 'like', twitter_list_id)
+//     .del()
+//     .then(count => {
+//       console.log(count);
+//     });
+// }
 
 function findListByTwitterListId(twitter_list_id) {
   return db('lists')

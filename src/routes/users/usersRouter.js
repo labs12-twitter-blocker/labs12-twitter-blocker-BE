@@ -238,36 +238,47 @@ function updateListFollowers(params) {
     // console.log("subscribers: ", subscribers);
 
     //////////////////////////////////JSON//////////////////////
-    Users.removeAllListFollowersJSON(params.list_id);
-    Users.insertMegaUserListFollowerJSON(params.list_id, subscribers.users);
+    Users.removeAllListFollowers(params.list_id);
+    let json_follower = [];
+    subscribers.users.map(follower => {
+      json_follower.push({
+        "twitter_user_id": follower.id_str,
+        "name": follower.name,
+        "screen_name": follower.screen_name,
+        "description": follower.description,
+        "profile_img": follower.profile_background_image_url_https
+      })
+    })
+    Users.insertMegaUserListFollower(params.list_id, json_follower);
     //////////////////////////////////JSON//////////////////////
 
-    // Remove all the followers from a list, then add them back
-    Users.removeAllListFollowers(params.list_id);
+    /////////////Old Code that did not store as JSON
+    // // Remove all the followers from a list, then add them back
+    // Users.removeAllListFollowers(params.list_id);
 
-    // For every subscriber the list has, add the user_id to the DB.
-    subscribers.users.map(follower => {
+    // // For every subscriber the list has, add the user_id to the DB.
+    // subscribers.users.map(follower => {
 
-      let new_follower = {
-        "twitter_list_id": params.list_id,
-        "twitter_user_id": follower.id_str,
-      }
+    //   let new_follower = {
+    //     "twitter_list_id": params.list_id,
+    //     "twitter_user_id": follower.id_str,
+    //   }
 
-      Users.insertMegaUserListFollower(new_follower)
-        .then(follower => {
-          // res.status(201).json(user);
-          return
-        })
-        .catch(error => {
-          console.log("error: ", error);
-          res.status(500).json({
-            message: "There was an error while saving the list follower to the database"
-          });
-        })
-      if (!error) {
-        console.log(error);
-      }
-    })
+    //   Users.insertMegaUserListFollower(new_follower)
+    //     .then(follower => {
+    //       // res.status(201).json(user);
+    //       return
+    //     })
+    //     .catch(error => {
+    //       console.log("error: ", error);
+    //       res.status(500).json({
+    //         message: "There was an error while saving the list follower to the database"
+    //       });
+    //     })
+    //   if (!error) {
+    //     console.log(error);
+    //   }
+    // })
   })
 };
 
@@ -277,39 +288,51 @@ function updateListMembers(params) {
     // console.log("members: ", members);
 
     //////////////////////////////////JSON//////////////////////
-    Users.removeAllListMembersJSON(params.list_id);
-    Users.insertMegaUserListMemberJSON(params.list_id, members.users);
-    //////////////////////////////////JSON//////////////////////
-
-    // Remove all the followers from a list, then add them back
     Users.removeAllListMembers(params.list_id);
-    // For every member the list has, add the user_id and user info to the DB.
+    let json_member = [];
     members.users.map(member => {
-
-      let new_member = {
-        "twitter_list_id": params.list_id,
+      json_member.push({
         "twitter_user_id": member.id_str,
         "name": member.name,
         "screen_name": member.screen_name,
         "description": member.description,
         "profile_img": member.profile_background_image_url_https
-      }
-
-      Users.insertMegaUserListMember(new_member)
-        .then(follower => {
-          // res.status(201).json(user);
-          return
-        })
-        .catch(error => {
-          console.log("error: ", error);
-          res.status(500).json({
-            message: "There was an error while saving the list member to the database"
-          });
-        })
-      if (!error) {
-        console.log(error);
-      }
+      })
     })
+
+    Users.insertMegaUserListMember(params.list_id, json_member);
+    //////////////////////////////////JSON//////////////////////
+
+    /////////////Old Code that did not store as JSON
+    // Remove all the followers from a list, then add them back
+    // Users.removeAllListMembers(params.list_id);
+    // // For every member the list has, add the user_id and user info to the DB.
+    // members.users.map(member => {
+
+    //   let new_member = {
+    //     "twitter_list_id": params.list_id,
+    //     "twitter_user_id": member.id_str,
+    //     "name": member.name,
+    //     "screen_name": member.screen_name,
+    //     "description": member.description,
+    //     "profile_img": member.profile_background_image_url_https
+    //   }
+
+    //   Users.insertMegaUserListMember(new_member)
+    //     .then(follower => {
+    //       // res.status(201).json(user);
+    //       return
+    //     })
+    //     .catch(error => {
+    //       console.log("error: ", error);
+    //       res.status(500).json({
+    //         message: "There was an error while saving the list member to the database"
+    //       });
+    //     })
+    //   if (!error) {
+    //     console.log(error);
+    //   }
+    // })
   })
 };
 
