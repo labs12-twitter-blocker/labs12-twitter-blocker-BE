@@ -158,7 +158,6 @@ function updateLists(params) {
       console.log("user has no lists");
     } else {
 
-    
     // For every list the user has, add it to the DB.
     lists.map(list => {
 
