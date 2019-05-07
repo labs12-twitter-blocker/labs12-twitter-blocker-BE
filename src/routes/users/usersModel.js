@@ -8,7 +8,6 @@ module.exports = {
   findBy,
   findById,
   findPremium,
-  findTwitterUserByTwitterId,
   findListByTwitterListId,
   findTwitterUserByTwitterId,
   insertMegaUser,
@@ -67,17 +66,17 @@ function insertMegaUserList(list) {
     });
 }
 
-function insertMegaUserListFollower(follower) {
+function insertMegaUserListFollower(twitter_list_id, json) {
   return db("list_followers")
-    .insert(follower)
+    .insert({"twitter_list_id":twitter_list_id,  "list_followers": JSON.stringify(json)})
     .then(ids => {
       return ids;
     });
 }
 
-function insertMegaUserListMember(members) {
+function insertMegaUserListMember(twitter_list_id, json) {
   return db("list_members")
-    .insert(members)
+    .insert({"twitter_list_id":twitter_list_id,  "list_members":  JSON.stringify(json)})
     .then(ids => {
       return ids;
     });
