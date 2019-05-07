@@ -219,7 +219,6 @@ router.get('/points/top', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
-<<<<<<< HEAD
 });
 // GET /lists/points/follow
 // Get Follow lists ordered by number of points
@@ -244,9 +243,6 @@ router.get('/points/block', (req, res) => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
 });
-=======
-})
->>>>>>> origin
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
