@@ -42,7 +42,7 @@ router.get("/:twitter_id", (req, res) => {
     })
 })
 
-// GET /users/points/ 
+// GET /users/points/
 // Get all users ordered by number of points
 
 router.get("/points", (req, res) => {
@@ -341,7 +341,7 @@ function updateListMembers(params) {
 
 router.post("/", async (req, res) => {
   try {
-    const addUser = await Users.add(req.body)
+    await Users.add(req.body)
     res.status(201).json({ message: "User has been added" })
   } catch (error) {
     res.status(500).json({ message: "There was an error adding new user" })

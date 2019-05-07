@@ -1,12 +1,13 @@
-const router = require('express').Router();
+const router = require('express').Router()
 const data = require('./listsModel')
-let Twitter = require("twitter");
+const axios = require('axios')
+let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.ACCESS_TOKEN_KEY,
   access_token_secret: process.env.ACCESS_TOKEN_SECRET
-});
+})
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
 
@@ -189,7 +190,7 @@ router.get('/subscribers/:twitter_list_id', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The list information could not be retrieved.' })
     })
-});
+})
 
 // GET /lists/members/:twitter_list_id
 // Get all members of a list and some of their info by twitter_list_ID
@@ -218,6 +219,7 @@ router.get('/points/top', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
+<<<<<<< HEAD
 });
 // GET /lists/points/follow
 // Get Follow lists ordered by number of points
@@ -242,6 +244,9 @@ router.get('/points/block', (req, res) => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
 });
+=======
+})
+>>>>>>> origin
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
@@ -269,16 +274,39 @@ router.get('/timeline/:list_id', (req, res) => {
 // POST /lists/ -
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
-  const list = req.body
-  data.insertList(list)
-    //TODO check for list content
+  const userInput = req.body
+  const user = req.user.screen_name
+  const key = client.access_token_key 
+  const secret = client.access_token_secret
+  let params = {original_user: user, 
+              "TWITTER_ACCESS_TOKEN": key, 
+              "TWITTER_ACCESS_TOKEN_SECRET": secret, 
+              "search_users": userInput, 
+              "return_limit": 20, 
+              "last_level": 2, 
+              "no_of_results": 50 }
+
+//POST req to DS server
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
+  .then(response => {
+    res.status(200).json(response)
+    const list = response.data.ranked_results
+    if(!list) {
+      res.status(404).json({ error: 'No lists returned.' })
+    }
+    data.insertList(list)
     .then(response => {
-      res.status(200).json(response)
+      res.status(201).json(response)
     })
     .catch(err => {
       res.status(500).json({ error: 'There was an error adding the list.' })
     })
+  })
+  .catch(err => {
+    res.status(500).json({ error: 'There was an error creating the list.' })
+  })
 })
+
 
 // POST /lists/:list_id/follow/:user_id
 // Send JSON with user_id to subscribe that user to a list by list_id**

@@ -1,6 +1,6 @@
-exports.up = function(knex, Promise) {
+exports.up = function (knex, Promise) {
   return knex.schema
-  .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
+    .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("twitter_users", tbl => {
       tbl.string('twitter_users_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
       tbl.string("twitter_id").notNullable().unique();
@@ -18,7 +18,7 @@ exports.up = function(knex, Promise) {
 
     .createTable("app_users", tbl => {
       tbl.string('app_user_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-      tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
+      // tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
       tbl.string("twitter_id").notNullable();
       tbl.string("screen_name").notNullable();
 
@@ -47,7 +47,7 @@ exports.up = function(knex, Promise) {
     });
 };
 
-exports.down = function(knex, Promise) {
+exports.down = function (knex, Promise) {
   return knex.schema
     .dropTableIfExists("app_users")
     .dropTableIfExists("twitter_users");

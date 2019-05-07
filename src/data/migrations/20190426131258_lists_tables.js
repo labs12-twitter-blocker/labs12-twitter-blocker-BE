@@ -1,6 +1,6 @@
 
-exports.up = function(knex, Promise) {
-    return knex.schema
+exports.up = function (knex, Promise) {
+  return knex.schema
     .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("lists", tbl => {
         tbl.string('list_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
@@ -19,21 +19,21 @@ exports.up = function(knex, Promise) {
         tbl.boolean("is_block_list");
         tbl.boolean("created_with_hashtag");
 
-        // Adds a json column, using the built-in json type in PostgreSQL, MySQL and SQLite, 
-        // defaulting to a text column in older versions or in unsupported databases.
-        // For PostgreSQL, due to incompatibility between native array and json types, 
-        // when setting an array (or a value that could be an array) as the value of a 
-        // json or jsonb column, you should use JSON.stringify() to convert your value to a 
-        // string prior to passing it to the query builder, e.g.
-            // knex.table('users')
-            //   .where({id: 1})
-            //   .update({json_data: JSON.stringify(mightBeAnArray)});
-        tbl.json("created_with_hashtag_json");
-        tbl.boolean("created_with_users");
-        tbl.json("created_with_users_json");
-        tbl.boolean("created_with_category");
-        tbl.json("created_with_category_json");
-        tbl.timestamps(true, true);
+      // Adds a json column, using the built-in json type in PostgreSQL, MySQL and SQLite,
+      // defaulting to a text column in older versions or in unsupported databases.
+      // For PostgreSQL, due to incompatibility between native array and json types,
+      // when setting an array (or a value that could be an array) as the value of a
+      // json or jsonb column, you should use JSON.stringify() to convert your value to a
+      // string prior to passing it to the query builder, e.g.
+      // knex.table('users')
+      //   .where({id: 1})
+      //   .update({json_data: JSON.stringify(mightBeAnArray)});
+      tbl.json("created_with_hashtag_json");
+      tbl.boolean("created_with_users");
+      tbl.json("created_with_users_json");
+      tbl.boolean("created_with_category");
+      tbl.json("created_with_category_json");
+      tbl.timestamps(true, true);
     })
     // .createTable("list_followers", tbl => {
     //     tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
