@@ -5,8 +5,8 @@ let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 })
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
@@ -268,39 +268,152 @@ router.get('/timeline/:list_id', (req, res) => {
 //////////////////////POST///////////////////////////////////////////
 
 // POST /lists/ -
+
+// POST /lists/create
+
+// Takes in the post from the Front end
+router.post('/create', (req, res) => {
+  if (req.body.name) {
+    let params = {
+      name: req.body.name,
+      mode: req.body.mode,
+      description: req.body.description
+    }
+    // Executes the function to create the list on twitter
+    createList(params);
+    res.status(200).json({ message: "List Created" })
+  } else {
+    res.status(400).json({ message: "Please enter a name for your list" })
+  }
+})
+
+
+// Creates the list on twitter
+
+function createList(params) {
+  client.post("/lists/create", params, function (error, response) {
+
+    // This still needs error handling
+  })
+}
+
+// Add a list of users to a list with the twitter api
+// POST lists/members/create_all
+
+router.post('/members/create_all', (req, res) => {
+  const params = {
+    list_id: req.body.list_id,
+    screen_name: req.body.screen_name
+  }
+  addMembers(params);
+  res.status(200);
+})
+
+function addMembers(params) {
+  client.post('/lists/members/create_all', params, function (error, response) {
+    if (error) {
+      return error
+    } else {
+      return response
+    }
+  })
+}
+
+// Subscribe to a list with the twitter api
+
+// Unsubscribe from a list with the twitter api
+
+// ============================== Still needs to be built ===========================================
+router.post('/subscribers/destroy', (req, res) => {
+  const params = {
+    id: req.body.twitter_id
+
+  }
+  console.log(params);
+
+  unsubscribe(params)
+})
+
+function unsubscribe(params) {
+  client.post('lists/subscribers/destroy', params, function (error, response) {
+    // handle errors here
+  })
+}
+
+// Delete a user of a list with the twitter api
+// POST /lists/members/destroy
+
+// ============================== Not functional still===========================================
+// Not working still for some reason. Can only get Error 204 off twitter endpoint
+router.post('/members/destroy', (req, res) => {
+  const params = {
+    list_id: req.body.list_id,
+  }
+  destroyMember(params)
+});
+
+function destroyMember(params) {
+  // twitter api stuff here
+  client.post('/lists/members/destroy', params, function (error, response) {
+
+  })
+}
+
+// Delete a list with the twitter api
+// ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
+router.post('/destroy', (req, res) => {
+  const params = {
+    user_id: req.body.twitter_id,
+    list_id: req.body.twitter_list_id
+  }
+  destroyList(params);
+})
+
+function destroyList(params) {
+  client.post('/lists/destroy', params, function (error, response) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(response)
+    }
+  })
+}
+
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
   const userInput = req.body
   const user = req.user.screen_name
-  const key = client.access_token_key 
+  const key = client.access_token_key
   const secret = client.access_token_secret
-  let params = {original_user: user, 
-              "TWITTER_ACCESS_TOKEN": key, 
-              "TWITTER_ACCESS_TOKEN_SECRET": secret, 
-              "search_users": userInput, 
-              "return_limit": 20, 
-              "last_level": 2, 
-              "no_of_results": 50 }
+  let params = {
+    "original_user": user,
+    "TWITTER_ACCESS_TOKEN": key,
+    "TWITTER_ACCESS_TOKEN_SECRET": secret,
+    "search_users": userInput,
+    "return_limit": 20,
+    "last_level": 2,
+    "no_of_results": 50
+  }
 
-//POST req to DS server
+  //POST req to DS server
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
-  .then(response => {
-    res.status(200).json(response)
-    const list = response.data.ranked_results
-    if(!list) {
-      res.status(404).json({ error: 'No lists returned.' })
-    }
-    data.insertList(list)
     .then(response => {
-      res.status(201).json(response)
+      res.status(200).json(response)
+      const list = response.data.ranked_results
+      if (!list) {
+        res.status(404).json({ error: 'No lists returned.' })
+      }
+      data.insertList(list)
+        .then(response => {
+          res.status(201).json(response)
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'There was an error adding the list.' })
+        })
     })
     .catch(err => {
-      res.status(500).json({ error: 'There was an error adding the list.' })
+      res.status(500).json({ error: 'There was an error creating the list.' })
     })
-  })
-  .catch(err => {
-    res.status(500).json({ error: 'There was an error creating the list.' })
-  })
 })
 
 
@@ -386,7 +499,7 @@ router.delete('/:list_id/unfollow/:user_id', (req, res) => {
       res.status(200).json(response)
     })
     .catch(err => {
-      res.status(500).json({ error: 'There was an error unfollowing the list.' })
+      res.status(500).json({ error: 'There was an error un-following the list.' })
     })
 })
 

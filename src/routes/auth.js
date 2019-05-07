@@ -6,9 +6,8 @@ const Strategy = require('passport-twitter').Strategy;
 const Users = require("./users/usersModel");
 const axios = require("axios")
 
-
-const url = "http://localhost:5000"
-
+// url for testing
+const url = process.env.BACKEND_URL;
 passport.use(
   new Strategy(
     {
@@ -20,6 +19,7 @@ passport.use(
 
       //search app users table for twitter id
       Users.findById(profile.id).then(user => {
+        // console.log("++++++++++++++++++++++++++PROFILE_________________________________", profile)
         if (!user) {
 
           //insert new user info into app user db
@@ -35,7 +35,6 @@ passport.use(
             "email": null,
             "is_paying": false
           }
-
           axios
             .post(`${url}/users`, newUser).then(
 
@@ -58,7 +57,7 @@ passport.use(
               .put(`${url}/users/${profile.id}`, modifiedUser).then(
                 axios.post(`${url}/users/mega/${profile.username}`))
           }).catch(error => {
-            res.status(400).json(error)
+            // res.status(400).json(error)
           })
         }
         return callback(null, profile);
@@ -86,7 +85,7 @@ router.get(
   function (req, res) {
 
     res.redirect(`${process.env.FRONT_END_URL}`);
-    // console.log(token)
+
   }
 );
 

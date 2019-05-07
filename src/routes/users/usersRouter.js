@@ -86,8 +86,8 @@ router.post("/mega/:twitter_handle", (req, res) => {
 
   // Inserts the user into the twitter_users table
   client.get("users/show", params, function (error, user, response) {
-    // console.log(user);
-    // console.log(response);
+    console.log(user);
+    console.log(response);
 
     let new_user = {
       twitter_id: user.id_str,
@@ -234,7 +234,7 @@ function updateLists(params) {
 function updateListFollowers(params) {
   client.get("lists/subscribers", params, function (error, subscribers, response) {
     // console.log("lists/subscribers params: ", params);
-    // console.log("subscribers: ", subscribers);
+    console.log("subscribers: ", subscribers);
 
     //////////////////////////////////JSON//////////////////////
     Users.removeAllListFollowers(params.list_id);
