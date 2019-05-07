@@ -60,7 +60,7 @@ passport.use(
             // res.status(400).json(error)
           })
         }
-        return callback(null, profile);
+        return callback(null, user);
       })
     }));
 
@@ -73,19 +73,28 @@ passport.deserializeUser(function (obj, callback) {
 });
 
 
+// when login is successful, retrieve user info
+router.get("/twitter/login/success", (req, res) => {
+  console.log(req.session.passport.user)
+  if (req.session.passport.user) {
+    res.json({
+      success: true,
+      user: req.session.passport.user
+    });
+  }
+});
+
+
+
 router.get('/twitter/login', passport.authenticate('twitter'));
 
 router.get(
   '/twitter/callback',
   passport.authenticate('twitter', {
-
     failureRedirect: process.env.FRONT_END_URL
-
   }),
   function (req, res) {
-
     res.redirect(`${process.env.FRONT_END_URL}`);
-
   }
 );
 
