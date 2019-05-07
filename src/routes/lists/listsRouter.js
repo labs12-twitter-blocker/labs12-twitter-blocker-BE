@@ -278,6 +278,9 @@ function createList(params) {
 // Add a list of users to a list with the twitter api
 
 // POST lists/members/create_all
+
+
+// TEST THIS
 router.post('/members/create_all', (req, res) => {
   const params = {
     list_id: req.body.list_id,
@@ -296,7 +299,47 @@ function addMembers(params) {
     }
   })
 }
+
+// Subscribe to a list with the twitter api
+
+// Unsubscribe from a list with the twitter api
+
+// router.post('/subscribers/destroy', (req, res) => {
+//   const params = {
+//     id: req.body.twitter_id
+
+//   }
+//   console.log(params);
+
+//   unsubscribe(params)
+// })
+
+// function unsubscribe(params) {
+//   client.post('lists/subscribers/destroy', params, function (error, response) {
+//     // handle errors here
+//   })
+// }
+
+// Delete a user of a list with the twitter api
+// POST /lists/members/destroy
+router.post('/members/destroy', (req, res) => {
+  const params = {
+    list_id: req.body.list_id,
+  }
+  destroyMember(params)
+});
+
+function destroyMember(params) {
+  // twitter api stuff here
+  client.post('/lists/members/destroy', params, function (error, response) {
+
+  })
+}
+
 // Delete a list with the twitter api
+
+
+
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
