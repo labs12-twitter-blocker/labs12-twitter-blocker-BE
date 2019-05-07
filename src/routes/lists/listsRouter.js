@@ -243,7 +243,10 @@ router.get('/points/block', (req, res) => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
 });
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8b91cf1fc1599af562fae2e52ea055d9b5cc9ad6
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
