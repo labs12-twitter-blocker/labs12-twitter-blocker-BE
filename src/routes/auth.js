@@ -19,6 +19,7 @@ passport.use(
 
       //search app users table for twitter id
       Users.findById(profile.id).then(user => {
+        // console.log("++++++++++++++++++++++++++PROFILE_________________________________", profile)
         if (!user) {
 
           //insert new user info into app user db
@@ -34,7 +35,6 @@ passport.use(
             "email": null,
             "is_paying": false
           }
-
           axios
             .post(`${url}/users`, newUser).then(
 

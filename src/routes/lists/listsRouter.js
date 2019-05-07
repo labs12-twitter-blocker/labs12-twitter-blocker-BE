@@ -219,7 +219,6 @@ router.get('/points/top', (req, res) => {
     .catch(err => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
-<<<<<<< HEAD
 });
 // GET /lists/points/follow
 // Get Follow lists ordered by number of points
@@ -244,9 +243,7 @@ router.get('/points/block', (req, res) => {
       res.status(500).json({ error: 'The lists information could not be retrieved.' })
     })
 });
-=======
-})
->>>>>>> origin
+
 
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
@@ -291,23 +288,19 @@ router.post('/create', (req, res) => {
   }
 })
 
+
 // Creates the list on twitter
+
 function createList(params) {
   client.post("/lists/create", params, function (error, response) {
-    if (error) {
-      return error
-    } else {
-      return response
-    }
+
+    // This still needs error handling
   })
 }
 
 // Add a list of users to a list with the twitter api
-
 // POST lists/members/create_all
 
-
-// TEST THIS
 router.post('/members/create_all', (req, res) => {
   const params = {
     list_id: req.body.list_id,
@@ -331,24 +324,28 @@ function addMembers(params) {
 
 // Unsubscribe from a list with the twitter api
 
-// router.post('/subscribers/destroy', (req, res) => {
-//   const params = {
-//     id: req.body.twitter_id
+// ============================== Still needs to be built ===========================================
+router.post('/subscribers/destroy', (req, res) => {
+  const params = {
+    id: req.body.twitter_id
 
-//   }
-//   console.log(params);
+  }
+  console.log(params);
 
-//   unsubscribe(params)
-// })
+  unsubscribe(params)
+})
 
-// function unsubscribe(params) {
-//   client.post('lists/subscribers/destroy', params, function (error, response) {
-//     // handle errors here
-//   })
-// }
+function unsubscribe(params) {
+  client.post('lists/subscribers/destroy', params, function (error, response) {
+    // handle errors here
+  })
+}
 
 // Delete a user of a list with the twitter api
 // POST /lists/members/destroy
+
+// ============================== Not functional still===========================================
+// Not working still for some reason. Can only get Error 204 off twitter endpoint
 router.post('/members/destroy', (req, res) => {
   const params = {
     list_id: req.body.list_id,
@@ -364,9 +361,24 @@ function destroyMember(params) {
 }
 
 // Delete a list with the twitter api
+// ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
+router.post('/destroy', (req, res) => {
+  const params = {
+    user_id: req.body.twitter_id,
+    list_id: req.body.twitter_list_id
+  }
+  destroyList(params);
+})
 
-
-
+function destroyList(params) {
+  client.post('/lists/destroy', params, function (error, response) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(response)
+    }
+  })
+}
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
