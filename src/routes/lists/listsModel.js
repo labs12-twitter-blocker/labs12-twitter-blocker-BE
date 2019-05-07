@@ -13,11 +13,13 @@ module.exports = {
     getSubscribers,
     getMembers,
     getAllByOrder,
+    getFollowByOrder,
+    getBlockByOrder,
     insertList,
     subscribeToList,
     updateList,
     deleteList,
-    unfollowList
+    unfollowList,
 };
 //   get lists/, /cool
 function get() {
@@ -90,12 +92,27 @@ function getMembers(twitter_list_id) {
     .where('twitter_list_id', twitter_list_id)
 }
 
-// get /points list in order of points (upvotes-downvotes)
+// get /lists/points/top all lists in order of points
 function getAllByOrder() {
     return db('lists')
     .select('*')
-    .orderByRaw('(list_upvotes - list_downvotes) desc')
+    .orderBy('list_points', 'desc')
+}
 
+// get /lists/points/follow follow lists in order of points (upvotes-downvotes)
+function getFollowByOrder() {
+    return db('lists')
+    .select('*')
+    .where('is_block_list', false)
+    .orderByRaw('(list_upvotes - list_downvotes) desc')
+}
+
+// get /lists/points/block block lists in order of points (upvotes-downvotes)
+function getBlockByOrder() {
+    return db('lists')
+    .select('*')
+    .where('is_block_list', true)
+    .orderByRaw('(list_upvotes - list_downvotes) desc')
 }
 
 // get /timeline/:list_id - returns timeline of list
