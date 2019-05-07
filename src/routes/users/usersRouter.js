@@ -154,7 +154,11 @@ router.post("/mega/:twitter_handle", (req, res) => {
 // Inserts the user's lists into the lists table
 function updateLists(params) {
   client.get("lists/list", params, function (error, lists, response) {
+    if (error) {
+      console.log("user has no lists");
+    } else {
 
+    
     // For every list the user has, add it to the DB.
     lists.map(list => {
 
@@ -224,31 +228,61 @@ function updateLists(params) {
         })
 
     });
-
-    if (!error) {
+    if (error) {
       console.log(error);
     }
-  })
+  }})
 };
 
+// function updateListFollowers(params) {
+//   console.log("****************************************************************************************updateListFollowers")
+//   let json_follower = [];
+
+//   client.get("lists/subscribers", params, function (error, subscribers, response) {
+//     if (error) {
+//       throw error;
+//     } else if(subscribers) { 
+//         subscribers.users.map(follower => {
+//                     json_follower.push({
+//                       "twitter_user_id": follower.id_str,
+//                       "name": follower.name,
+//                       "screen_name": follower.screen_name,
+//                       "description": follower.description,
+//                       "profile_img": follower.profile_background_image_url_https
+//                     })
+//       Users.removeAllListFollowers(params.list_id)
+//         .then(subscribers => {
+//           console.log("****************************************************************************************removeAllListFollowers")
+//             Users.insertMegaUserListFollower(params.list_id, json_follower)
+//           })
+//         })
+//   }
+//   })
+// }
+
 function updateListFollowers(params) {
+  console.log("****************************************************************************************updateListFollowers")
   client.get("lists/subscribers", params, function (error, subscribers, response) {
     // console.log("lists/subscribers params: ", params);
     // console.log("subscribers: ", subscribers);
 
     //////////////////////////////////JSON//////////////////////
-    Users.removeAllListFollowers(params.list_id);
-    let json_follower = [];
-    subscribers.users.map(follower => {
-      json_follower.push({
-        "twitter_user_id": follower.id_str,
-        "name": follower.name,
-        "screen_name": follower.screen_name,
-        "description": follower.description,
-        "profile_img": follower.profile_background_image_url_https
+    Users.removeAllListFollowers(params.list_id)
+    .then(e => {
+      console.log("****************************************************************************************removeAllListFollowers")
+      let json_follower = [];
+      subscribers.users.map(follower => {
+        json_follower.push({
+          "twitter_user_id": follower.id_str,
+          "name": follower.name,
+          "screen_name": follower.screen_name,
+          "description": follower.description,
+          "profile_img": follower.profile_background_image_url_https
+        })
       })
+      Users.insertMegaUserListFollower(params.list_id, json_follower);
     })
-    Users.insertMegaUserListFollower(params.list_id, json_follower);
+    
     //////////////////////////////////JSON//////////////////////
 
     /////////////Old Code that did not store as JSON
@@ -282,24 +316,27 @@ function updateListFollowers(params) {
 };
 
 function updateListMembers(params) {
+  console.log("****************************************************************************************updateListMembers")
   client.get("lists/members", params, function (error, members, response) {
     // console.log("lists/members params: ", params);
     // console.log("members: ", members);
 
     //////////////////////////////////JSON//////////////////////
-    Users.removeAllListMembers(params.list_id);
-    let json_member = [];
-    members.users.map(member => {
-      json_member.push({
-        "twitter_user_id": member.id_str,
-        "name": member.name,
-        "screen_name": member.screen_name,
-        "description": member.description,
-        "profile_img": member.profile_background_image_url_https
+    Users.removeAllListMembers(params.list_id)
+    .then(e => {
+      let json_member = [];
+      members.users.map(member => {
+        json_member.push({
+          "twitter_user_id": member.id_str,
+          "name": member.name,
+          "screen_name": member.screen_name,
+          "description": member.description,
+          "profile_img": member.profile_background_image_url_https
+        })
       })
+      Users.insertMegaUserListMember(params.list_id, json_member);
     })
-
-    Users.insertMegaUserListMember(params.list_id, json_member);
+    
     //////////////////////////////////JSON//////////////////////
 
     /////////////Old Code that did not store as JSON
