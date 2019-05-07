@@ -3,18 +3,19 @@ exports.up = function(knex, Promise) {
     return knex.schema
     .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("lists", tbl => {
-        tbl.string('list_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-        tbl.string("list_name", 255);
+        tbl.string('list_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("list_name");
         tbl.datetime("list_creation_date");
-        tbl.integer("member_count", 9);
-        tbl.integer("subscriber_count", 9),
+        tbl.integer("member_count");
+        tbl.integer("subscriber_count"),
         tbl.boolean("public");
-        tbl.string("twitter_list_id", 100).unique();
-        tbl.string("description", 255);
+        tbl.string("twitter_list_id").unique();
+        tbl.string("description");
         // tbl.string("twitter_id").references("twitter_users.twitter_id"); // Took away (*FK)
         tbl.string("twitter_id");
-        tbl.integer("list_upvotes", 7);
-        tbl.integer("list_downvotes", 7);
+        // tbl.integer("list_upvotes", 7);
+        // tbl.integer("list_downvotes", 7);
+        tbl.integer("list_points"); // Taking away the upvotes and downvotes and combining them into points
         tbl.boolean("is_block_list");
         tbl.boolean("created_with_hashtag");
 
@@ -51,22 +52,30 @@ exports.up = function(knex, Promise) {
     //     tbl.string("profile_img", 255);
     //   })
     .createTable("list_followers", tbl => {
-        tbl.string('list_followers_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-        tbl.string("twitter_list_id", 100);
+        tbl.string('list_followers_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id");
         tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.jsonb("list_followers");
     })
     .createTable("list_members", tbl => {
-        tbl.string('list_members_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-        tbl.string("twitter_list_id", 100);
+        tbl.string('list_members_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id");
         tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
         tbl.jsonb("list_members");
-      });
+    })
+    .createTable("list_votes", tbl => {
+        tbl.string('vote_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+        tbl.string("twitter_list_id");
+        tbl.foreign("twitter_list_id").references("twitter_list_id").inTable("lists").onDelete('CASCADE');
+        tbl.string("twitter_user_id");
+        tbl.integer("vote");
+    });
 
 };
 
 exports.down = function(knex, Promise) {
     return knex.schema
+        .dropTableIfExists("list_votes")
         .dropTableIfExists("list_followers")
         .dropTableIfExists("list_members")
         .dropTableIfExists("lists");

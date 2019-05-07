@@ -2,25 +2,25 @@ exports.up = function(knex, Promise) {
   return knex.schema
   .raw('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"')
     .createTable("twitter_users", tbl => {
-      tbl.string('twitter_users_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
-      tbl.string("twitter_id", 255).notNullable().unique();
-      tbl.integer("followers", 9);
-      tbl.integer("friends", 9);
-      tbl.string("description", 255);
-      tbl.string("profile_img", 255); //url to profile image
-      tbl.string("screen_name", 16); //Twitter Handle
-      tbl.string("name", 55);
-      tbl.string("location", 55);
+      tbl.string('twitter_users_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+      tbl.string("twitter_id").notNullable().unique();
+      tbl.integer("followers");
+      tbl.integer("friends");
+      tbl.string("description");
+      tbl.string("profile_img"); //url to profile image
+      tbl.string("screen_name"); //Twitter Handle
+      tbl.string("name");
+      tbl.string("location");
       tbl.datetime("created_at");
       tbl.boolean("protected");
       tbl.boolean("verified");
     })
 
     .createTable("app_users", tbl => {
-      tbl.string('app_user_id', 36).unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
+      tbl.string('app_user_id').unique().primary().defaultTo(knex.raw('uuid_generate_v4()'));
       tbl.foreign("twitter_id").references("twitter_id").inTable("twitter_users").onDelete('CASCADE');
-      tbl.string("twitter_id", 255).notNullable();
-      tbl.string("screen_name", 50).notNullable();
+      tbl.string("twitter_id").notNullable();
+      tbl.string("screen_name").notNullable();
 
       // Adds created_at and updated_at columns on the database,
       // setting each to datetime types. When true is passed as
@@ -37,11 +37,11 @@ exports.up = function(knex, Promise) {
       // Not adding Stripe FK yet.
       // tbl.integer("stripe_id", 6);
 
-      tbl.string("token", 255);
-      tbl.string("token_secret", 55);
-      tbl.integer("upvotes", 6);
-      tbl.integer("downvotes", 6);
-      tbl.string("email", 255);
+      tbl.string("token");
+      tbl.string("token_secret");
+      tbl.integer("upvotes");
+      tbl.integer("downvotes");
+      tbl.string("email");
       tbl.boolean("admin");
       tbl.boolean("deactivated");
     });

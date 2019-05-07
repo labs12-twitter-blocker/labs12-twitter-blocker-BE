@@ -845,3 +845,82 @@ _http method_: **[POST]**
 ?????
 ]
 ```
+
+**/--------------------------------------------/ VOTES /----------------------------------------/**
+
+
+### **Get All Votes On A List**
+
+_url_: `/votes/list/:twitter_list_id`
+
+_http method_: **[GET]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example response
+
+```
+[
+    {
+        "vote_id": "50f2dff5-e6ff-43c4-93b7-dee6f8bebc85",
+        "twitter_list_id": "199798310",
+        "twitter_user_id": "1123316691100786688",
+        "vote": -1
+    }
+]
+```
+
+### **Get All Votes By A User**
+
+_url_: `/votes/user/:twitter_user_id`
+
+_http method_: **[GET]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example response
+
+```
+[
+    {
+        "vote_id": "50f2dff5-e6ff-43c4-93b7-dee6f8bebc85",
+        "twitter_list_id": "199798310",
+        "twitter_user_id": "1123316691100786688",
+        "vote": -1
+    }
+]
+```
+
+### **Upvote Or Downvote a List**
+
+_url_: `/votes/`
+
+_http method_: **[POST]**
+
+#### Response
+
+##### 200 (ok)
+
+###### Example req.body
+
+```
+[
+{
+	"twitter_list_id": "199798310",
+	"twitter_user_id": "1123316691100786688",
+	"vote": -1
+}
+]
+```
+
+###### Example response
+
+```
+[
+
+]
+```

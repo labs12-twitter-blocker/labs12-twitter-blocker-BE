@@ -6,12 +6,14 @@ const router = require('./routes');
 const listsRouter = require("./routes/lists/listsRouter.js");
 const tweetsRouter = require("./routes/tweets/tweetsRouter.js");
 const usersRouter = require("./routes/users/usersRouter.js");
+const votesRouter = require("./routes/votes/votesRouter.js");
 
 serverMiddleware(server);
 
 server.use("/lists", listsRouter);
 server.use("/tweets", tweetsRouter);
 server.use("/users", usersRouter);
+server.use("/votes", votesRouter);
 server.use('/', router);
 
 module.exports = server;
