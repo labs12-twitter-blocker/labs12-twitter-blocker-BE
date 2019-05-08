@@ -13,11 +13,23 @@ const store = new KnexSessionStore({
   "knex": db,
   "tablename": 'sessions'
 })
+let whitelist = [
+  'http://localhost:3000',
+  'http://localhost:5000',
+  'https://twitter-blocker.netlify.com/',
+  'https://twitter-block.herokuapp.com' ]
 
 const corsOptions = {
-  origin: process.env.FRONT_END_URL,
   credentials: true,
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
 }
+
 
 require('dotenv').config();
 
@@ -26,7 +38,7 @@ module.exports = server => {
   server.use(express.json());
   server.use(helmet());
   server.use(cors(corsOptions));
-  server.use(morgan('tiny'));
+  server.use(morgan());
   server.use(cookieParser());
   server.use(passport.initialize());
   server.use(passport.session());
