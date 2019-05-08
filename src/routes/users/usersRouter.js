@@ -158,79 +158,80 @@ function updateLists(params) {
       console.log("user has no lists");
     } else {
 
-    // For every list the user has, add it to the DB.
-    lists.map(list => {
+      // For every list the user has, add it to the DB.
+      lists.map(list => {
 
-      let new_list = {
-        "twitter_list_id": list.id_str,
-        "list_name": list.name,
-        "list_creation_date": list.created_at,
-        "member_count": list.member_count,
-        "subscriber_count": list.subscriber_count,
-        "public": true,
-        "description": list.description,
-        "twitter_id": list.user.id_str,
-        "list_points": 0,
-        "is_block_list": false,
-        "created_with_hashtag": false,
-        "created_with_users": false,
-        "created_with_category": false
-      }
-      if (list.mode != "public") {
-        new_list.public = false
-      };
+        let new_list = {
+          "twitter_list_id": list.id_str,
+          "list_name": list.name,
+          "list_creation_date": list.created_at,
+          "member_count": list.member_count,
+          "subscriber_count": list.subscriber_count,
+          "public": true,
+          "description": list.description,
+          "twitter_id": list.user.id_str,
+          "list_points": 0,
+          "is_block_list": false,
+          "created_with_hashtag": false,
+          "created_with_users": false,
+          "created_with_category": false
+        }
+        if (list.mode != "public") {
+          new_list.public = false
+        };
 
-      // First test if the list is already in our DB
-      Users.findListByTwitterListId(list.id_str)
-        .then(list => {
-          // If we find the list in our DB, update its info
-          if (list) {
-            Users.updateMegaList(list.twitter_list_id, new_list)
-              .then(updated => {
-                if (updated) {
+        // First test if the list is already in our DB
+        Users.findListByTwitterListId(list.id_str)
+          .then(list => {
+            // If we find the list in our DB, update its info
+            if (list) {
+              Users.updateMegaList(list.twitter_list_id, new_list)
+                .then(updated => {
+                  if (updated) {
+                    // res.status(201).json(user);
+
+                    ////////////////////////////////////////////////////////
+                    // Also update the members of the list
+                    updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
+                    updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
+                    ////////////////////////////////////////////////////////
+                  } else {
+                    res.status(404).json({ message: "List not found." });
+                  }
+                })
+                .catch(error => {
+                  console.log("error: ", error);
+                  res.status(500).json({ message: "The list information could not be modified." });
+                });
+            } else {
+              // No list found So go ahead and Add them to the DB
+              Users.insertMegaUserList(new_list)
+                .then(list => {
                   // res.status(201).json(user);
 
                   ////////////////////////////////////////////////////////
-                  // Also update the members of the list
+                  // Also update the members and followers of the list
                   updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
                   updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
                   ////////////////////////////////////////////////////////
-                } else {
-                  res.status(404).json({ message: "List not found." });
-                }
-              })
-              .catch(error => {
-                console.log("error: ", error);
-                res.status(500).json({ message: "The list information could not be modified." });
-              });
-          } else {
-            // No list found So go ahead and Add them to the DB
-            Users.insertMegaUserList(new_list)
-              .then(list => {
-                // res.status(201).json(user);
+                })
+                .catch(error => {
+                  console.log("error: ", error);
+                  res.status(500).json({ message: "There was an error while saving the list to the database" });
+                });
+            }
+          })
+          .catch(error => {
+            console.log("error: ", error);
+            res.status(500).json({ message: "There was an error while saving the list to the database" });
+          })
 
-                ////////////////////////////////////////////////////////
-                // Also update the members and followers of the list
-                updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
-                updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
-                ////////////////////////////////////////////////////////
-              })
-              .catch(error => {
-                console.log("error: ", error);
-                res.status(500).json({ message: "There was an error while saving the list to the database" });
-              });
-          }
-        })
-        .catch(error => {
-          console.log("error: ", error);
-          res.status(500).json({ message: "There was an error while saving the list to the database" });
-        })
-
-    });
-    if (error) {
-      console.log(error);
+      });
+      if (error) {
+        console.log(error);
+      }
     }
-  }})
+  })
 };
 
 // function updateListFollowers(params) {
@@ -240,7 +241,7 @@ function updateLists(params) {
 //   client.get("lists/subscribers", params, function (error, subscribers, response) {
 //     if (error) {
 //       throw error;
-//     } else if(subscribers) { 
+//     } else if(subscribers) {
 //         subscribers.users.map(follower => {
 //                     json_follower.push({
 //                       "twitter_user_id": follower.id_str,
@@ -267,21 +268,21 @@ function updateListFollowers(params) {
 
     //////////////////////////////////JSON//////////////////////
     Users.removeAllListFollowers(params.list_id)
-    .then(e => {
-      console.log("****************************************************************************************removeAllListFollowers")
-      let json_follower = [];
-      subscribers.users.map(follower => {
-        json_follower.push({
-          "twitter_user_id": follower.id_str,
-          "name": follower.name,
-          "screen_name": follower.screen_name,
-          "description": follower.description,
-          "profile_img": follower.profile_background_image_url_https
+      .then(e => {
+        console.log("****************************************************************************************removeAllListFollowers")
+        let json_follower = [];
+        subscribers.users.map(follower => {
+          json_follower.push({
+            "twitter_user_id": follower.id_str,
+            "name": follower.name,
+            "screen_name": follower.screen_name,
+            "description": follower.description,
+            "profile_img": follower.profile_background_image_url_https
+          })
         })
+        Users.insertMegaUserListFollower(params.list_id, json_follower);
       })
-      Users.insertMegaUserListFollower(params.list_id, json_follower);
-    })
-    
+
     //////////////////////////////////JSON//////////////////////
 
     /////////////Old Code that did not store as JSON
@@ -322,19 +323,19 @@ function updateListMembers(params) {
 
     //////////////////////////////////JSON//////////////////////
     Users.removeAllListMembers(params.list_id)
-    .then(e => {
-      let json_member = [];
-      members.users.map(member => {
-        json_member.push({
-          "twitter_user_id": member.id_str,
-          "name": member.name,
-          "screen_name": member.screen_name,
-          "description": member.description,
-          "profile_img": member.profile_background_image_url_https
+      .then(e => {
+        let json_member = [];
+        members.users.map(member => {
+          json_member.push({
+            "twitter_user_id": member.id_str,
+            "name": member.name,
+            "screen_name": member.screen_name,
+            "description": member.description,
+            "profile_img": member.profile_background_image_url_https
+          })
         })
+        Users.insertMegaUserListMember(params.list_id, json_member);
       })
-      Users.insertMegaUserListMember(params.list_id, json_member);
-    })
 
     //////////////////////////////////JSON//////////////////////
 
@@ -434,7 +435,7 @@ router.delete("/:twitter_id", async (req, res) => {
 })
 
 // Block a user with twitter api
-// POST /users/blocks/create/:user_id
+// POST /users/blocks/create
 router.post("/blocks/create", (req, res) => {
   const params = {
     user_id: req.body.user_id
@@ -444,7 +445,7 @@ router.post("/blocks/create", (req, res) => {
 })
 
 function blockUser(params) {
-  client.post('/blocks/create/', params, function (response, error) {
+  client.post('/blocks/create', params, function (response, error) {
     if (error) {
       console.log(error)
     } else {
@@ -453,4 +454,21 @@ function blockUser(params) {
   })
 }
 
+router.post("/blocks/destroy", (req, res) => {
+  const params = {
+    user_id: req.body.user_id
+  }
+  res.status(200).json('User Unblocked');
+  unblockUser(params)
+
+})
+function unblockUser(params) {
+  client.post('/blocks/destroy', params, function (response, error) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(response)
+    }
+  })
+}
 module.exports = router;
