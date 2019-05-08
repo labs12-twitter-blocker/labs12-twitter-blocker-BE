@@ -94,7 +94,7 @@ router.get(
     failureRedirect: process.env.FRONT_END_URL
   }),
   function (req, res) {
-    res.redirect(`${process.env.FRONT_END_URL}`);
+    res.redirect(process.env.FRONT_END_URL);
   }
 );
 

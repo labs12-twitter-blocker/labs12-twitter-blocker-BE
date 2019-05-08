@@ -273,7 +273,6 @@ router.get('/timeline/:list_id', (req, res) => {
 // ==========================TWITTER ENDPOINT========================================
 // POST /lists/create
 // Takes in the post from the Front end
-
 router.post('/create', (req, res) => {
   if (req.body.name) {
     let params = {
@@ -290,7 +289,6 @@ router.post('/create', (req, res) => {
 })
 
 // Creates the list on twitter
-
 function createList(params) {
   client.post("/lists/create", params, function (error, response) {
 
@@ -349,36 +347,40 @@ function addMembers(params) {
 
 // ==========================TWITTER ENDPOINT========================================
 // ============================== Not functional still===========================================
-// Not working still for some reason. Can only get Error 204 off twitter endpoint
-router.post('/members/destroy', (req, res) => {
-  const params = {
-    list_id: req.body.list_id,
-  }
-  destroyMember(params)
-});
+// router.post('/members/destroy', (req, res) => {
+//   const params = {
+//     list_id: req.body.list_id,
+//     user_id: req.body.user_id
+//   }
+//   destroyMember(params)
+//   res.status(200).json("user deleted from list")
+// });
 
-function destroyMember(params) {
-  // twitter api stuff here
-  client.post('/lists/members/destroy', params, function (error, response) {
-
-  })
-}
+// function destroyMember(params) {
+//   client.post('/lists/members/destroy', params, (error, response) => {
+//     if (error) {
+//       console.log(error)
+//     } else {
+//       console.log(response)
+//     }
+//   })
+// }
 
 
 // Delete a list with the twitter api
 // ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
-router.post('/destroy/:list_id', (req, res) => {
-  list_id = req.params.list_id;
-  // const params = {
-  //   list_id: req.body.twitter_list_id
-  // }
-  console.log("LIST ID", list_id);
-  destroyList(list_id);
+router.post('/destroy', (req, res) => {
+  // list_id = req.body.list_id;
+  const params = {
+    list_id: req.body.list_id
+  }
+  // console.log("LIST ID", list_id);
+  destroyList(params);
   res.status(200)
 })
 
-function destroyList(list_id) {
-  client.post('/lists/destroy', list_id, function (error, response) {
+function destroyList(params) {
+  client.post('/lists/destroy', params, function (error, response) {
     if (error) {
       console.log(error)
     } else {
@@ -407,6 +409,9 @@ router.post('/', (req, res) => {
     "last_level": 2,
     "no_of_results": 50
   }
+
+  // Post request from React to pass to DS
+
 
   //POST req to DS server
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
