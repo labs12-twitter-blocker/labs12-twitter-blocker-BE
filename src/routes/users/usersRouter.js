@@ -398,4 +398,24 @@ router.delete("/:twitter_id", async (req, res) => {
   }
 })
 
+// Block a user with twitter api
+// POST /users/blocks/create/:user_id
+router.post("/blocks/create", (req, res) => {
+  const params = {
+    user_id: req.body.user_id
+  }
+  res.status(200).json("User Blocked");
+  blockUser(params)
+})
+
+function blockUser(params) {
+  client.post('/blocks/create/', params, function (response, error) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(response)
+    }
+  })
+}
+
 module.exports = router;
