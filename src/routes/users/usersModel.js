@@ -90,23 +90,51 @@ function orderByUpVotes() {
   return db("app_users").orderBy("upvotes")
 }
 
+// function removeAllListFollowers(twitter_list_id) {
+//   return db("list_followers")
+//     .where("twitter_list_id", 'like', twitter_list_id)
+//     .del()
+//     .then(count => {
+//       console.log(count);
+//     });
+// }
+
 function removeAllListFollowers(twitter_list_id) {
-  return db("list_followers")
+  return new Promise(function(resolve, reject) {
+  if (resolve) {
+  db("list_followers")
     .where("twitter_list_id", 'like', twitter_list_id)
     .del()
-    .then(count => {
-      console.log(count);
-    });
-}
+    .returning('*')
+    resolve(resolve);
+  }
+  else {
+    reject(Error("It broke"));
+  }
+})};
+
+// function removeAllListMembers(twitter_list_id) {
+//   return db("list_members")
+//     .where("twitter_list_id", 'like', twitter_list_id)
+//     .del()
+//     .then(count => {
+//       console.log(count);
+//     });
+// }
 
 function removeAllListMembers(twitter_list_id) {
-  return db("list_members")
+  return new Promise(function(resolve, reject) {
+  if (resolve) {
+  db("list_members")
     .where("twitter_list_id", 'like', twitter_list_id)
     .del()
-    .then(count => {
-      console.log(count);
-    });
-}
+    .returning('*')
+    resolve(resolve);
+  }
+  else {
+    reject(Error("It broke"));
+  }
+})};
 
 function findListByTwitterListId(twitter_list_id) {
   return db('lists')
