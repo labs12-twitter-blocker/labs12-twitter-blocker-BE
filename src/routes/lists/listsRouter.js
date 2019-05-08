@@ -324,21 +324,21 @@ function addMembers(params) {
 // Unsubscribe from a list with the twitter api
 
 // ============================== Still needs to be built ===========================================
-router.post('/subscribers/destroy', (req, res) => {
-  const params = {
-    id: req.body.twitter_id
+// router.post('/subscribers/destroy', (req, res) => {
 
-  }
-  console.log(params);
+//    const id = req.params.list_id
 
-  unsubscribe(params)
-})
 
-function unsubscribe(params) {
-  client.post('lists/subscribers/destroy', params, function (error, response) {
-    // handle errors here
-  })
-}
+//   console.log(params);
+
+//   unsubscribe(params)
+// })
+
+// function unsubscribe(params) {
+//   client.post('lists/subscribers/destroy', params, function (error, response) {
+//     // handle errors here
+//   })
+// }
 
 // Delete a user of a list with the twitter api
 // POST /lists/members/destroy
@@ -361,16 +361,18 @@ function destroyMember(params) {
 
 // Delete a list with the twitter api
 // ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
-router.post('/destroy', (req, res) => {
-  const params = {
-    user_id: req.body.twitter_id,
-    list_id: req.body.twitter_list_id
-  }
-  destroyList(params);
+router.post('/destroy/:list_id', (req, res) => {
+  list_id = req.params.list_id;
+  // const params = {
+  //   list_id: req.body.twitter_list_id
+  // }
+  console.log("LIST ID", list_id);
+  destroyList(list_id);
+  res.status(200)
 })
 
-function destroyList(params) {
-  client.post('/lists/destroy', params, function (error, response) {
+function destroyList(list_id) {
+  client.post('/lists/destroy', list_id, function (error, response) {
     if (error) {
       console.log(error)
     } else {
@@ -378,6 +380,9 @@ function destroyList(params) {
     }
   })
 }
+
+// Build endpoint to take in post from react server to pass to ds endpoint
+
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
