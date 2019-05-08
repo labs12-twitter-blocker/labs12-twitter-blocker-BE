@@ -4,8 +4,8 @@ const cors = require('cors');
 const passport = require('passport');
 const morgan = require('morgan');
 const session = require('express-session');
-const cookieParser = require('cookie-parser')
-const cookieSession = require("cookie-session")
+// const cookieParser = require('cookie-parser')
+// const cookieSession = require("cookie-session")
 const KnexSessionStore = require('connect-session-knex')(session);
 const db = require('../data/db')
 
@@ -14,18 +14,13 @@ const store = new KnexSessionStore({
   "tablename": 'sessions'
 })
 
-const corsOptions = {
-  origin: process.env.FRONT_END_URL,
-  credentials: true,
-}
-
 require('dotenv').config();
 
 //All Server Middleware should be applied here
 module.exports = server => {
   server.use(express.json());
+  server.use(cors());
   server.use(helmet());
-  server.use(cors(corsOptions));
   server.use(morgan('tiny'));
   // server.use(cookieParser());
   server.use(passport.initialize());
