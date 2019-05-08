@@ -14,6 +14,8 @@ const store = new KnexSessionStore({
   "tablename": 'sessions'
 })
 
+
+
 const corsOptions = {
   origin: '*',
   credentials: true,
