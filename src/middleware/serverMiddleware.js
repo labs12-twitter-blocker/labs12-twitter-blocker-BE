@@ -15,6 +15,7 @@ const store = new KnexSessionStore({
 })
 let whitelist = [
   'http://localhost:3000',
+  "https://desolate-escarpment-65092.herokuapp.com/",
   'http://localhost:5000',
   'https://twitter-blocker.netlify.com/',
   "https://optimistic-payne-f1664e.netlify.com/",
