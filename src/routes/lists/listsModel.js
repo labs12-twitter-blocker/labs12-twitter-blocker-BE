@@ -20,6 +20,7 @@ module.exports = {
     updateList,
     deleteList,
     unfollowList,
+    updateListMembers
 };
 //   get lists/, /cool
 function get() {
@@ -141,6 +142,12 @@ function updateList(listId, list) {
     return db('lists as l')
     .where('l.list_id', listId)
     .update(list)
+}
+
+function updateListMembers(list_members_id, listMembers) {
+    returndb('list_members')
+    .where('list_members_id', list_members_id)
+    .update(listMembers)
 }
 
 function deleteList(listId) {
