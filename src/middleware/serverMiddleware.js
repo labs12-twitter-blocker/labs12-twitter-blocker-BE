@@ -17,6 +17,7 @@ let whitelist = [
   'http://localhost:3000',
   'http://localhost:5000',
   'https://twitter-blocker.netlify.com/',
+  "https://optimistic-payne-f1664e.netlify.com/",
   'https://twitter-block.herokuapp.com' ]
 
 const corsOptions = {
