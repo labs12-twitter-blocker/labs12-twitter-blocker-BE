@@ -36,7 +36,7 @@ module.exports = server => {
   server.use(passport.session());
   server.use(
     session({
-      //     secret: process.env.SESSION_SECRET,
+      secret: process.env.SESSION_SECRET,
       //     cookie: {
       //       maxAge: 24 * 60 * 60 * 100,
       //       // domain: process.env.BACK_END_URL
