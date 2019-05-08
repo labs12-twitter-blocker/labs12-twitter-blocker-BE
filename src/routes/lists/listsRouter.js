@@ -244,6 +244,7 @@ router.get('/points/block', (req, res) => {
     })
 });
 
+// ==========================TWITTER ENDPOINT========================================
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
@@ -269,9 +270,10 @@ router.get('/timeline/:list_id', (req, res) => {
 
 // POST /lists/ -
 
+// ==========================TWITTER ENDPOINT========================================
 // POST /lists/create
-
 // Takes in the post from the Front end
+
 router.post('/create', (req, res) => {
   if (req.body.name) {
     let params = {
@@ -287,7 +289,6 @@ router.post('/create', (req, res) => {
   }
 })
 
-
 // Creates the list on twitter
 
 function createList(params) {
@@ -297,6 +298,7 @@ function createList(params) {
   })
 }
 
+// ==========================TWITTER ENDPOINT========================================
 // Add a list of users to a list with the twitter api
 // POST lists/members/create_all
 
@@ -319,10 +321,11 @@ function addMembers(params) {
   })
 }
 
+
+// ==========================TWITTER ENDPOINT========================================
+
 // Subscribe to a list with the twitter api
-
 // Unsubscribe from a list with the twitter api
-
 // ============================== Still needs to be built ===========================================
 // router.post('/subscribers/destroy', (req, res) => {
 
@@ -343,6 +346,8 @@ function addMembers(params) {
 // Delete a user of a list with the twitter api
 // POST /lists/members/destroy
 
+
+// ==========================TWITTER ENDPOINT========================================
 // ============================== Not functional still===========================================
 // Not working still for some reason. Can only get Error 204 off twitter endpoint
 router.post('/members/destroy', (req, res) => {
@@ -358,6 +363,7 @@ function destroyMember(params) {
 
   })
 }
+
 
 // Delete a list with the twitter api
 // ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
@@ -380,6 +386,8 @@ function destroyList(list_id) {
     }
   })
 }
+
+
 
 // Build endpoint to take in post from react server to pass to ds endpoint
 

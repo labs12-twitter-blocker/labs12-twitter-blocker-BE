@@ -14,13 +14,18 @@ const store = new KnexSessionStore({
   "tablename": 'sessions'
 })
 
+const corsOptions = {
+  origin: process.env.FRONT_END_URL,
+  credentials: true,
+}
+
 require('dotenv').config();
 
 //All Server Middleware should be applied here
 module.exports = server => {
   server.use(express.json());
   server.use(helmet());
-  server.use(cors());
+  server.use(cors(corsOptions));
   server.use(morgan('tiny'));
   // server.use(cookieParser());
   server.use(passport.initialize());
