@@ -33,9 +33,8 @@ module.exports = server => {
   server.use(morgan());
   server.use(cookieParser());
   server.use(passport.initialize());
-  server.use(passport.session());
-  server.use(
-    session({
+  server.use(passport.session(
+    {
       secret: process.env.SESSION_SECRET,
       cookie: {
         maxAge: 24 * 60 * 60 * 100,
@@ -44,6 +43,6 @@ module.exports = server => {
       resave: true,
       saveUninitialized: true,
       store: store
-    })
-  );
+    }
+  ));
 };

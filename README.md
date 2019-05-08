@@ -163,6 +163,3 @@ Creates new list for authenticated user
 | Verified                  | verified                | verified         | bool      |
 
 
-
-Lets rebuild this
-Added https
