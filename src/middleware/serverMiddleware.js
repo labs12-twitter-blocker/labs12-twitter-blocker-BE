@@ -34,16 +34,16 @@ module.exports = server => {
   server.use(cookieParser());
   server.use(passport.initialize());
   server.use(passport.session());
-  // server.use(
-  //   session({
-  //     secret: process.env.SESSION_SECRET,
-  //     cookie: {
-  //       maxAge: 24 * 60 * 60 * 100,
-  //       // domain: process.env.BACK_END_URL
-  //     },
-  //     resave: true,
-  //     saveUninitialized: true,
-  //     store: store
-  //   })
-  // );
+  server.use(
+    session({
+      //     secret: process.env.SESSION_SECRET,
+      //     cookie: {
+      //       maxAge: 24 * 60 * 60 * 100,
+      //       // domain: process.env.BACK_END_URL
+      //     },
+      //     resave: true,
+      //     saveUninitialized: true,
+      //     store: store
+    })
+  );
 };
