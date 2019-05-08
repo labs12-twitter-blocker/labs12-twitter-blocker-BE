@@ -75,13 +75,20 @@ passport.deserializeUser(function (obj, callback) {
 
 // when login is successful, retrieve user info
 router.get("/twitter/login/success", (req, res) => {
-  if (req.session.passport.user) {
-    console.log(req.session.passport.user)
-    res.json({
-      success: true,
-      user: req.session.passport.user
-    });
+  function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
   }
+  setCookie(test, 123, 1)
+  // if (req.session.passport.user) {
+  //   console.log(req.session.passport.user)
+  //   res.json({
+  //     success: true,
+  //     user: req.session.passport.user
+  //   });
+  // }
 });
 
 
