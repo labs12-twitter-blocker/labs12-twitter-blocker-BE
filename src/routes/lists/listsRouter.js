@@ -461,6 +461,24 @@ router.put('/:list_id', (req, res) => {
     })
 })
 
+// PUT /lists/:list_members_id
+// Update List members by the list_id
+router.put('/:list_members_id', (req, res) => {
+  const listMembersId = req.params.list_id
+  const listMembers = req.body
+  if (!listId) {
+    res.status(404).json({ error: 'The list with the specified ID does not exist.' })
+    return;
+  }
+  data.updateListMembers(listId, list)
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'There was an error updating the list.' })
+    })
+})
+
 /////////////////////////////////////////////////////////////////////
 //////////////////////DELETE/////////////////////////////////////////
 
