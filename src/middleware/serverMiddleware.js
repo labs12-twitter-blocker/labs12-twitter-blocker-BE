@@ -13,23 +13,11 @@ const store = new KnexSessionStore({
   "knex": db,
   "tablename": 'sessions'
 })
-let whitelist = [
-  'http://localhost:3000',
-  "https://desolate-escarpment-65092.herokuapp.com/",
-  'http://localhost:5000',
-  'https://twitter-blocker.netlify.com/',
-  "https://optimistic-payne-f1664e.netlify.com/",
-  'https://twitter-block.herokuapp.com' ]
 
 const corsOptions = {
+  origin: '*',
   credentials: true,
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  }
+  allowedHeaders: [ 'Origin', 'X-Requested-With', 'contentType', 'Content-Type', 'Accept', 'Authorization' ],
 }
 
 
