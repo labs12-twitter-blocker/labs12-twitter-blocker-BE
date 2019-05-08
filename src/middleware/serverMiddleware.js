@@ -26,8 +26,8 @@ require('dotenv').config();
 //All Server Middleware should be applied here
 module.exports = server => {
   server.use(express.json());
+  server.use(cors());
   server.use(helmet());
-  server.use(cors(corsOptions));
   server.use(morgan());
   server.use(cookieParser());
   server.use(passport.initialize());
