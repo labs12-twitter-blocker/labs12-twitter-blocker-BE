@@ -75,8 +75,8 @@ passport.deserializeUser(function (obj, callback) {
 
 // when login is successful, retrieve user info
 router.get("/twitter/login/success", (req, res) => {
-  console.log(req.session.passport.user)
   if (req.session.passport.user) {
+    console.log(req.session.passport.user)
     res.json({
       success: true,
       user: req.session.passport.user
