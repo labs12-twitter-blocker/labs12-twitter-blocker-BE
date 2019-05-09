@@ -18,6 +18,7 @@ const listsRouter = require("./routes/lists/listsRouter.js");
 const tweetsRouter = require("./routes/tweets/tweetsRouter.js");
 const usersRouter = require("./routes/users/usersRouter.js");
 const votesRouter = require("./routes/votes/votesRouter.js");
+const authRouter = require('./routes/auth/authRouter.js')
 
 const helmet = require('helmet');
 const morgan = require('morgan');
@@ -34,7 +35,7 @@ const corsOptions = {
   origin: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
-  exposedHeaders: ['x-auth-token']
+  exposedHeaders: [ 'x-auth-token' ]
 };
 
 //rest API requirements
@@ -66,13 +67,13 @@ server.use(
 // passport.deserializeUser(user.deserialize);
 
 
-let createToken = function(auth) {
+let createToken = function (auth) {
   return jwt.sign({
     id: auth.id
   }, process.env.SESSION_SECRET,
-  {
-    expiresIn: 24 * 60 * 60 * 100
-  });
+    {
+      expiresIn: 24 * 60 * 60 * 100
+    });
 };
 
 let generateToken = function (req, res, next) {
@@ -86,7 +87,7 @@ let sendToken = function (req, res) {
 };
 
 server.route('/auth/twitter/reverse')
-  .post(function(req, res) {
+  .post(function (req, res) {
     request.post({
       url: 'https://api.twitter.com/oauth/request_token',
       oauth: {
@@ -102,7 +103,7 @@ server.route('/auth/twitter/reverse')
       let jsonStr = '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}';
       res.send(JSON.parse(jsonStr));
     });
-});
+  });
 
 server.route('/auth/twitter')
   .post((req, res, next) => {
@@ -119,44 +120,44 @@ server.route('/auth/twitter')
         return res.send(500, { message: err.message });
       }
 
-      console.log("**************************/auth/twitter body:",body);
+      console.log("**************************/auth/twitter body:", body);
       const bodyString = '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}';
       const parsedBody = JSON.parse(bodyString);
 
-      req.body['oauth_token'] = parsedBody.oauth_token;
-      req.body['oauth_token_secret'] = parsedBody.oauth_token_secret;
-      req.body['user_id'] = parsedBody.user_id;
+      req.body[ 'oauth_token' ] = parsedBody.oauth_token;
+      req.body[ 'oauth_token_secret' ] = parsedBody.oauth_token_secret;
+      req.body[ 'user_id' ] = parsedBody.user_id;
 
       next();
     });
-  }, passport.authenticate('twitter-token', {session: false}), function(req, res, next) {
-      if (!req.user) {
-        return res.send(401, 'User Not Authenticated');
-      }
+  }, passport.authenticate('twitter-token', { session: false }), function (req, res, next) {
+    if (!req.user) {
+      return res.send(401, 'User Not Authenticated');
+    }
 
-      // prepare token for API
-      req.auth = {
-        id: req.user.id
-      };
+    // prepare token for API
+    req.auth = {
+      id: req.user.id
+    };
 
-      return next();
-}, generateToken, sendToken);
+    return next();
+  }, generateToken, sendToken);
 
 
 //token handling middleware
 let authenticate = expressJwt({
   secret: process.env.SESSION_SECRET,
   requestProperty: 'auth',
-  getToken: function(req) {
-    if (req.headers['x-auth-token']) {
-      return req.headers['x-auth-token'];
+  getToken: function (req) {
+    if (req.headers[ 'x-auth-token' ]) {
+      return req.headers[ 'x-auth-token' ];
     }
     return null;
   }
 });
 
-var getCurrentUser = function(req, res, next) {
-  Users.findById(req.auth.id, function(err, user) {
+var getCurrentUser = function (req, res, next) {
+  Users.findById(req.auth.id, function (err, user) {
     if (err) {
       next(err);
     } else {
@@ -169,8 +170,8 @@ var getCurrentUser = function(req, res, next) {
 let getOne = function (req, res) {
   var user = req.user.toObject();
 
-  delete user['twitterProvider'];
-  delete user['__v'];
+  delete user[ 'twitterProvider' ];
+  delete user[ '__v' ];
 
   res.json(user);
 };
@@ -187,15 +188,8 @@ server.use("/lists", listsRouter);
 server.use("/tweets", tweetsRouter);
 server.use("/users", usersRouter);
 server.use("/votes", votesRouter);
-server.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-server.get('/welcome', (req, res) => {
-  res.send('You are logged in');
-});
-
-
-// server.use('/', router);
+server.use('/', router);
+server.use("/auth", authRouter)
 process.on('unhandledRejection', error => {
   // Will print "unhandledRejection err is not defined"
   console.log('unhandledRejection', error);
