@@ -105,7 +105,7 @@ function getFollowByOrder() {
     return db('lists')
     .select('*')
     .where('is_block_list', false)
-    .orderByRaw('(list_upvotes - list_downvotes) desc')
+    .orderBy('list_points', 'desc')
 }
 
 // get /lists/points/block block lists in order of points (upvotes-downvotes)
@@ -113,7 +113,7 @@ function getBlockByOrder() {
     return db('lists')
     .select('*')
     .where('is_block_list', true)
-    .orderByRaw('(list_upvotes - list_downvotes) desc')
+    .orderBy('list_points', 'desc')
 }
 
 // get /timeline/:list_id - returns timeline of list
