@@ -5,7 +5,7 @@ const passport = require('passport');
 const Strategy = require('passport-twitter').Strategy;
 const Users = require("./users/usersModel");
 const axios = require("axios")
-
+const db = require('../routes/users/usersModel')
 // url for testing
 const url = process.env.BACKEND_URL;
 passport.use(
@@ -75,14 +75,16 @@ passport.deserializeUser(function (user, callback) {
 
 // when login is successful, retrieve user info
 router.get("/twitter/login/success", (req, res) => {
-
-  if (req.session.passport.user) {
-    console.log(req.session.passport.user)
-    res.json({
-      success: true,
-      user: req.session.passport.user
-    });
-  }
+  const sessions = db.getSessionUser()
+  console.log("SESSIONS+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", sessions, "=========================================================================================")
+  res.status(200).json("working");
+  // if (req.session.passport.user) {
+  //   console.log(req.session.passport.user)
+  //   res.json({
+  //     success: true,
+  //     user: req.session.passport.user
+  //   });
+  // }
 });
 
 

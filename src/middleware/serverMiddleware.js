@@ -16,6 +16,7 @@ const store = new KnexSessionStore({
 
 
 
+
 const corsOptions = {
   origin: '*',
   credentials: true,
@@ -39,8 +40,7 @@ module.exports = server => {
       secret: process.env.SESSION_SECRET,
       cookie: {
         maxAge: 24 * 60 * 60 * 100,
-        domain: "https://dstarlingtech.netlify.com/", "/"
-        //       // domain: process.env.BACK_END_URL
+        domain: ".dstarlingtech."
       },
       resave: true,
       saveUninitialized: true,

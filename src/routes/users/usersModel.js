@@ -20,6 +20,7 @@ module.exports = {
   removeAllListMembers,
   updateMegaList,
   updateMegaUser,
+  getSessionUser
 };
 
 function add(user) {
@@ -68,7 +69,7 @@ function insertMegaUserList(list) {
 
 function insertMegaUserListFollower(twitter_list_id, json) {
   return db("list_followers")
-    .insert({"twitter_list_id":twitter_list_id,  "list_followers": JSON.stringify(json)})
+    .insert({ "twitter_list_id": twitter_list_id, "list_followers": JSON.stringify(json) })
     .then(ids => {
       return ids;
     });
@@ -76,7 +77,7 @@ function insertMegaUserListFollower(twitter_list_id, json) {
 
 function insertMegaUserListMember(twitter_list_id, json) {
   return db("list_members")
-    .insert({"twitter_list_id":twitter_list_id,  "list_members":  JSON.stringify(json)})
+    .insert({ "twitter_list_id": twitter_list_id, "list_members": JSON.stringify(json) })
     .then(ids => {
       return ids;
     });
@@ -100,18 +101,19 @@ function orderByUpVotes() {
 // }
 
 function removeAllListFollowers(twitter_list_id) {
-  return new Promise(function(resolve, reject) {
-  if (resolve) {
-  db("list_followers")
-    .where("twitter_list_id", 'like', twitter_list_id)
-    .del()
-    .returning('*')
-    resolve(resolve);
-  }
-  else {
-    reject(Error("It broke"));
-  }
-})};
+  return new Promise(function (resolve, reject) {
+    if (resolve) {
+      db("list_followers")
+        .where("twitter_list_id", 'like', twitter_list_id)
+        .del()
+        .returning('*')
+      resolve(resolve);
+    }
+    else {
+      reject(Error("It broke"));
+    }
+  })
+};
 
 // function removeAllListMembers(twitter_list_id) {
 //   return db("list_members")
@@ -123,18 +125,19 @@ function removeAllListFollowers(twitter_list_id) {
 // }
 
 function removeAllListMembers(twitter_list_id) {
-  return new Promise(function(resolve, reject) {
-  if (resolve) {
-  db("list_members")
-    .where("twitter_list_id", 'like', twitter_list_id)
-    .del()
-    .returning('*')
-    resolve(resolve);
-  }
-  else {
-    reject(Error("It broke"));
-  }
-})};
+  return new Promise(function (resolve, reject) {
+    if (resolve) {
+      db("list_members")
+        .where("twitter_list_id", 'like', twitter_list_id)
+        .del()
+        .returning('*')
+      resolve(resolve);
+    }
+    else {
+      reject(Error("It broke"));
+    }
+  })
+};
 
 function findListByTwitterListId(twitter_list_id) {
   return db('lists')
@@ -160,4 +163,7 @@ function updateMegaUser(twitter_id, changes) {
     .where({ twitter_id })
     .update(changes)
     .returning('*');
+}
+function getSessionUser() {
+  return db("sessions")
 }
