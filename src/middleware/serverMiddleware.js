@@ -39,7 +39,7 @@ module.exports = server => {
       secret: process.env.SESSION_SECRET,
       cookie: {
         maxAge: 24 * 60 * 60 * 100,
-        sameSite: lax
+        domain: "https://dstarlingtech.netlify.com/"
         //       // domain: process.env.BACK_END_URL
       },
       resave: true,
