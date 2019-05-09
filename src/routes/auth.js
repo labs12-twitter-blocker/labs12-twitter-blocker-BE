@@ -60,8 +60,8 @@ passport.use(
             // res.status(400).json(error)
           })
         }
-        return callback(null, user);
       })
+      return callback(null, user);
     }));
 
 passport.serializeUser(function (user, callback) {
@@ -75,19 +75,14 @@ passport.deserializeUser(function (user, callback) {
 
 // when login is successful, retrieve user info
 router.get("/twitter/login/success", (req, res) => {
-  const sessions = db.getSessionUser()
-  console.log("SESSIONS+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", sessions, "=========================================================================================")
-  res.status(200).json("working");
-  // if (req.session.passport.user) {
-  //   console.log(req.session.passport.user)
-  //   res.json({
-  //     success: true,
-  //     user: req.session.passport.user
-  //   });
-  // }
+  if (req.session.passport.user) {
+    console.log(req.session.passport.user)
+    res.json({
+      success: true,
+      user: req.session.passport.user
+    });
+  }
 });
-
-
 
 router.get('/twitter/login', passport.authenticate('twitter'));
 
