@@ -40,11 +40,10 @@ module.exports = server => {
       secret: process.env.SESSION_SECRET,
       cookie: {
         maxAge: 24 * 60 * 60 * 100,
-        domain: ".dstarlingtech."
       },
       resave: true,
       saveUninitialized: true,
       store: store
-    })
+    }),
   );
 };
