@@ -8,6 +8,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const request = require('request');
 let passportConfig = require('./passport');
+Users = require("./routes/users/usersModel");
 passportConfig();
 
 const server = express();
@@ -67,6 +68,7 @@ server.use(
 
 
 let createToken = function(auth) {
+  console.log("*********************************************Create Token")
   return jwt.sign({
     id: auth.id
   }, process.env.SESSION_SECRET,
@@ -76,6 +78,7 @@ let createToken = function(auth) {
 };
 
 let generateToken = function (req, res, next) {
+  console.log("*********************************************Generate Token")
   req.token = createToken(req.auth);
   return next();
 };
@@ -119,7 +122,7 @@ server.route('/auth/twitter')
         return res.send(500, { message: err.message });
       }
 
-      console.log("**************************/auth/twitter body:",body);
+      // console.log("**************************/auth/twitter body:",body);
       const bodyString = '{ "' + body.replace(/&/g, '", "').replace(/=/g, '": "') + '"}';
       const parsedBody = JSON.parse(bodyString);
 
@@ -155,30 +158,23 @@ let authenticate = expressJwt({
   }
 });
 
-var getCurrentUser = function(req, res, next) {
-  Users.findById(req.auth.id, function(err, user) {
-    if (err) {
-      next(err);
-    } else {
+let getCurrentUser = function(req, res, next) {
+  Users.findById(req.auth.id).then(user => {
       req.user = user;
       next();
-    }
-  });
+  }).catch(error => {
+      next(error);
+  })
 };
 
 let getOne = function (req, res) {
-  var user = req.user.toObject();
-
+  let user = req.user;
   delete user['twitterProvider'];
   delete user['__v'];
-
   res.json(user);
 };
 
-router.route('/auth/me').get(authenticate, getCurrentUser, getOne);
-
-
-
+server.route('/auth/me').get(authenticate, getCurrentUser, getOne);
 
 
 // server.use('/auth', authRouter);
