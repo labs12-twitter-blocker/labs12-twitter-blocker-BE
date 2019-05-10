@@ -1,6 +1,7 @@
 const router = require('express').Router()
 const data = require('./listsModel')
 const axios = require('axios')
+const User = require('../users/usersModel')
 let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -396,42 +397,45 @@ function destroyList(params) {
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', (req, res) => {
+
   const userInput = req.body
-  const user = req.user.screen_name
-  const key = client.access_token_key
-  const secret = client.access_token_secret
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  const user = userInput.original_user
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER", user)
+  const token = userInput.token
+  let secret = "CioCgHCvIXsoXs9rXn9W8XVu6s5fFPUqLdfoOZTDfPlGt"
   let params = {
     "original_user": user,
-    "TWITTER_ACCESS_TOKEN": key,
+    "TWITTER_ACCESS_TOKEN": token,
     "TWITTER_ACCESS_TOKEN_SECRET": secret,
-    "search_users": userInput,
+    "search_users": userInput.searchUsers,
     "return_limit": 20,
     "last_level": 2,
     "no_of_results": 50
   }
+  res.status(200).json(params)
 
   // Post request from React to pass to DS
 
-
   //POST req to DS server
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
-    .then(response => {
-      res.status(200).json(response)
-      const list = response.data.ranked_results
-      if (!list) {
-        res.status(404).json({ error: 'No lists returned.' })
-      }
-      data.insertList(list)
-        .then(response => {
-          res.status(201).json(response)
-        })
-        .catch(err => {
-          res.status(500).json({ error: 'There was an error adding the list.' })
-        })
-    })
-    .catch(err => {
-      res.status(500).json({ error: 'There was an error creating the list.' })
-    })
+  // axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
+  //   .then(response => {
+  //     res.status(200).json(response)
+  //     const list = response.data.ranked_results
+  //     if (!list) {
+  //       res.status(404).json({ error: 'No lists returned.' })
+  //     }
+  //     data.insertList(list)
+  //       .then(response => {
+  //         res.status(201).json(response)
+  //       })
+  //       .catch(err => {
+  //         res.status(500).json({ error: 'There was an error adding the list.' })
+  //       })
+  //   })
+  //   .catch(err => {
+  //     res.status(500).json({ error: 'There was an error creating the list.' })
+  //   })
 })
 
 
