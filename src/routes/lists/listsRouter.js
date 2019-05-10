@@ -302,17 +302,11 @@ router.post('/create', async (req, res) => {
 
     // Creates the list on twitter
     client.post("/lists/create", params, function (error, response) {
-      if (error) {
-        console.log("________________________________________client.post(listscreate error__________________________-", error)
-        return error
-      } else {
-        (response => {
-          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
-          // response.json(response)
-          response.status(200).json({ message: "List Created", "response": response })
-        })
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
 
-      }})
+       // This still needs error handling	
+      res.status(200).json({ message: "List Created", "response": response })	
+    })
   } else {
     res.status(400).json({ message: "Please enter a name for your list" })
   }
