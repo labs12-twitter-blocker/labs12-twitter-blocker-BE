@@ -36,8 +36,20 @@ const corsOptions = {
   origin: true,
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
-  exposedHeaders: [ 'x-auth-token' ]
+  exposedHeaders: [ 'x-auth-token' ],
+
+
+
+
 };
+//CORS middleware
+var allowCrossDomain = function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+
+  next();
+}
 
 //rest API requirements
 server.use(bodyParser.urlencoded({
@@ -47,6 +59,7 @@ server.use(bodyParser.json());
 
 //All Server Middleware should be applied here
 server.use(cors(corsOptions));
+server.use(allowCrossDomain)
 server.use(helmet());
 server.use(morgan('tiny'));
 server.use(passport.initialize());
