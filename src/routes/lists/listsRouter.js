@@ -302,17 +302,11 @@ router.post('/create', async (req, res) => {
 
     // Creates the list on twitter
     client.post("/lists/create", params, function (error, response) {
-      if (error) {
-        console.log("________________________________________client.post(listscreate error__________________________-", error)
-        return error
-      } else {
-        (response => {
-          console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
-          // response.json(response)
-          response.status(200).json({ message: "List Created", "response": response })
-        })
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
 
-      }})
+       // This still needs error handling	
+      res.status(200).json({ message: "List Created", "response": response })	
+    })
   } else {
     res.status(400).json({ message: "Please enter a name for your list" })
   }
@@ -421,42 +415,51 @@ router.post('/', async (req, res) => {
   }
 
   //POST req to DS server
-  console.log("_______________DS POST STARTING____________")
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params, {
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-  .then(response => {
-    console.log("_______________DS POST .THEN____________")
+  dsSendMembers(params, userInput)
 
-      // find list by name
-      // then push list to it with /lists/create_all
-      const listUsers = response.data.ranked_results
-      console.log("________________________________________USER INPUT________________________________-", userInput)
-      listUsersString = listUsers.toString();
-      console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
-
-      let params = { list_id: userInput.id, screen_name: listUsersString}
-      
-
-      Users.findById(userInput.user_id)
-      .then(newUser => {
-
-        console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
-        let client = new Twitter({
-          consumer_key: process.env.TWITTER_CONSUMER_KEY,
-          consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-          access_token_key: newUser.token,
-          access_token_secret: newUser.token_secret,
-        })
-        addMembers(params, client)
-            
-        res.status(200).json(response.data.ranked_results)
-      } )
-
-    })
+  res.status(202).json({message: "making that list"})
 })
+
+
+//POST req to DS server
+function dsSendMembers(dsParams, userInput) {
+  console.log("_______________DS POST STARTING____________")
+  
+    axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec_test', dsParams, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log("_______________DS POST .THEN____________")
+  
+        // find list by name
+        // then push list to it with /lists/create_all
+        const listUsers = response.data.ranked_results
+        console.log("________________________________________USER INPUT________________________________-", userInput)
+        listUsersString = listUsers.toString();
+        console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
+  
+        let params = { list_id: userInput.id, screen_name: listUsersString}
+        
+  
+        Users.findById(userInput.user_id)
+        .then(newUser => {
+  
+          console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+          let client = new Twitter({
+            consumer_key: process.env.TWITTER_CONSUMER_KEY,
+            consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+            access_token_key: newUser.token,
+            access_token_secret: newUser.token_secret,
+          })
+          addMembers(params, client)
+              
+          // res.status(200).json(response.data.ranked_results)
+        } )
+  
+      })
+}
 
 
 // ==========================TWITTER ENDPOINT========================================

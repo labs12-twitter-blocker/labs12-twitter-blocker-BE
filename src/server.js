@@ -33,13 +33,13 @@ const store = new KnexSessionStore({
 })
 
 //CORS middleware
-let allowCrossDomain = function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
+// let allowCrossDomain = function (req, res, next) {
+//   res.header('Access-Control-Allow-Origin', "*");
+//   res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+//   res.header('Access-Control-Allow-Headers', 'Content-Type');
 
-  next();
-}
+//   next();
+// }
 const corsOptions = {
   origin: '*',
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
@@ -55,7 +55,7 @@ server.use(bodyParser.json());
 
 //All Server Middleware should be applied here
 server.use(cors(corsOptions));
-server.use(allowCrossDomain);
+// server.use(allowCrossDomain);
 server.use(helmet());
 server.use(morgan('tiny'));
 server.use(passport.initialize());
