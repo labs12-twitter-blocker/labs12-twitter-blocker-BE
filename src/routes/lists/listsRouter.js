@@ -425,7 +425,7 @@ router.post('/', async (req, res) => {
 function dsSendMembers(dsParams, userInput) {
   console.log("_______________DS POST STARTING____________")
   
-    axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec_test', dsParams, {
+    axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', dsParams, {
       headers: {
         'Content-type': 'application/json'
       }
