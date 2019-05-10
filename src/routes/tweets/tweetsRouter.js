@@ -1,13 +1,9 @@
 const router = require('express').Router();
 const Twitter = require('twitter');
+const User = require('../users/usersModel')
 require('dotenv').config();
 
-const client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
-});
+
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
@@ -31,10 +27,11 @@ const client = new Twitter({
 
 // Send a new Tweet
 router.post('/', (req, res) => {
-  const status = req.body;
+  const status = req.body.status;
+  const id = req.body.id
   res.status(200).json({ message: 'tweet on its way, stop it if you can.' });
   slowTweet = setTimeout(function () {
-    postTweet(status)
+    postTweet(status, id)
   }, 60 * 1000)
 });
 
@@ -43,13 +40,25 @@ router.post('/cancel', (req, res) => {
   res.status(200).json({ message: 'tweet canceled.' });
 });
 
-function postTweet(status) {
+function postTweet(status, id) {
+  const client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+    access_token_secret: getSecret(id)
+    //process.env.TWITTER_ACCESS_TOKEN_SECRET
+  })
+
+  const getSecret = (id) => {
+    const sec = User.findById(id);
+    return sec
+  }
+
   client
     .post('statuses/update', status)
     .catch(function (error) {
     });
 }
-
 /////////////////////////////////////////////////////////////////////
 //////////////////////PUT////////////////////////////////////////////
 

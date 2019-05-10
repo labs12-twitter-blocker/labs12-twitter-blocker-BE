@@ -1,13 +1,14 @@
 const router = require('express').Router()
 const data = require('./listsModel')
 const axios = require('axios')
+require('dotenv').config()
 const User = require('../users/usersModel')
 let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
+  // access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
+  // access_token_secret: process.env.TWITTER_ACCESS_TOKEN_SECRET
 })
 /////////////////////////////////////////////////////////////////////
 //////////////////////GET////////////////////////////////////////////
@@ -274,51 +275,44 @@ router.get('/timeline/:list_id', (req, res) => {
 // ==========================TWITTER ENDPOINT========================================
 // POST /lists/create
 // Takes in the post from the Front end
-router.post('/create', (req, res) => {
+router.post('/create', async (req, res) => {
+
+  const userInput = req.body
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  const user = userInput.original_user
+  const id = userInput.user_id
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
+  const newUser = await Users.findById(id)
+  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+
+  let client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: newUser.token,
+    access_token_secret: newUser.token_secret,
+  })
   if (req.body.name) {
     let params = {
       name: req.body.name,
       mode: req.body.mode,
       description: req.body.description
     }
-    // Executes the function to create the list on twitter
-    createList(params);
+
+    // Creates the list on twitter
+    client.post("/lists/create", params, function (error, response) {
+
+
+      // This still needs error handling
+    })
+
     res.status(200).json({ message: "List Created" })
   } else {
     res.status(400).json({ message: "Please enter a name for your list" })
   }
 })
 
-// Creates the list on twitter
-function createList(params) {
-  client.post("/lists/create", params, function (error, response) {
 
-    // This still needs error handling
-  })
-}
-
-// ==========================TWITTER ENDPOINT========================================
-// Add a list of users to a list with the twitter api
-// POST lists/members/create_all
-
-router.post('/members/create_all', (req, res) => {
-  const params = {
-    list_id: req.body.list_id,
-    screen_name: req.body.screen_name
-  }
-  addMembers(params);
-  res.status(200);
-})
-
-function addMembers(params) {
-  client.post('/lists/members/create_all', params, function (error, response) {
-    if (error) {
-      return error
-    } else {
-      return response
-    }
-  })
-}
 
 
 // ==========================TWITTER ENDPOINT========================================
@@ -396,68 +390,105 @@ function destroyList(params) {
 
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
-router.post('/', (req, res) => {
-
+router.post('/', async (req, res) => {
   const userInput = req.body
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const user = userInput.original_user
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER", user)
-  const token = userInput.token
-  let secret = "CioCgHCvIXsoXs9rXn9W8XVu6s5fFPUqLdfoOZTDfPlGt"
-  // let params = {
-  //   "original_user": user,
-  //   "TWITTER_ACCESS_TOKEN": token,
-  //   "TWITTER_ACCESS_TOKEN_SECRET": secret,
-  //   "search_users": userInput.searchUsers,
-  //   "return_limit": 20,
-  //   "last_level": 2,
-  //   "no_of_results": 50
-  // }
-  let params = {
-    original_user: "dstar3248",
-    TWITTER_ACCESS_TOKEN: "802197601592508416-mN7lSceRwVsDKovXaEYu7toIKWxgfQS",
-    TWITTER_ACCESS_TOKEN_SECRET: "lNKFxBGJL9MrCOYP9BrAeuXLCy1Re8ZAZjMdBkz6QatIb",
-    search_users: [
-      "austen",
-      "paulg",
-      "justinkhan",
-      "tommycollison",
-      "lambdaschool"
-    ],
-    return_limit: 20,
-    last_level: 2,
-    no_of_results: 50
+  // console.log("REQ BODY!!!!!!!!!!!!!!!!", req.body)
+
+  const createdList = await data.getByIdUser(req.body.user_id, req.body.name)
+  console.log("CREATED LIST", createdList.twitter_list_id);
+  // listId = createdList.
+
+  const newList = {
+    "list_name": req.body.name,
+    "twitter_id": req.body.user_id
   }
-  // console.log("PARAMS++++++++++++++++++++++++++++++++++++++++", params)
-  // postToDS(params)
+  console.log("NEW LIST", newList)
+
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  const user = userInput.original_user
+  const id = userInput.user_id
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
+  const newUser = await Users.findById(id)
+  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+
+  let params = {
+    "original_user": user,
+    "TWITTER_ACCESS_TOKEN": newUser.token,
+    "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
+    "search_users": userInput.search_users,
+    "return_limit": 20,
+    "last_level": 2,
+    "no_of_results": 50
+  }
+
   // Post request from React to pass to DS
   //POST req to DS server
   // console.log(params, "HERE")
+  // const postToDS = (params) => {
+
+  console.log("NEW LIST", newList)
+
   axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params, {
     headers: {
       'Content-type': 'application/json'
     }
   })
-    .then(response => {
-      console.log("DS RESPONSE DATA+++++++++++++++++++++++++++++++", response.data);
 
-      res.status(200).json(response)
-      const list = res.data.ranked_results
-      if (!list) {
-        res.status(404).json({ error: 'No lists returned.' })
-      }
-      data.insertList(list)
-        .then(res => {
-          res.status(201).json(response)
-        })
-        .catch(err => {
-          res.status(500).json({ error: 'There was an error adding the list.', err })
-        })
-    })
-    .catch(err => {
-      res.status(500).json({ error: 'There was an error creating the list.', err })
+    .then(response => {
+      // console.log("DS RESPONSE DATA+++++++++++++++++++++++++++++++", response.data.ranked_results);
+
+      res.status(200).json(response.data.ranked_results)
+      // find list by name
+      // then push list to it with /lists/create_all
+      const listUsers = response.data.ranked_results
+      console.log("________________________________________LIST________________________________-", listUsers)
+
+      // if (!list) {
+      // res.status(404).json({ error: 'No lists returned.' })
+      // }
+      // const newMembers = {
+      // list_id: ,
+      // screen_name: listUsers
+      // }
+      data.insertList(newList)
+      // addMembers(newMembers)
+
+      //     .then(res => {
+      //       res.status(201).json(res)
+      //     })
+      //     .catch(err => {
+      //       res.status(500).json({ error: 'There was an error adding the list.', err })
+      //     })
+      // })
+      // .catch(err => {
+      //   res.status(500).json({ error: 'There was an error creating the list.', err })
+      // })
     })
 })
+
+
+// ==========================TWITTER ENDPOINT========================================
+// Add a list of users to a list with the twitter api
+// POST lists/members/create_all
+
+// router.post('/members/create_all', (req, res) => {
+//   const params = {
+//     list_id: req.body.list_id,
+//     screen_name: req.body.screen_name
+//   }
+//   addMembers(params);
+//   res.status(200);
+// })
+
+function addMembers(params) {
+  client.post('/lists/members/create_all', params, function (error, response) {
+    if (error) {
+      return error
+    } else {
+      return response
+    }
+  })
+}
 
 
 // POST /lists/:list_id/follow/:user_id
