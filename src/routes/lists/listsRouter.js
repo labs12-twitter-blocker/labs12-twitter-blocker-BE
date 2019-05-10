@@ -399,43 +399,64 @@ function destroyList(params) {
 router.post('/', (req, res) => {
 
   const userInput = req.body
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
   const user = userInput.original_user
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER", user)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER", user)
   const token = userInput.token
   let secret = "CioCgHCvIXsoXs9rXn9W8XVu6s5fFPUqLdfoOZTDfPlGt"
+  // let params = {
+  //   "original_user": user,
+  //   "TWITTER_ACCESS_TOKEN": token,
+  //   "TWITTER_ACCESS_TOKEN_SECRET": secret,
+  //   "search_users": userInput.searchUsers,
+  //   "return_limit": 20,
+  //   "last_level": 2,
+  //   "no_of_results": 50
+  // }
   let params = {
-    "original_user": user,
-    "TWITTER_ACCESS_TOKEN": token,
-    "TWITTER_ACCESS_TOKEN_SECRET": secret,
-    "search_users": userInput.searchUsers,
-    "return_limit": 20,
-    "last_level": 2,
-    "no_of_results": 50
+    original_user: "dstar3248",
+    TWITTER_ACCESS_TOKEN: "802197601592508416-mN7lSceRwVsDKovXaEYu7toIKWxgfQS",
+    TWITTER_ACCESS_TOKEN_SECRET: "lNKFxBGJL9MrCOYP9BrAeuXLCy1Re8ZAZjMdBkz6QatIb",
+    search_users: [
+      "austen",
+      "paulg",
+      "justinkhan",
+      "tommycollison",
+      "lambdaschool"
+    ],
+    return_limit: 20,
+    last_level: 2,
+    no_of_results: 50
   }
-  res.status(200).json(params)
-
+  // console.log("PARAMS++++++++++++++++++++++++++++++++++++++++", params)
+  // postToDS(params)
   // Post request from React to pass to DS
-
   //POST req to DS server
-  // axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params)
-  //   .then(response => {
-  //     res.status(200).json(response)
-  //     const list = response.data.ranked_results
-  //     if (!list) {
-  //       res.status(404).json({ error: 'No lists returned.' })
-  //     }
-  //     data.insertList(list)
-  //       .then(response => {
-  //         res.status(201).json(response)
-  //       })
-  //       .catch(err => {
-  //         res.status(500).json({ error: 'There was an error adding the list.' })
-  //       })
-  //   })
-  //   .catch(err => {
-  //     res.status(500).json({ error: 'There was an error creating the list.' })
-  //   })
+  // console.log(params, "HERE")
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params, {
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
+    .then(response => {
+      console.log("DS RESPONSE DATA+++++++++++++++++++++++++++++++", response.data);
+
+      res.status(200).json(response)
+      const list = res.data.ranked_results
+      if (!list) {
+        res.status(404).json({ error: 'No lists returned.' })
+      }
+      data.insertList(list)
+        .then(res => {
+          res.status(201).json(response)
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'There was an error adding the list.', err })
+        })
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'There was an error creating the list.', err })
+    })
 })
 
 
