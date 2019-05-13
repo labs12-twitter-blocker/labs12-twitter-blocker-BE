@@ -48,7 +48,7 @@ Documentation for the endpoints on the backend server
 - PUT
   - PUT /lists/:list_id - Update a List by the List_ID
 - DELETE
-  - DELETE /lists/:id - Delete a list by the List_ID
+  - DELETE /lists - Delete a list by the twitter List_ID
   - DELETE /lists/:list_id/unfollow/:user_id - Unfollow a list by list_id and user_id
 
 # TWEETS:
