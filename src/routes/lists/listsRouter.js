@@ -2,7 +2,8 @@ const router = require('express').Router()
 const data = require('./listsModel')
 const axios = require('axios')
 require('dotenv').config()
-const User = require('../users/usersModel')
+const User = require('../users/usersModel');
+const querystring = require('querystring');
 let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -301,17 +302,15 @@ router.post('/create', async (req, res) => {
 
     // Creates the list on twitter
     client.post("/lists/create", params, function (error, response) {
+      console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
 
-
-      // This still needs error handling
+       // This still needs error handling	
+      res.status(200).json({ message: "List Created", "response": response })	
     })
-
-    res.status(200).json({ message: "List Created" })
   } else {
     res.status(400).json({ message: "Please enter a name for your list" })
   }
 })
-
 
 
 
@@ -371,25 +370,19 @@ router.post('/', async (req, res) => {
   const userInput = req.body
   // console.log("REQ BODY!!!!!!!!!!!!!!!!", req.body)
 
-  const createdList = await data.getByIdUser(req.body.user_id, req.body.name)
-  console.log("CREATED LIST", createdList.twitter_list_id);
-  // listId = createdList.
-
   const newList = {
     "list_name": req.body.name,
     "twitter_id": req.body.user_id
   }
   console.log("NEW LIST", newList)
+  data.insertList(newList) // Insert the list into our DB
 
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const user = userInput.original_user
-  const id = userInput.user_id
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
-  const newUser = await Users.findById(id)
+  const newUser = await Users.findById(userInput.user_id)
   // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
 
   let params = {
-    "original_user": user,
+    "original_user": userInput.original_user,
     "TWITTER_ACCESS_TOKEN": newUser.token,
     "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
     "search_users": userInput.search_users,
@@ -398,50 +391,52 @@ router.post('/', async (req, res) => {
     "no_of_results": 50
   }
 
-  // Post request from React to pass to DS
   //POST req to DS server
-  // console.log(params, "HERE")
-  // const postToDS = (params) => {
+  dsSendMembers(params, userInput)
 
-  console.log("NEW LIST", newList)
-
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', params, {
-    headers: {
-      'Content-type': 'application/json'
-    }
-  })
-
-    .then(response => {
-      // console.log("DS RESPONSE DATA+++++++++++++++++++++++++++++++", response.data.ranked_results);
-
-      res.status(200).json(response.data.ranked_results)
-      // find list by name
-      // then push list to it with /lists/create_all
-      const listUsers = response.data.ranked_results
-      console.log("________________________________________LIST________________________________-", listUsers)
-
-      // if (!list) {
-      // res.status(404).json({ error: 'No lists returned.' })
-      // }
-      // const newMembers = {
-      // list_id: ,
-      // screen_name: listUsers
-      // }
-      data.insertList(newList)
-      // addMembers(newMembers)
-
-      //     .then(res => {
-      //       res.status(201).json(res)
-      //     })
-      //     .catch(err => {
-      //       res.status(500).json({ error: 'There was an error adding the list.', err })
-      //     })
-      // })
-      // .catch(err => {
-      //   res.status(500).json({ error: 'There was an error creating the list.', err })
-      // })
-    })
+  res.status(202).json({message: "making that list"})
 })
+
+
+//POST req to DS server
+function dsSendMembers(dsParams, userInput) {
+  console.log("_______________DS POST STARTING____________")
+  
+    axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', dsParams, {
+      headers: {
+        'Content-type': 'application/json'
+      }
+    })
+    .then(response => {
+      console.log("_______________DS POST .THEN____________")
+  
+        // find list by name
+        // then push list to it with /lists/create_all
+        const listUsers = response.data.ranked_results
+        console.log("________________________________________USER INPUT________________________________-", userInput)
+        listUsersString = listUsers.toString();
+        console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
+  
+        let params = { list_id: userInput.id, screen_name: listUsersString}
+        
+  
+        Users.findById(userInput.user_id)
+        .then(newUser => {
+  
+          console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+          let client = new Twitter({
+            consumer_key: process.env.TWITTER_CONSUMER_KEY,
+            consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+            access_token_key: newUser.token,
+            access_token_secret: newUser.token_secret,
+          })
+          addMembers(params, client)
+              
+          // res.status(200).json(response.data.ranked_results)
+        } )
+  
+      })
+}
 
 
 // ==========================TWITTER ENDPOINT========================================
@@ -456,13 +451,29 @@ router.post('/', async (req, res) => {
 //   addMembers(params);
 //   res.status(200);
 // })
+// .post(`/mails/users/sendVerificationMail`, null, { params: {
+//   mail,
+//   firstname
+// }})
+// screen_name=rsarver,episod,jasoncosta,theseancook,kurrik,froginthevalley
+// &list_id=23
+// 
+// axios.get('http://example.com/', request);
 
-function addMembers(params) {
-  client.post('/lists/members/create_all', params, function (error, response) {
+function addMembers(params, clientNew) {
+  console.log("________________________________________addMembers params-", params)
+  console.log("________________________________________addMembers clientNew-", clientNew)
+
+  clientNew.post('/lists/members/create_all', querystring.stringify(params) , function (error, response) {
     if (error) {
+      console.log("________________________________________addMembers error__________________________-", error)
       return error
     } else {
-      return response
+      (response => {
+        console.log("________________________________________addMembers Response__________________________-", response)
+        response.json(response)
+      })
+      // res.status(200).json(response)
     }
   })
 }
