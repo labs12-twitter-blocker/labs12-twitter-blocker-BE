@@ -50,7 +50,7 @@ router.post('/', (req, res) => {
     // First test if the user has already voted on the list
     Votes.findVote(req.body.twitter_list_id, req.body.twitter_user_id)
     .then(user => {
-        console.log("user", user)
+        console.log("First test if the user has already voted on the list: ", user)
         // If we find the user has voted before, update their vote
         if (user) {
             // remove their previous vote
@@ -59,7 +59,7 @@ router.post('/', (req, res) => {
                 // Then update the vote table
                 Votes.updateListVote(req.body.twitter_list_id, req.body.vote) //increment the list vote count
                 .then(
-                        Votes.updateVote(req.body.twitter_user_id, vote)
+                        Votes.updateVote(req.body.twitter_list_id, req.body.twitter_user_id, vote)
                             .then(response => {
                                 res.status(200).json(response)
                     })
