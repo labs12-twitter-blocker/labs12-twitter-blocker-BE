@@ -39,10 +39,14 @@ function insertVote(vote) {
         .insert(vote)
         // .then(ids => {return ids})
 }
-function updateVote(twitter_user_id, vote) {
+function updateVote(twitter_list_id, twitter_user_id, vote) {
     console.log("updateVote")
     return db('list_votes')
-    .where({twitter_user_id})
+    // .where({twitter_user_id})
+    .where({ 
+        "twitter_list_id": twitter_list_id,
+        "twitter_user_id": twitter_user_id
+   })
     .update(vote)
 }
 
