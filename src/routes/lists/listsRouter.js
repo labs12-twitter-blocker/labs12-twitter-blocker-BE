@@ -362,29 +362,6 @@ router.post('/create', async (req, res) => {
 // }
 
 
-// Delete a list with the twitter api
-// ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
-router.post('/destroy', (req, res) => {
-  // list_id = req.body.list_id;
-  const params = {
-    list_id: req.body.list_id
-  }
-  // console.log("LIST ID", list_id);
-  destroyList(params);
-  res.status(200)
-})
-
-function destroyList(params) {
-  client.post('/lists/destroy', params, function (error, response) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log(response)
-    }
-  })
-}
-
-
 
 // Build endpoint to take in post from react server to pass to ds endpoint
 
@@ -558,20 +535,47 @@ router.put('/:list_members_id', (req, res) => {
 
 // DELETE /lists/:list_id
 // Delete a list by the list_id
-router.delete('/:list_id', (req, res) => {
-  const listId = req.params.list_id
-  if (!listId) {
+router.delete('/', (req, res) => {
+  const twitterListId = req.body.twitter_list_id
+  const userId = req.body.twitter_id;
+  if (!twitterListId || !userId) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
-    return;
   }
-  data.deleteList(listId)
-    .then(response => {
-      res.status(200).json(response)
-    })
-    .catch(err => {
-      res.status(500).json({ error: 'There was an error deleting the list.' })
-    })
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", twitterListId)
+
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", userId)
+  const newUser = Users.findById(userId)
+  console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+  // const params = {
+  //   twitterListid: twitterListid,
+  //   userId
+  // }
+  let client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: newUser.token,
+    access_token_secret: newUser.token_secret,
+  })
+  client.post('/lists/destroy', params, function (error, response) {
+    if (error) {
+      console.log(error)
+    } else {
+      console.log(response)
+    }
+  }).then(
+    data.deleteList(listId)
+      .then(response => {
+        res.status(200).json(response)
+      })
+      .catch(err => {
+        res.status(500).json({ error: 'There was an error deleting the list.' })
+      }))
 })
+
+
+
+
+
 
 // DELETE /lists/:list_id/unfollow/:user_id
 // Unfollow a list by list_id and user_id
