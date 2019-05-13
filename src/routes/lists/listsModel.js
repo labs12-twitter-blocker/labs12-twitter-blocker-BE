@@ -20,6 +20,7 @@ module.exports = {
   subscribeToList,
   updateList,
   deleteList,
+  deleteTwitterList,
   unfollowList,
   updateListMembers
 };
@@ -161,6 +162,11 @@ function updateListMembers(list_members_id, listMembers) {
 function deleteList(listId) {
   return db('lists')
     .where('list_id', listId)
+    .delete()
+}
+function deleteTwitterList(listId) {
+  return db('lists')
+    .where('twitter_list_id', listId)
     .delete()
 }
 
