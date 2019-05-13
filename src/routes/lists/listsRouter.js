@@ -304,8 +304,8 @@ router.post('/create', async (req, res) => {
     client.post("/lists/create", params, function (error, response) {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
 
-       // This still needs error handling	
-      res.status(200).json({ message: "List Created", "response": response })	
+      // This still needs error handling
+      res.status(200).json({ message: "List Created", "response": response })
     })
   } else {
     res.status(400).json({ message: "Please enter a name for your list" })
@@ -361,29 +361,6 @@ router.post('/create', async (req, res) => {
 // }
 
 
-// Delete a list with the twitter api
-// ==========================================STILL GETTING 204 WHEN I HIT THIS ENDPOINT ======================
-router.post('/destroy', (req, res) => {
-  // list_id = req.body.list_id;
-  const params = {
-    list_id: req.body.list_id
-  }
-  // console.log("LIST ID", list_id);
-  destroyList(params);
-  res.status(200)
-})
-
-function destroyList(params) {
-  client.post('/lists/destroy', params, function (error, response) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log(response)
-    }
-  })
-}
-
-
 
 // Build endpoint to take in post from react server to pass to ds endpoint
 
@@ -417,35 +394,35 @@ router.post('/', async (req, res) => {
   //POST req to DS server
   dsSendMembers(params, userInput)
 
-  res.status(202).json({message: "making that list"})
+  res.status(202).json({ message: "making that list" })
 })
 
 
 //POST req to DS server
 function dsSendMembers(dsParams, userInput) {
   console.log("_______________DS POST STARTING____________")
-  
-    axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', dsParams, {
-      headers: {
-        'Content-type': 'application/json'
-      }
-    })
+
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', dsParams, {
+    headers: {
+      'Content-type': 'application/json'
+    }
+  })
     .then(response => {
       console.log("_______________DS POST .THEN____________")
-  
-        // find list by name
-        // then push list to it with /lists/create_all
-        const listUsers = response.data.ranked_results
-        console.log("________________________________________USER INPUT________________________________-", userInput)
-        listUsersString = listUsers.toString();
-        console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
-  
-        let params = { list_id: userInput.id, screen_name: listUsersString}
-        
-  
-        Users.findById(userInput.user_id)
+
+      // find list by name
+      // then push list to it with /lists/create_all
+      const listUsers = response.data.ranked_results
+      console.log("________________________________________USER INPUT________________________________-", userInput)
+      listUsersString = listUsers.toString();
+      console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
+
+      let params = { list_id: userInput.id, screen_name: listUsersString }
+
+
+      Users.findById(userInput.user_id)
         .then(newUser => {
-  
+
           console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
           let client = new Twitter({
             consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -454,11 +431,11 @@ function dsSendMembers(dsParams, userInput) {
             access_token_secret: newUser.token_secret,
           })
           addMembers(params, client)
-              
+
           // res.status(200).json(response.data.ranked_results)
-        } )
-  
-      })
+        })
+
+    })
 }
 
 
@@ -480,14 +457,14 @@ function dsSendMembers(dsParams, userInput) {
 // }})
 // screen_name=rsarver,episod,jasoncosta,theseancook,kurrik,froginthevalley
 // &list_id=23
-// 
+//
 // axios.get('http://example.com/', request);
 
 function addMembers(params, clientNew) {
   console.log("________________________________________addMembers params-", params)
   console.log("________________________________________addMembers clientNew-", clientNew)
 
-  clientNew.post('/lists/members/create_all', querystring.stringify(params) , function (error, response) {
+  clientNew.post('/lists/members/create_all', querystring.stringify(params), function (error, response) {
     if (error) {
       console.log("________________________________________addMembers error__________________________-", error)
       return error
@@ -569,20 +546,48 @@ router.put('/:list_members_id', (req, res) => {
 
 // DELETE /lists/:list_id
 // Delete a list by the list_id
-router.delete('/:list_id', (req, res) => {
-  const listId = req.params.list_id
-  if (!listId) {
+router.delete('/', (req, res) => {
+  const twitterListId = req.body.twitter_list_id
+  const userId = req.body.twitter_id;
+  if (!twitterListId || !userId) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
-    return;
   }
-  data.deleteList(listId)
-    .then(response => {
-      res.status(200).json(response)
-    })
-    .catch(err => {
-      res.status(500).json({ error: 'There was an error deleting the list.' })
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", userId)
+  let params = { list_id: twitterListId }
+
+  Users.findById(userId)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/destroy', querystring.stringify(params), function (error, response) {
+
+        if (error) {
+          console.log(error)
+          throw new error
+        } else {
+          console.log(response)
+        }
+      }).then(
+        data.deleteTwitterList(twitterListId)
+          .then(response => {
+            res.status(200).json({ message: "List deleted successfully.", response })
+          })
+          .catch(err => {
+            res.status(500).json({ error: 'There was an error deleting the list.', err })
+          })
+      )
     })
 })
+
+
+
+
 
 // DELETE /lists/:list_id/unfollow/:user_id
 // Unfollow a list by list_id and user_id
