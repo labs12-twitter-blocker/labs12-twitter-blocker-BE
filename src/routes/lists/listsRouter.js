@@ -623,19 +623,18 @@ router.delete('/', (req, res) => {
 
         if (error) {
           console.log(error)
-          throw new error
         } else {
           console.log(response)
         }
-      }).then(
-        data.deleteTwitterList(twitterListId)
-          .then(response => {
-            res.status(200).json({ message: "List deleted successfully.", response })
-          })
-          .catch(err => {
-            res.status(500).json({ error: 'There was an error deleting the list.', err })
-          })
-      )
+      })
+      data.deleteTwitterList(twitterListId)
+        .then(response => {
+          res.status(200).json({ message: "List deleted successfully.", response })
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'There was an error deleting the list.', err })
+        })
+
     })
 })
 
