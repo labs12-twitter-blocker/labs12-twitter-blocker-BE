@@ -45,6 +45,7 @@ Documentation for the endpoints on the backend server
 - POST
   - POST /lists/ - Create a new list (Create Block/Cool List; Public/Private List)
   - POST /lists/:list_id/follow/:user_id - Send JSON with user_id to subscribe that user to a list by list_id
+  - POST /lists/subscribe - Subscribes user to a list
 - PUT
   - PUT /lists/:list_id - Update a List by the List_ID
 - DELETE
