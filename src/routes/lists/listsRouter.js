@@ -253,8 +253,15 @@ router.get('/points/block', (req, res) => {
 
 router.get('/timeline/:list_id', (req, res) => {
   const id = req.params.list_id
+  const userId = req.params.user_id
   const params = { list_id: id }
   // Fetch data from twitter api
+  let client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: process.env.userId.token,
+  access_token_secret: process.env.userId.token_secret
+  })
   client.get("lists/statuses", params, function (error, response) {
     if (error) {
       res.status(400).json('The list information could not be retrieved from twitter');
