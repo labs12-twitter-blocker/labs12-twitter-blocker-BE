@@ -316,7 +316,54 @@ router.post('/create', async (req, res) => {
 
 // ==========================TWITTER ENDPOINT========================================
 
+/////////////////////////////////////////////////////////////////////
+//////////////////////SUBSCRIBE/////////////////////////////////////////
+
+// POST /lists/subscribers/create
 // Subscribe to a list with the twitter api
+// 
+router.post('/subscribe', (req, res) => {
+
+  const twitterListId = req.body.twitter_list_id
+  const userId = req.body.twitter_id;
+  if (!twitterListId || !userId) {
+    res.status(404).json({ error: 'The list with the specified ID does not exist.' })
+  }
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", userId)
+  let params = { list_id: twitterListId }
+
+  Users.findById(userId)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/subscribers/create', querystring.stringify(params), function (error, response) {
+
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(response)
+        }
+      })
+        // data.subscribeToList(twitterListId)
+        //   .then(response => {
+        //     res.status(200).json({ message: "List subscribed to successfully.", response })
+        //   })
+        //   .catch(err => {
+        //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
+        //   })
+    })
+})
+
+
+
+
+
 // Unsubscribe from a list with the twitter api
 // ============================== Still needs to be built ===========================================
 // router.post('/subscribers/destroy', (req, res) => {
