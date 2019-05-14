@@ -20,6 +20,7 @@ require('dotenv').config();
 // [X] GET /tweets/friends/:user_id - (Timeline)
 // [X] Get all tweets from a users friends by user_id
 
+
 /////////////////////////////////////////////////////////////////////
 //////////////////////POST///////////////////////////////////////////
 
@@ -27,38 +28,36 @@ require('dotenv').config();
 
 // Send a new Tweet
 router.post('/', (req, res) => {
-  const status = req.body.status;
-  const id = req.body.id
+  const newStatus = req.body.status;
+  const newId = req.body.twitter_user_id
   res.status(200).json({ message: 'tweet on its way, stop it if you can.' });
   slowTweet = setTimeout(function () {
-    postTweet(status, id)
-  }, 60 * 1000)
+    postTweet(newStatus, newId)
+  }, 1000)
 });
+
+function postTweet(status, id) {
+  Users.findById(id)
+    .then(newUser => {
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client
+        .post('statuses/update', status)
+        .catch(function (error) {
+        });
+    })
+}
 
 router.post('/cancel', (req, res) => {
   clearTimeout(slowTweet);
   res.status(200).json({ message: 'tweet canceled.' });
-});
+})
 
-function postTweet(status, id) {
-  const client = new Twitter({
-    consumer_key: process.env.TWITTER_CONSUMER_KEY,
-    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-    access_token_key: process.env.TWITTER_ACCESS_TOKEN_KEY,
-    access_token_secret: getSecret(id)
-    //process.env.TWITTER_ACCESS_TOKEN_SECRET
-  })
-
-  const getSecret = (id) => {
-    const sec = User.findById(id);
-    return sec
-  }
-
-  client
-    .post('statuses/update', status)
-    .catch(function (error) {
-    });
-}
 /////////////////////////////////////////////////////////////////////
 //////////////////////PUT////////////////////////////////////////////
 
