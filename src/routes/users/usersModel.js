@@ -167,3 +167,10 @@ function updateMegaUser(twitter_id, changes) {
 function getSessionUser() {
   return db("sessions")
 }
+
+
+
+
+
+
+

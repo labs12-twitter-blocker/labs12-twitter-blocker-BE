@@ -162,8 +162,3 @@ Creates new list for authenticated user
 | Update Date [Date/Time]   |                         | updated_at       | date/time |
 | Protected                 | protected               | protected        | bool      |
 | Verified                  | verified                | verified         | bool      |
-
-
-MOre testing
-update to rev=build
-update to build

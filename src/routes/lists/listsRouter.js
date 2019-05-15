@@ -321,7 +321,7 @@ router.post('/create', async (req, res) => {
 
 // POST /lists/subscribers/create
 // Subscribe to a list with the twitter api
-// 
+//
 router.post('/subscribe', (req, res) => {
 
   const twitterListId = req.body.twitter_list_id
@@ -350,13 +350,13 @@ router.post('/subscribe', (req, res) => {
           console.log(response)
         }
       })
-        // data.subscribeToList(twitterListId)
-        //   .then(response => {
-        //     res.status(200).json({ message: "List subscribed to successfully.", response })
-        //   })
-        //   .catch(err => {
-        //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
-        //   })
+      // data.subscribeToList(twitterListId)
+      //   .then(response => {
+      //     res.status(200).json({ message: "List subscribed to successfully.", response })
+      //   })
+      //   .catch(err => {
+      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
+      //   })
     })
 })
 
@@ -461,7 +461,7 @@ function dsSendMembers(dsParams, userInput) {
       // then push list to it with /lists/create_all
       const listUsers = response.data.ranked_results
       console.log("________________________________________USER INPUT________________________________-", userInput)
-      listUsersString = listUsers.toString();
+      const listUsersString = listUsers.toString();
       console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
 
       let params = { list_id: userInput.id, screen_name: listUsersString }
@@ -481,7 +481,6 @@ function dsSendMembers(dsParams, userInput) {
 
           // res.status(200).json(response.data.ranked_results)
         })
-
     })
 }
 
@@ -524,6 +523,30 @@ function addMembers(params, clientNew) {
     }
   })
 }
+
+router.post('/block', (req, res) => {
+  Users.findById(req.body.twitter_user_id)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      const params = {
+        "since_id": req.body.twitter_user_id,
+        "TWITTER_ACCESS_TOKEN": newUser.token,
+        "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
+      }
+      // console.log("Params+++++++++++++++++++++++++++++++++", params)
+      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-1', params, {
+        headers: { 'Content-type': 'application/json' }
+      }
+      )
+        .then(
+          (response => {
+            console.log("RESPONSE DATA+++++++++++++++++++", response.data)
+            res.status(200).json(response.data)
+
+          }))
+    })
+}
+)
 
 
 // POST /lists/:list_id/follow/:user_id
@@ -660,3 +683,6 @@ router.delete('/:list_id/unfollow/:user_id', (req, res) => {
 
 
 module.exports = router;
+
+
+
