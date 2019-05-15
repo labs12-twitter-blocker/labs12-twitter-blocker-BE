@@ -1,12 +1,20 @@
 // Update with your config settings.
-const localPg = {
-  host: 'localhost',
-  database: 'twitter',
-  user: 'twitdev',
-  password: 'qxZVf5d9'
+// const localPg = {
+//   host: 'localhost',
+//   database: 'twitter',
+//   user: 'twitdev',
+//   password: 'qxZVf5d9'
+// }
+
+const gcpPg = {
+  database: 'twitbase',
+  user: process.env.SQL_USER,
+  password: process.env.SQL_PASSWORD
 }
 
-const prodDbConnection = process.env.DATABASE_URL || localPg;
+const prodDbConnection = gcpPg // || localPg;
+// test
+gcpPg.host = `/cloudsql/twitter-list-blocker:us-west1:twitter-list-blocker`;
 
 module.exports = {
 
