@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const axios = require("axios");
+const querystring = require('querystring');
 
 const Users = require("./usersModel.js");
 
@@ -8,8 +9,8 @@ let Twitter = require("twitter");
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  //   access_token_key: process.env.ACCESS_TOKEN_KEY,
+  //   access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 
@@ -436,39 +437,54 @@ router.delete("/:twitter_id", async (req, res) => {
 
 // Block a user with twitter api
 // POST /users/blocks/create
-router.post("/blocks/create", (req, res) => {
+router.post("/blocks/create/:user_id", async (req, res) => {
+  const twitter_id = req.body.twitter_id
   const params = {
-    user_id: req.body.user_id
+    user_id: req.params.user_id
   }
-  res.status(200).json("User Blocked");
-  blockUser(params)
-})
-
-function blockUser(params) {
-  client.post('/blocks/create', params, function (response, error) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log(response)
-    }
-  })
+  await Users.findById(twitter_id)
+    .then(newUser => {
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/blocks/create', querystring.stringify(params), function (response, error) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(response)
+        }
+      })
+    }).then(
+      res.status(200).json("User Blocked"))
 }
-
-router.post("/blocks/destroy", (req, res) => {
+)
+router.post("/blocks/destroy/:user_id", async (req, res) => {
+  const twitter_id = req.body.twitter_id
   const params = {
-    user_id: req.body.user_id
+    user_id: req.params.user_id
   }
-  res.status(200).json('User Unblocked');
-  unblockUser(params)
 
+  await Users.findById(twitter_id)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/blocks/destroy', params, function (response, error) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log("response", response)
+        }
+      })
+      res.status(200).json("User Unblocked")
+    })
 })
-function unblockUser(params) {
-  client.post('/blocks/destroy', params, function (response, error) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log(response)
-    }
-  })
-}
 module.exports = router;
