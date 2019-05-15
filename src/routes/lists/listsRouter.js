@@ -94,6 +94,7 @@ router.get('/:twitter_list_id', (req, res) => {
 
 // GET /lists/creator/:user_id
 // Get All Lists Created by the user_ID
+
 router.get('/creator/:user_id', (req, res) => {
   const id = req.params.user_id;
   if (!id) {
@@ -505,7 +506,7 @@ function addMembers(params, clientNew) {
   })
 }
 
-router.post('/block', (req, res) => {
+router.post('/blocklist', (req, res) => {
   Users.findById(req.body.twitter_user_id)
     .then(newUser => {
       // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
@@ -528,7 +529,6 @@ router.post('/block', (req, res) => {
     })
 }
 )
-
 
 // POST /lists/:list_id/follow/:user_id
 // Send JSON with user_id to subscribe that user to a list by list_id**
