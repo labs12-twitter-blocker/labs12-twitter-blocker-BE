@@ -281,7 +281,6 @@ router.post('/create', async (req, res) => {
 
   const userInput = req.body
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const user = userInput.original_user
   const id = userInput.user_id
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
@@ -425,7 +424,7 @@ router.post('/', async (req, res) => {
   console.log("NEW LIST", newList)
   data.insertList(newList) // Insert the list into our DB
 
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
   const newUser = await Users.findById(userInput.user_id)
   // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
 
