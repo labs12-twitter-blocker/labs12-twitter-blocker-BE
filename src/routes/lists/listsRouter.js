@@ -462,7 +462,7 @@ function dsSendMembers(dsParams, userInput) {
       // then push list to it with /lists/create_all
       const listUsers = response.data.ranked_results
       console.log("________________________________________USER INPUT________________________________-", userInput)
-      const listUsersString = listUsers.toString();
+      let listUsersString = listUsers.toString();
       console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
 
       let params = { list_id: userInput.id, screen_name: listUsersString }
