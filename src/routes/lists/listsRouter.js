@@ -486,25 +486,6 @@ function dsSendMembers(dsParams, userInput) {
 
 
 // ==========================TWITTER ENDPOINT========================================
-// Add a list of users to a list with the twitter api
-// POST lists/members/create_all
-
-// router.post('/members/create_all', (req, res) => {
-//   const params = {
-//     list_id: req.body.list_id,
-//     screen_name: req.body.screen_name
-//   }
-//   addMembers(params);
-//   res.status(200);
-// })
-// .post(`/mails/users/sendVerificationMail`, null, { params: {
-//   mail,
-//   firstname
-// }})
-// screen_name=rsarver,episod,jasoncosta,theseancook,kurrik,froginthevalley
-// &list_id=23
-//
-// axios.get('http://example.com/', request);
 
 function addMembers(params, clientNew) {
   console.log("________________________________________addMembers params-", params)
