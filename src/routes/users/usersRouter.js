@@ -437,20 +437,12 @@ router.delete("/:twitter_id", async (req, res) => {
 
 // Block a user with twitter api
 // POST /users/blocks/create
-router.post("/blocks/create/:user_id", (req, res) => {
+router.post("/blocks/create/:user_id", async (req, res) => {
   const twitter_id = req.body.twitter_id
   const params = {
     user_id: req.params.user_id
   }
-  blockUser(params, twitter_id)
-  res.status(200).json("User Blocked");
-})
-
-async function blockUser(params, id) {
-  console.log(id);
-  console.log(params);
-
-  await Users.findById(id)
+  await Users.findById(twitter_id)
     .then(newUser => {
       console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
       let client = new Twitter({
@@ -466,24 +458,33 @@ async function blockUser(params, id) {
           console.log(response)
         }
       })
-    })
+    }).then(
+      res.status(200).json("User Blocked"))
 }
-
-router.post("/blocks/destroy", (req, res) => {
+)
+router.post("/blocks/destroy/:user_id", async (req, res) => {
+  const twitter_id = req.body.twitter_id
   const params = {
-    user_id: req.body.user_id
+    user_id: req.params.user_id
   }
-  res.status(200).json('User Unblocked');
-  unblockUser(params)
 
+  await Users.findById(twitter_id)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/blocks/destroy', params, function (response, error) {
+        if (error) {
+          console.log(error)
+        } else {
+          console.log("response", response)
+        }
+      })
+      res.status(200).json("User Unblocked")
+    })
 })
-function unblockUser(params) {
-  client.post('/blocks/destroy', params, function (response, error) {
-    if (error) {
-      console.log(error)
-    } else {
-      console.log(response)
-    }
-  })
-}
 module.exports = router;
