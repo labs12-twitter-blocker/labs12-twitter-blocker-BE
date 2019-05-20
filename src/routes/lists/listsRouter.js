@@ -357,6 +357,7 @@ router.post('/subscribe', (req, res) => {
           console.log(response)
         }
       })
+      res.status(200).json({ message: "Subscribed to List"})
       // data.subscribeToList(twitterListId)
       //   .then(response => {
       //     res.status(200).json({ message: "List subscribed to successfully.", response })
