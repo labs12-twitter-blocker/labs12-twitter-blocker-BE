@@ -9,8 +9,8 @@ let Twitter = require("twitter");
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  //   access_token_key: process.env.ACCESS_TOKEN_KEY,
-  //   access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  access_token_key: process.env.ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 
@@ -103,7 +103,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
       protected: user.protected,
       verified: user.verified
     };
-
+    console.log("here")
     // First test if the user is already in out DB
     Users.findTwitterUserByTwitterId(user.id_str)
       .then(user => {
@@ -113,7 +113,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
             .then(updated => {
               if (updated) {
                 // res.status(200).json(updated);
-
+                console.log("here")
                 ///////////////////////////////////////
                 // Also add the users lists to the DB
                 updateLists(params);

@@ -261,7 +261,7 @@ router.get('/timeline/:list_id', (req, res) => {
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.userId.token,
-  access_token_secret: process.env.userId.token_secret
+    access_token_secret: process.env.userId.token_secret
   })
   client.get("lists/statuses", params, function (error, response) {
     if (error) {
@@ -517,12 +517,12 @@ router.post('/blocklist', (req, res) => {
     .then(newUser => {
       // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
       const params = {
-        "since_id": req.body.twitter_user_id,
+        // "since_id": req.body.twitter_user_id,
         "TWITTER_ACCESS_TOKEN": newUser.token,
         "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
       }
       // console.log("Params+++++++++++++++++++++++++++++++++", params)
-      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-1', params, {
+      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-2', params, {
         headers: { 'Content-type': 'application/json' }
       }
       )
