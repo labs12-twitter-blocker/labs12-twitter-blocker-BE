@@ -255,10 +255,10 @@ router.get('/points/block', (req, res) => {
 router.get('/timeline/:list_id', (req, res) => {
   const id = req.params.list_id
   const params = { list_id: id }
-  const userId = req.body.user_id;
+  const userId = req.body.twitter_user_id;
   // Fetch data from twitter api
   
-  Users.findById(userId.twitter_user_id)
+  Users.findById(userId)
   .then(user => {
     let client = new Twitter({
       consumer_key: process.env.TWITTER_CONSUMER_KEY,
