@@ -1,10 +1,10 @@
 // Update with your config settings.
-// const localPg = {
-//   host: 'localhost',
-//   database: 'twitter',
-//   user: 'twitdev',
-//   password: 'qxZVf5d9'
-// }
+const localPg = {
+  host: 'localhost',
+  database: 'twitter',
+  user: 'twitdev',
+  password: 'qxZVf5d9'
+}
 
 const gcpPg = {
   database: 'twitbase',
@@ -20,7 +20,7 @@ module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: prodDbConnection,
+    connection: localPg,
     migrations: {
       directory: './src/data/migrations'
     },
