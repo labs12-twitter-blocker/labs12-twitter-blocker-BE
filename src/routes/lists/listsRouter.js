@@ -266,7 +266,6 @@ router.get('/timeline/:list_id', (req, res) => {
       access_token_key: user.token,
       access_token_secret: user.token_secret
     })
-  })
 
   client.get("/lists/statuses", params, function (error, response) {
     if (error) {
@@ -275,7 +274,12 @@ router.get('/timeline/:list_id', (req, res) => {
       (response => response.json(response))
       res.status(200).json(response)
     }
-  });
+  })
+})
+  .catch(err => {
+    res.status(500).json({error: 'The list timeline could not be retrieved.'})
+  })
+
   // res.status(400).json(error);
 })
 
