@@ -254,32 +254,30 @@ router.get('/points/block', (req, res) => {
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
-router.get('/timeline/:list_id', async (req, res) => {
-  console.log("/-*/-*/-*/-*/req.session", req.session)
-
-  const params = { 
-    list_id: req.params.list_id, 
-    user_id: req.params.user_id 
-  }
-
-  const newUser = await Users.findById(req.body.user_id)
-
+router.get('/timeline/:list_id', (req, res) => {
+  const id = req.params.list_id
+  const params = { list_id: id }
+  const userId = req.body.twitter_user_id;
   // Fetch data from twitter api
-  let client = new Twitter({
-    consumer_key: process.env.TWITTER_CONSUMER_KEY,
-    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-    access_token_key: newUser.token,
-    access_token_secret: newUser.token_secret
-  })
-  client.get("lists/statuses", params, function (error, response) {
-    if (error) {
-      res.status(400).json('The list information could not be retrieved from twitter');
-    } else {
+  
+  Users.findById(userId)
+  .then(newUser => {
+    let client = new Twitter({
+      consumer_key: process.env.TWITTER_CONSUMER_KEY,
+      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+      access_token_key: newUser.token,
+      access_token_secret: newUser.token_secret
+    })
+
+  client.get("/lists/statuses", params, function (error, response) {
+    // if (error) {
+    //   res.status(400).json('The list information could not be retrieved from twitter');
+    // } else {
       (response => response.json(response))
       res.status(200).json(response)
-    }
+    // }
   })
-// })
+})
   .catch(err => {
     res.status(500).json({error: 'The list timeline could not be retrieved.'})
   })
