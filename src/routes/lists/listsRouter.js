@@ -250,36 +250,34 @@ router.get('/points/block', (req, res) => {
     })
 });
 
-// ==========================TWITTER ENDPOINT========================================
+/// ==========================TWITTER ENDPOINT========================================
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
-router.get('/timeline/:list_id', async (req, res) => {
-  console.log("/-*/-*/-*/-*/req.session", req.session)
-
-  const params = { 
-    list_id: req.params.list_id, 
-    user_id: req.params.user_id 
-  }
-
-  const newUser = await Users.findById(req.body.user_id)
-
+router.get('/timeline/:list_id', (req, res) => {
+  const id = req.params.list_id
+  const params = { list_id: id }
+  const userId = req.body.twitter_user_id;
   // Fetch data from twitter api
-  let client = new Twitter({
-    consumer_key: process.env.TWITTER_CONSUMER_KEY,
-    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-    access_token_key: newUser.token,
-    access_token_secret: newUser.token_secret
-  })
-  client.get("lists/statuses", params, function (error, response) {
-    if (error) {
-      res.status(400).json('The list information could not be retrieved from twitter');
-    } else {
+  
+  Users.findById(userId)
+  .then(newUser => {
+    let client = new Twitter({
+      consumer_key: process.env.TWITTER_CONSUMER_KEY,
+      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+      access_token_key: newUser.token,
+      access_token_secret: newUser.token_secret
+    })
+
+  client.get("/lists/statuses", params, function (error, response) {
+    // if (error) {
+    //   res.status(400).json('The list information could not be retrieved from twitter');
+    // } else {
       (response => response.json(response))
       res.status(200).json(response)
-    }
+    // }
   })
-// })
+})
   .catch(err => {
     res.status(500).json({error: 'The list timeline could not be retrieved.'})
   })
@@ -484,21 +482,20 @@ router.post('/members/destroy', (req, res) => {
       res.status(200).json({ message: "User removed from list" })
 
 
-// 1 First we send the POST to the DS endpoint from REACT
-// 2 We wait about a minute for the response from DS and send it to REACT
-// 3 The user will choose which of the list members they want on the list in REACT
-// 4 They will then submit the list members in REACT -> POST 
-// 5 We take the input with the members, 
-// 6 We will hit the Twitter API and make a list, 
-// 7 then add members to the newly created list with the Twitter API
-// 8 Add the new list to our DB
-
+      
     })
-})
-// Build endpoint to take in post from react server to pass to ds endpoint
-
-
-
+  })
+  
+  
+  // Build endpoint to take in post from react server to pass to ds endpoint
+  // 1 First we send the POST to the DS endpoint from REACT
+  // 2 We wait about a minute for the response from DS and send it to REACT
+  // 3 The user will choose which of the list members they want on the list in REACT
+  // 4 They will then submit the list members in REACT -> POST 
+  // 5 We take the input with the members, 
+  // 6 We will hit the Twitter API and make a list, 
+  // 7 then add members to the newly created list with the Twitter API
+  // 8 Add the new list to our DB
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
@@ -516,7 +513,7 @@ router.post('/', async (req, res) => {
   /////////////////
   //POST req to DS server
   // NOT WORKING TONIGHT REMOVE COMMENTS
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec_test', dsParams, {
+  axios.post(`${process.env.DS_URL}`, dsParams, {
     headers: {
       'Content-type': 'application/json'
     }
