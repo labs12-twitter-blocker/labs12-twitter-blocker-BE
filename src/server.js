@@ -7,6 +7,7 @@ const router = express.Router();
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const request = require('request');
+const auth = require('./middleware/authenticate')
 let passportConfig = require('./passport');
 Users = require("./routes/users/usersModel");
 passportConfig();
@@ -14,7 +15,6 @@ passportConfig();
 const server = express();
 
 // const authRouter = require('./routes/auth');
-const postTweetRoute = require('./routes/tweets/tweetsRouter');
 const listsRouter = require("./routes/lists/listsRouter.js");
 const tweetsRouter = require("./routes/tweets/tweetsRouter.js");
 const usersRouter = require("./routes/users/usersRouter.js");
@@ -194,11 +194,10 @@ server.route('/auth/me').get(authenticate, getCurrentUser, getOne);
 
 
 // server.use('/auth', authRouter);
-server.use('/tweet', postTweetRoute);
-server.use("/lists", listsRouter);
-server.use("/tweets", tweetsRouter);
+server.use("/lists", auth, listsRouter);
+server.use("/tweets", auth, tweetsRouter);
 server.use("/users", usersRouter);
-server.use("/votes", votesRouter);
+server.use("/votes", auth, votesRouter);
 server.use('/', router);
 // server.use("/auth", authRouter)
 process.on('unhandledRejection', error => {

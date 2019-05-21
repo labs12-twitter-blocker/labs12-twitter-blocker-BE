@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const axios = require("axios");
 const querystring = require('querystring');
-
 const Users = require("./usersModel.js");
-
+const data = require('../lists/listsModel')
+const auth = require('../../middleware/authenticate')
 // https://www.npmjs.com/package/twitter
 let Twitter = require("twitter");
 let client = new Twitter({
@@ -20,33 +20,33 @@ let client = new Twitter({
 // GET /users
 // Get all users
 
-router.get("/", (req, res) => {
+router.get("/", auth, (req, res) => {
   Users.find()
     .then(users => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.status(400).json({ message: "There was an error retrieving all users" });
+      res.status(400).json({ message: "There was an error retrieving all users", error });
     })
 })
 
 // GET /users/:user_id
 // Get a users by twitter_id
 
-router.get("/:twitter_id", (req, res) => {
+router.get("/:twitter_id", auth, (req, res) => {
   Users.findById(req.params.twitter_id)
     .then(users => {
       res.status(200).json({ users });
     })
     .catch(error => {
-      res.status(400).json({ message: "There was an error retrieving user by twitter id" });
+      res.status(400).json({ message: "There was an error retrieving user by twitter id", error });
     })
 })
 
 // GET /users/points/
 // Get all users ordered by number of points
 
-router.get("/points", (req, res) => {
+router.get("/points", auth, (req, res) => {
   Users.orderByUpVotes(req.params.upvotes)
     .then(users => {
       res.status(200).json({ users })
@@ -65,7 +65,7 @@ router.get("/points", (req, res) => {
 // GET /users/premium
 // Get all paying users
 
-router.get("/premium", (req, res) => {
+router.get("/premium", auth, (req, res) => {
   Users.findPremium()
     .then(users => {
       res.status(200).json({ users })
@@ -82,9 +82,20 @@ router.get("/premium", (req, res) => {
 // Get all the user info and add to all the DB tables
 // (YES: lists, twitter_users, list_followers. NO: app_users, tweets, twitter_followers )
 router.post("/mega/:twitter_handle", (req, res) => {
+
   const userInfo = req.body;
+  console.log("USER INFO-----------------------------------------------------", userInfo)
   const params = { screen_name: req.params.twitter_handle };
 
+  // await Users.findById(twitter_id)
+  // .then(newUser => {
+  //   // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+  //   let client = new Twitter({
+  //     consumer_key: process.env.TWITTER_CONSUMER_KEY,
+  //     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+  //     access_token_key: newUser.token,
+  //     access_token_secret: newUser.token_secret,
+  //   })
   // Inserts the user into the twitter_users table
   client.get("users/show", params, function (error, user, response) {
     // console.log(user);
@@ -272,15 +283,17 @@ function updateListFollowers(params) {
       .then(e => {
         console.log("****************************************************************************************removeAllListFollowers")
         let json_follower = [];
-        subscribers.users.map(follower => {
-          json_follower.push({
-            "twitter_user_id": follower.id_str,
-            "name": follower.name,
-            "screen_name": follower.screen_name,
-            "description": follower.description,
-            "profile_img": follower.profile_background_image_url_https
+        try {
+          subscribers.users.map(follower => {
+            json_follower.push({
+              "twitter_user_id": follower.id_str,
+              "name": follower.name,
+              "screen_name": follower.screen_name,
+              "description": follower.description,
+              "profile_img": follower.profile_background_image_url_https
+            })
           })
-        })
+        } catch (error) { console.log("No subscribers to map") }
         Users.insertMegaUserListFollower(params.list_id, json_follower);
       })
 
@@ -399,13 +412,13 @@ router.post("/", async (req, res) => {
 // POST friendships/create
 // Follow another user
 
-router.post("/follow", async (req, res) => {
+router.post("/follow", auth, async (req, res) => {
   const userId = req.body.twitter_id;
   const followId = req.body.follow_id
   if (!userId || !followId) {
     res.status(404).json({ error: 'The user with the specified ID does not exist.' })
   }
-  
+
   let params = { user_id: followId }
 
   Users.findById(userId)
@@ -417,13 +430,13 @@ router.post("/follow", async (req, res) => {
         access_token_key: newUser.token,
         access_token_secret: newUser.token_secret,
       })
-      client.post('/friendships/create', querystring.stringify(params), function (error, response) {
+      client.post('/friendships/create', auth, querystring.stringify(params), function (error, response) {
 
         if (error) {
           console.log(error)
         } else {
           console.log(response)
-          res.status(200).json({ message: "User is now followed", response})
+          res.status(200).json({ message: "User is now followed", response })
         }
       })
     })
@@ -436,7 +449,7 @@ router.post("/follow", async (req, res) => {
 // PUT /users/:user_id
 // Edit a user by user_id
 
-router.put("/:twitter_id", async (req, res) => {
+router.put("/:twitter_id", auth, async (req, res) => {
   const changes = req.body;
   try {
     const updateUser = await Users.editUser(req.params.twitter_id, changes);
@@ -462,7 +475,7 @@ router.put("/:twitter_id", async (req, res) => {
 // DELETE /users/:user_id
 // Delete app_user by twitter_id
 
-router.delete("/:twitter_id", async (req, res) => {
+router.delete("/:twitter_id", auth, async (req, res) => {
   try {
     const user = await Users.deleteUser(req.params.twitter_id);
     if (user) {
@@ -481,7 +494,7 @@ router.delete("/:twitter_id", async (req, res) => {
 
 // Block a user with twitter api
 // POST /users/blocks/create
-router.post("/blocks/create/:user_id", async (req, res) => {
+router.post("/blocks/create/:user_id", auth, async (req, res) => {
   const twitter_id = req.body.twitter_id
   const params = {
     user_id: req.params.user_id
@@ -506,7 +519,7 @@ router.post("/blocks/create/:user_id", async (req, res) => {
       res.status(200).json("User Blocked"))
 }
 )
-router.post("/blocks/destroy/:user_id", async (req, res) => {
+router.post("/blocks/destroy/:user_id", auth, async (req, res) => {
   const twitter_id = req.body.twitter_id
   const params = {
     user_id: req.params.user_id
@@ -521,7 +534,7 @@ router.post("/blocks/destroy/:user_id", async (req, res) => {
         access_token_key: newUser.token,
         access_token_secret: newUser.token_secret,
       })
-      client.post('/blocks/destroy', params, function (response, error) {
+      client.post('/blocks/destroy', auth, params, function (response, error) {
         if (error) {
           console.log(error)
         } else {
@@ -530,5 +543,19 @@ router.post("/blocks/destroy/:user_id", async (req, res) => {
       })
       res.status(200).json("User Unblocked")
     })
+})
+router.post("/delete/user", auth, async (req, res) => {
+  const twitter_id = req.body.twitter_id.toString()
+  const lists = await data.getUserTwitterId(twitter_id)
+
+
+
+  lists.map(item => {
+    data.deleteTwitterList(item.twitter_list_id)
+    //   // console.log("deleted")
+    // console.log("map item", item.twitter_list_id.toString())
+  })
+  await Users.deleteUser(twitter_id);
+  res.status(200).json("success");
 })
 module.exports = router;
