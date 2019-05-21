@@ -166,12 +166,16 @@ router.post("/mega/:twitter_handle", (req, res) => {
 // Inserts the user's lists into the lists table
 function updateLists(params) {
   client.get("lists/list", params, function (error, lists, response) {
+    const listArr = []
+    const usersList = []
+
     if (error) {
       console.log("user has no lists");
     } else {
-
+      // console.log(lists)
       // For every list the user has, add it to the DB.
       lists.map(list => {
+        listArr.push(list.id_str)
 
         let new_list = {
           "twitter_list_id": list.id_str,
@@ -191,7 +195,8 @@ function updateLists(params) {
         if (list.mode != "public") {
           new_list.public = false
         };
-
+        // check if the lists exists in our db and not twitter
+        // console.log("LIST___________________++++++++++++++++++++++++__________________", listArr)
         // First test if the list is already in our DB
         Users.findListByTwitterListId(list.id_str)
           .then(list => {
@@ -237,8 +242,16 @@ function updateLists(params) {
             console.log("error: ", error);
             res.status(500).json({ message: "There was an error while saving the list to the database" });
           })
+        data.getUserTwitterId(list.user.id_str).then(item =>
+          // console.log("ITEM 0", item)
+          usersList.push(item.twitter_list_id)
+          // usersList.push(item.twitter_id)
+        )
 
+        console.log("Users List_)_)_)_)_)_)_)_)_)_", usersList)
       });
+      if (listArr)
+        console.log("245 listARR", listArr)
       if (error) {
         console.log(error);
       }
@@ -411,6 +424,7 @@ router.post("/", async (req, res) => {
 
 // POST friendships/create
 // Follow another user
+
 
 router.post("/follow", auth, async (req, res) => {
   const userId = req.body.twitter_id;
