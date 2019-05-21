@@ -206,10 +206,10 @@ server.route('/auth/me').get(authenticate, getCurrentUser, getOne);
 
 
 // server.use('/auth', authRouter);
-server.use("/lists", auth, listsRouter);
-server.use("/tweets", auth, tweetsRouter);
+server.use("/lists", listsRouter);
+server.use("/tweets", tweetsRouter);
 server.use("/users", usersRouter);
-server.use("/votes", auth, votesRouter);
+server.use("/votes", votesRouter);
 server.use('/', router);
 // server.use("/auth", authRouter)
 process.on('unhandledRejection', error => {

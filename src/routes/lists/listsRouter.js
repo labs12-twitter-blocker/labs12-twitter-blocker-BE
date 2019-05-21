@@ -279,7 +279,7 @@ router.get('/timeline/:list_id', async (req, res) => {
       res.status(200).json(response)
     }
   })
-})
+// })
   .catch(err => {
     res.status(500).json({error: 'The list timeline could not be retrieved.'})
   })
