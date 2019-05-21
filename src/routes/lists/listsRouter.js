@@ -261,7 +261,6 @@ router.get('/timeline/:list_id', (req, res) => {
   
   Users.findById(userId)
   .then(newUser => {
-    console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
     let client = new Twitter({
       consumer_key: process.env.TWITTER_CONSUMER_KEY,
       consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
@@ -269,13 +268,13 @@ router.get('/timeline/:list_id', (req, res) => {
       access_token_secret: newUser.token_secret
     })
 
-  client.get("/lists/statuses", querystring.stringify(params), function (error, response) {
-    if (error) {
-      res.status(400).json('The list information could not be retrieved from twitter');
-    } else {
+  client.get("/lists/statuses", params, function (error, response) {
+    // if (error) {
+    //   res.status(400).json('The list information could not be retrieved from twitter');
+    // } else {
       (response => response.json(response))
       res.status(200).json(response)
-    }
+    // }
   })
 })
   .catch(err => {
