@@ -260,15 +260,16 @@ router.get('/timeline/:list_id', (req, res) => {
   // Fetch data from twitter api
   
   Users.findById(userId)
-  .then(user => {
+  .then(newUser => {
+    console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
     let client = new Twitter({
       consumer_key: process.env.TWITTER_CONSUMER_KEY,
       consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      access_token_key: user.token,
-      access_token_secret: user.token_secret
+      access_token_key: newUser.token,
+      access_token_secret: newUser.token_secret
     })
 
-  client.get("/lists/statuses", params, function (error, response) {
+  client.get("/lists/statuses", querystring.stringify(params), function (error, response) {
     if (error) {
       res.status(400).json('The list information could not be retrieved from twitter');
     } else {
