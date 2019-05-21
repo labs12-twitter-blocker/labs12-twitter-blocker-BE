@@ -9,8 +9,8 @@ let Twitter = require("twitter");
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  //   access_token_key: process.env.ACCESS_TOKEN_KEY,
-  //   access_token_secret: process.env.ACCESS_TOKEN_SECRET
+  access_token_key: process.env.ACCESS_TOKEN_KEY,
+  access_token_secret: process.env.ACCESS_TOKEN_SECRET
 });
 
 
@@ -103,7 +103,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
       protected: user.protected,
       verified: user.verified
     };
-
+    console.log("here")
     // First test if the user is already in out DB
     Users.findTwitterUserByTwitterId(user.id_str)
       .then(user => {
@@ -113,7 +113,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
             .then(updated => {
               if (updated) {
                 // res.status(200).json(updated);
-
+                console.log("here")
                 ///////////////////////////////////////
                 // Also add the users lists to the DB
                 updateLists(params);
@@ -392,6 +392,44 @@ router.post("/", async (req, res) => {
 // [X] POST /users/followers -
 // [X] All all a users followers to the twitter_followers table
 
+//////////////////////////////////////////////
+/////////////FOLLOW ANOTHER USER/////////////
+
+
+// POST friendships/create
+// Follow another user
+
+router.post("/follow", async (req, res) => {
+  const userId = req.body.twitter_id;
+  const followId = req.body.follow_id
+  if (!userId || !followId) {
+    res.status(404).json({ error: 'The user with the specified ID does not exist.' })
+  }
+  
+  let params = { user_id: followId }
+
+  Users.findById(userId)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/friendships/create', querystring.stringify(params), function (error, response) {
+
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(response)
+          res.status(200).json({ message: "User is now followed", response})
+        }
+      })
+    })
+})
+
+
 /////////////////////////////////////////////////////////////////////
 //////////////////////PUT////////////////////////////////////////////
 
@@ -411,6 +449,12 @@ router.put("/:twitter_id", async (req, res) => {
     res.status(500).json({ message: "There was an error updating the user" })
   }
 })
+
+
+
+
+
+
 
 /////////////////////////////////////////////////////////////////////
 //////////////////////DELETE/////////////////////////////////////////
