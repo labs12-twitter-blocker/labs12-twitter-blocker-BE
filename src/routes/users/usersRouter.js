@@ -544,16 +544,18 @@ router.post("/blocks/destroy/:user_id", auth, async (req, res) => {
       res.status(200).json("User Unblocked")
     })
 })
-router.post("/delete/user", auth, async (req, res) => {
-  const twitter_id = req.body.twitter_id.toString()
+router.delete("/delete/:user_id", async (req, res) => {
+
+  await Users.deleteUser(twitter_id);
+  res.status(200).json("success");
+})
+router.delete("/delete/userlists/:user_id", async (req, res) => {
+  const twitter_id = req.params.user_id.toString()
+  console.log("Twitter Id", twitter_id)
   const lists = await data.getUserTwitterId(twitter_id)
-
-
 
   lists.map(item => {
     data.deleteTwitterList(item.twitter_list_id)
-    //   // console.log("deleted")
-    // console.log("map item", item.twitter_list_id.toString())
   })
   await Users.deleteUser(twitter_id);
   res.status(200).json("success");
