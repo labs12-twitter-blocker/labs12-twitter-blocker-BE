@@ -6,6 +6,7 @@ module.exports = {
   getPrivate,
   getBlocked,
   getById,
+  getByUserTwitterId,
   getByIdUser,
   getByUserCreated,
   getPublicByUserCreated,
@@ -18,6 +19,7 @@ module.exports = {
   getBlockByOrder,
   insertList,
   subscribeToList,
+  getUserTwitterId,
   updateList,
   deleteList,
   deleteTwitterList,
@@ -51,7 +53,15 @@ function getById(twitter_list_id) {
   return db('lists')
     .where('twitter_list_id', twitter_list_id).first()
 }
+function getByUserTwitterId(twitter_user_id) {
+  return db('lists')
+    .where('twitter_id', twitter_user_id).first()
+}
 
+function getUserTwitterId(twitter_user_id) {
+  return db('lists')
+    .where('twitter_id', twitter_user_id)
+}
 // get /:list_id
 function getByIdUser(userId, list_name) {
   return db('lists')
@@ -164,10 +174,11 @@ function deleteList(listId) {
     .where('list_id', listId)
     .delete()
 }
-function deleteTwitterList(listId) {
-  return db('lists')
-    .where('twitter_list_id', listId)
-    .delete()
+async function deleteTwitterList(listId) {
+  return await db('lists')
+    .where("twitter_list_id", listId)
+    .del()
+
 }
 
 function unfollowList(listId, userId) {
