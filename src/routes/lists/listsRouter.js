@@ -261,7 +261,7 @@ router.get('/timeline/:list_id', (req, res) => {
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
     consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
     access_token_key: process.env.userId.token,
-  access_token_secret: process.env.userId.token_secret
+    access_token_secret: process.env.userId.token_secret
   })
   client.get("lists/statuses", params, function (error, response) {
     if (error) {
@@ -288,7 +288,6 @@ router.post('/create', async (req, res) => {
 
   const userInput = req.body
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const user = userInput.original_user
   const id = userInput.user_id
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
   // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
@@ -367,57 +366,96 @@ router.post('/subscribe', (req, res) => {
       //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
       //   })
     })
+  res.status(200).json({ message: "Subscribed from list" })
+
 })
-
-
-
 
 
 // Unsubscribe from a list with the twitter api
 // ============================== Still needs to be built ===========================================
-// router.post('/subscribers/destroy', (req, res) => {
 
-//    const id = req.params.list_id
+// POST /lists/unsubscribe
+// Subscribe to a list with the twitter api
+//
+router.post('/unsubscribe', (req, res) => {
 
+  const twitterListId = req.body.twitter_list_id
+  const userId = req.body.twitter_id;
+  if (!twitterListId || !userId) {
+    res.status(404).json({ error: 'The list with the specified ID does not exist.' })
+  }
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", userId)
+  let params = { list_id: twitterListId }
 
-//   console.log(params);
+  Users.findById(userId)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/subscribers/destroy', querystring.stringify(params), function (error, response) {
 
-//   unsubscribe(params)
-// })
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(response)
+        }
+      })
+      res.status(200).json({ message: "Unsubscribed from list" })
 
-// function unsubscribe(params) {
-//   client.post('lists/subscribers/destroy', params, function (error, response) {
-//     // handle errors here
-//   })
-// }
+      // data.subscribeToList(twitterListId)
+      //   .then(response => {
+      //     res.status(200).json({ message: "List subscribed to successfully.", response })
+      //   })
+      //   .catch(err => {
+      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
+      //   })
+    })
+})
 
 // Delete a user of a list with the twitter api
 // POST /lists/members/destroy
 
 
 // ==========================TWITTER ENDPOINT========================================
-// ============================== Not functional still===========================================
-// router.post('/members/destroy', (req, res) => {
-//   const params = {
-//     list_id: req.body.list_id,
-//     user_id: req.body.user_id
-//   }
-//   destroyMember(params)
-//   res.status(200).json("user deleted from list")
-// });
 
-// function destroyMember(params) {
-//   client.post('/lists/members/destroy', params, (error, response) => {
-//     if (error) {
-//       console.log(error)
-//     } else {
-//       console.log(response)
-//     }
-//   })
-// }
+router.post('/members/destroy', (req, res) => {
 
+  const twitterListId = req.body.twitter_list_id;
+  const removeUserId = req.body.twitter_id;
+  const ownerId = req.body.twitter_user_id
+  if (!twitterListId || !removeUserId) {
+    res.status(404).json({ error: 'The list or user with the specified ID does not exist.' })
+  }
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", removeUserId)
+  let params = { list_id: twitterListId, user_id: removeUserId }
 
+  Users.findById(ownerId)
+    .then(newUser => {
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/members/destroy', querystring.stringify(params), function (error, response) {
 
+        if (error) {
+          console.log("error", error)
+        } else {
+          console.log("response", response)
+        }
+      })
+      res.status(200).json({ message: "User removed from list" })
+
+    })
+})
 // Build endpoint to take in post from react server to pass to ds endpoint
 
 
@@ -433,7 +471,7 @@ router.post('/', async (req, res) => {
   console.log("NEW LIST", newList)
   data.insertList(newList) // Insert the list into our DB
 
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
   const newUser = await Users.findById(userInput.user_id)
   // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
 
@@ -519,12 +557,12 @@ router.post('/blocklist', (req, res) => {
     .then(newUser => {
       // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
       const params = {
-        "since_id": req.body.twitter_user_id,
+        // "since_id": req.body.twitter_user_id,
         "TWITTER_ACCESS_TOKEN": newUser.token,
         "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
       }
       // console.log("Params+++++++++++++++++++++++++++++++++", params)
-      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-1', params, {
+      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-2', params, {
         headers: { 'Content-type': 'application/json' }
       }
       )
