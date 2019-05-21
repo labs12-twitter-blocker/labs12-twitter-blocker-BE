@@ -3,6 +3,7 @@ const data = require('./listsModel')
 const axios = require('axios')
 require('dotenv').config()
 const User = require('../users/usersModel');
+const auth = require('../../middleware/authenticate')
 const querystring = require('querystring');
 const url = process.env.BACKEND_URL;
 let Twitter = require("twitter")
@@ -95,6 +96,7 @@ router.get('/:twitter_list_id', (req, res) => {
 
 // GET /lists/creator/:user_id
 // Get All Lists Created by the user_ID
+
 router.get('/creator/:user_id', (req, res) => {
   const id = req.params.user_id;
   if (!id) {
@@ -276,7 +278,12 @@ router.get('/timeline/:list_id', async (req, res) => {
       (response => response.json(response))
       res.status(200).json(response)
     }
-  });
+  })
+})
+  .catch(err => {
+    res.status(500).json({error: 'The list timeline could not be retrieved.'})
+  })
+
   // res.status(400).json(error);
 })
 
@@ -295,8 +302,18 @@ router.get('/timeline/:list_id', async (req, res) => {
 router.post('/create', async (req, res) => {
   let screen_name = req.body.screen_name
 
+<<<<<<< HEAD
   const newUser = await Users.findById(req.body.user_id)
   console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+=======
+  const userInput = req.body
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+  const id = userInput.user_id
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
+  const newUser = await Users.findById(id)
+  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+>>>>>>> origin
 
   let client = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -350,7 +367,7 @@ router.post('/create', async (req, res) => {
 
 // POST /lists/subscribers/create
 // Subscribe to a list with the twitter api
-// 
+//
 router.post('/subscribe', (req, res) => {
 
   const twitterListId = req.body.twitter_list_id
@@ -379,65 +396,104 @@ router.post('/subscribe', (req, res) => {
           console.log(response)
         }
       })
-        // data.subscribeToList(twitterListId)
-        //   .then(response => {
-        //     res.status(200).json({ message: "List subscribed to successfully.", response })
-        //   })
-        //   .catch(err => {
-        //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
-        //   })
+      res.status(200).json({ message: "Subscribed to List" })
+      // data.subscribeToList(twitterListId)
+      //   .then(response => {
+      //     res.status(200).json({ message: "List subscribed to successfully.", response })
+      //   })
+      //   .catch(err => {
+      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
+      //   })
     })
+  res.status(200).json({ message: "Subscribed from list" })
+
 })
-
-
-
 
 
 // Unsubscribe from a list with the twitter api
 // ============================== Still needs to be built ===========================================
-// router.post('/subscribers/destroy', (req, res) => {
 
-//    const id = req.params.list_id
+// POST /lists/unsubscribe
+// Subscribe to a list with the twitter api
+//
+router.post('/unsubscribe', (req, res) => {
 
+  const twitterListId = req.body.twitter_list_id
+  const userId = req.body.twitter_id;
+  if (!twitterListId || !userId) {
+    res.status(404).json({ error: 'The list with the specified ID does not exist.' })
+  }
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", userId)
+  let params = { list_id: twitterListId }
 
-//   console.log(params);
+  Users.findById(userId)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/subscribers/destroy', querystring.stringify(params), function (error, response) {
 
-//   unsubscribe(params)
-// })
+        if (error) {
+          console.log(error)
+        } else {
+          console.log(response)
+        }
+      })
+      res.status(200).json({ message: "Unsubscribed from list" })
 
-// function unsubscribe(params) {
-//   client.post('lists/subscribers/destroy', params, function (error, response) {
-//     // handle errors here
-//   })
-// }
+      // data.subscribeToList(twitterListId)
+      //   .then(response => {
+      //     res.status(200).json({ message: "List subscribed to successfully.", response })
+      //   })
+      //   .catch(err => {
+      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
+      //   })
+    })
+})
 
 // Delete a user of a list with the twitter api
 // POST /lists/members/destroy
 
 
 // ==========================TWITTER ENDPOINT========================================
-// ============================== Not functional still===========================================
-// router.post('/members/destroy', (req, res) => {
-//   const params = {
-//     list_id: req.body.list_id,
-//     user_id: req.body.user_id
-//   }
-//   destroyMember(params)
-//   res.status(200).json("user deleted from list")
-// });
 
-// function destroyMember(params) {
-//   client.post('/lists/members/destroy', params, (error, response) => {
-//     if (error) {
-//       console.log(error)
-//     } else {
-//       console.log(response)
-//     }
-//   })
-// }
+router.post('/members/destroy', (req, res) => {
 
+  const twitterListId = req.body.twitter_list_id;
+  const removeUserId = req.body.twitter_id;
+  const ownerId = req.body.twitter_user_id
+  if (!twitterListId || !removeUserId) {
+    res.status(404).json({ error: 'The list or user with the specified ID does not exist.' })
+  }
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++List id", twitterListId)
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++User id", removeUserId)
+  let params = { list_id: twitterListId, user_id: removeUserId }
 
+  Users.findById(ownerId)
+    .then(newUser => {
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      client.post('/lists/members/destroy', querystring.stringify(params), function (error, response) {
 
+        if (error) {
+          console.log("error", error)
+        } else {
+          console.log("response", response)
+        }
+      })
+      res.status(200).json({ message: "User removed from list" })
+
+<<<<<<< HEAD
 // 1 First we send the POST to the DS endpoint from REACT
 // 2 We wait about a minute for the response from DS and send it to REACT
 // 3 The user will choose which of the list members they want on the list in REACT
@@ -446,12 +502,30 @@ router.post('/subscribe', (req, res) => {
 // 6 We will hit the Twitter API and make a list, 
 // 7 then add members to the newly created list with the Twitter API
 // 8 Add the new list to our DB
+=======
+    })
+})
+// Build endpoint to take in post from react server to pass to ds endpoint
+>>>>>>> origin
 
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
+<<<<<<< HEAD
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+=======
+  // console.log("REQ BODY!!!!!!!!!!!!!!!!", req.body)
+
+  const newList = {
+    "list_name": req.body.name,
+    "twitter_id": req.body.user_id
+  }
+  console.log("NEW LIST", newList)
+  data.insertList(newList) // Insert the list into our DB
+
+  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
+>>>>>>> origin
   const newUser = await Users.findById(userInput.user_id)
   let dsParams = {
       "original_user": userInput.original_user,
@@ -475,7 +549,13 @@ router.post('/', async (req, res) => {
       console.log("_______________DS POST .THEN____________")
       console.log("_______________response.data", response.data)
       const listUsers = response.data.ranked_results
+<<<<<<< HEAD
       listUsersString = listUsers.toString();
+=======
+      console.log("________________________________________USER INPUT________________________________-", userInput)
+      let listUsersString = listUsers.toString();
+      console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
+>>>>>>> origin
 
       const params = { screen_name: listUsersString }
       // Got the list of users back from DS, now need to get user objects for each one of them to send back to REACT
@@ -499,6 +579,7 @@ router.post('/', async (req, res) => {
 
 
 
+<<<<<<< HEAD
 
 
   ///////////
@@ -515,28 +596,15 @@ router.post('/', async (req, res) => {
 
 
 
+=======
+          // res.status(200).json(response.data.ranked_results)
+        })
+    })
+}
+>>>>>>> origin
 
 
 // ==========================TWITTER ENDPOINT========================================
-// Add a list of users to a list with the twitter api
-// POST lists/members/create_all
-
-// router.post('/members/create_all', (req, res) => {
-//   const params = {
-//     list_id: req.body.list_id,
-//     screen_name: req.body.screen_name
-//   }
-//   addMembers(params);
-//   res.status(200);
-// })
-// .post(`/mails/users/sendVerificationMail`, null, { params: {
-//   mail,
-//   firstname
-// }})
-// screen_name=rsarver,episod,jasoncosta,theseancook,kurrik,froginthevalley
-// &list_id=23
-//
-// axios.get('http://example.com/', request);
 
 // function addMembers(params, clientNew) {
 //   console.log("________________________________________addMembers params-", params)
@@ -556,6 +624,29 @@ router.post('/', async (req, res) => {
 //   })
 // }
 
+router.post('/blocklist', (req, res) => {
+  Users.findById(req.body.twitter_user_id)
+    .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      const params = {
+        // "since_id": req.body.twitter_user_id,
+        "TWITTER_ACCESS_TOKEN": newUser.token,
+        "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
+      }
+      // console.log("Params+++++++++++++++++++++++++++++++++", params)
+      axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-2', params, {
+        headers: { 'Content-type': 'application/json' }
+      }
+      )
+        .then(
+          (response => {
+            console.log("RESPONSE DATA+++++++++++++++++++", response.data)
+            res.status(200).json(response.data)
+
+          }))
+    })
+}
+)
 
 // POST /lists/:list_id/follow/:user_id
 // Send JSON with user_id to subscribe that user to a list by list_id**
@@ -647,19 +738,18 @@ router.delete('/', (req, res) => {
 
         if (error) {
           console.log(error)
-          throw new error
         } else {
           console.log(response)
         }
-      }).then(
-        data.deleteTwitterList(twitterListId)
-          .then(response => {
-            res.status(200).json({ message: "List deleted successfully.", response })
-          })
-          .catch(err => {
-            res.status(500).json({ error: 'There was an error deleting the list.', err })
-          })
-      )
+      })
+      data.deleteTwitterList(twitterListId)
+        .then(response => {
+          res.status(200).json({ message: "List deleted successfully.", response })
+        })
+        .catch(err => {
+          res.status(500).json({ error: 'There was an error deleting the list.', err })
+        })
+
     })
 })
 
@@ -692,3 +782,6 @@ router.delete('/:list_id/unfollow/:user_id', (req, res) => {
 
 
 module.exports = router;
+
+
+
