@@ -5,6 +5,7 @@ require('dotenv').config()
 const User = require('../users/usersModel');
 const auth = require('../../middleware/authenticate')
 const querystring = require('querystring');
+const url = process.env.BACKEND_URL;
 let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -253,23 +254,24 @@ router.get('/points/block', (req, res) => {
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
-router.get('/timeline/:list_id', (req, res) => {
-  const id = req.params.list_id
-  const params = { list_id: id }
-  const userId = req.body.twitter_user_id;
-  // Fetch data from twitter api
-  
-  Users.findById(userId)
-  .then(newUser => {
-    console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
-    let client = new Twitter({
-      consumer_key: process.env.TWITTER_CONSUMER_KEY,
-      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      access_token_key: newUser.token,
-      access_token_secret: newUser.token_secret
-    })
+router.get('/timeline/:list_id', async (req, res) => {
+  console.log("/-*/-*/-*/-*/req.session", req.session)
 
-  client.get("/lists/statuses", querystring.stringify(params), function (error, response) {
+  const params = { 
+    list_id: req.params.list_id, 
+    user_id: req.params.user_id 
+  }
+
+  const newUser = await Users.findById(req.body.user_id)
+
+  // Fetch data from twitter api
+  let client = new Twitter({
+    consumer_key: process.env.TWITTER_CONSUMER_KEY,
+    consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+    access_token_key: newUser.token,
+    access_token_secret: newUser.token_secret
+  })
+  client.get("lists/statuses", params, function (error, response) {
     if (error) {
       res.status(400).json('The list information could not be retrieved from twitter');
     } else {
@@ -277,7 +279,7 @@ router.get('/timeline/:list_id', (req, res) => {
       res.status(200).json(response)
     }
   })
-})
+// })
   .catch(err => {
     res.status(500).json({error: 'The list timeline could not be retrieved.'})
   })
@@ -295,15 +297,13 @@ router.get('/timeline/:list_id', (req, res) => {
 // ==========================TWITTER ENDPOINT========================================
 // POST /lists/create
 // Takes in the post from the Front end
+// Should create list with Twitter API
+// Then it should add members to the newly created list
 router.post('/create', async (req, res) => {
+  let screen_name = req.body.screen_name
 
-  const userInput = req.body
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const id = userInput.user_id
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
-  const newUser = await Users.findById(id)
-  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+  const newUser = await Users.findById(req.body.user_id)
+  console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
 
   let client = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -321,12 +321,30 @@ router.post('/create', async (req, res) => {
     // Creates the list on twitter
     client.post("/lists/create", params, function (error, response) {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
-
-      // This still needs error handling
-      res.status(200).json({ message: "List Created", "response": response })
+      // We created the list on Twitter API, We now need to add members to it
+      let memberCreateParams = {
+          list_id: response.id_str,
+          screen_name: screen_name
+      }
+      console.log("memberCreateParams+++++++++++++++++++++++++++++++++", memberCreateParams);
+      client.post('/lists/members/create_all', memberCreateParams, function (error, responseCreate) {
+        if (error) {
+          console.log("________________________________________addMembers error__________________________-", error)
+          return error
+        } else {
+          console.log("________________________________________addMembers Response__________________________-", response)
+          
+          axios.post(`${url}/mega/${responseCreate.user.screenname}`,)
+          .then(
+            // console.log("________________________________________MEGA__________________________-")
+            res.status(200).json(responseCreate)
+          )
+        }
+      })
     })
+       
   } else {
-    res.status(400).json({ message: "Please enter a name for your list" })
+    res.status(400).json({ message: "list broken, please try again" })
   }
 })
 
@@ -465,103 +483,105 @@ router.post('/members/destroy', (req, res) => {
       })
       res.status(200).json({ message: "User removed from list" })
 
+
+// 1 First we send the POST to the DS endpoint from REACT
+// 2 We wait about a minute for the response from DS and send it to REACT
+// 3 The user will choose which of the list members they want on the list in REACT
+// 4 They will then submit the list members in REACT -> POST 
+// 5 We take the input with the members, 
+// 6 We will hit the Twitter API and make a list, 
+// 7 then add members to the newly created list with the Twitter API
+// 8 Add the new list to our DB
+
     })
 })
 // Build endpoint to take in post from react server to pass to ds endpoint
 
 
+
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
-  // console.log("REQ BODY!!!!!!!!!!!!!!!!", req.body)
-
-  const newList = {
-    "list_name": req.body.name,
-    "twitter_id": req.body.user_id
-  }
-  console.log("NEW LIST", newList)
-  data.insertList(newList) // Insert the list into our DB
-
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
   const newUser = await Users.findById(userInput.user_id)
-  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
-
-  let params = {
-    "original_user": userInput.original_user,
-    "TWITTER_ACCESS_TOKEN": newUser.token,
-    "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
-    "search_users": userInput.search_users,
-    "return_limit": 20,
-    "last_level": 2,
-    "no_of_results": 50
+  let dsParams = {
+      "original_user": userInput.original_user,
+      "TWITTER_ACCESS_TOKEN": newUser.token,
+      "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
+      "search_users": userInput.search_users,
+      "return_limit": 20,
+      "last_level": 2,
+      "no_of_results": 50
   }
-
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++dsParams", dsParams)
+  /////////////////
   //POST req to DS server
-  dsSendMembers(params, userInput)
-
-  res.status(202).json({ message: "making that list" })
-})
-
-
-//POST req to DS server
-function dsSendMembers(dsParams, userInput) {
-  console.log("_______________DS POST STARTING____________")
-
-  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec', dsParams, {
+  // NOT WORKING TONIGHT REMOVE COMMENTS
+  axios.post('https://us-central1-twitter-follower-blocker.cloudfunctions.net/list_rec_test', dsParams, {
     headers: {
       'Content-type': 'application/json'
     }
   })
     .then(response => {
       console.log("_______________DS POST .THEN____________")
-
-      // find list by name
-      // then push list to it with /lists/create_all
+      console.log("_______________response.data", response.data)
       const listUsers = response.data.ranked_results
-      console.log("________________________________________USER INPUT________________________________-", userInput)
-      let listUsersString = listUsers.toString();
-      console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
-
-      let params = { list_id: userInput.id, screen_name: listUsersString }
+      listUsersString = listUsers.toString();
 
 
-      Users.findById(userInput.user_id)
-        .then(newUser => {
+      const params = { screen_name: listUsersString }
+      // Got the list of users back from DS, now need to get user objects for each one of them to send back to REACT
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+      access_token_secret: newUser.token_secret
+      })
+      client.get("users/lookup", params, function (error, response) {
+        if (error) {
+          res.status(400).json('The users could not be retrieved from twitter');
+        } else {
+          (response => response.json(response))
+          res.status(200).json(response)
+        }
+      });
 
-          console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
-          let client = new Twitter({
-            consumer_key: process.env.TWITTER_CONSUMER_KEY,
-            consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-            access_token_key: newUser.token,
-            access_token_secret: newUser.token_secret,
-          })
-          addMembers(params, client)
-
-          // res.status(200).json(response.data.ranked_results)
-        })
     })
-}
+
+
+
+  ///////////
+  // BAV - Add to the Step 8
+  // const newList = {
+  //   "list_name": req.body.name,
+  //   "twitter_id": req.body.user_id
+  // }
+  // console.log("NEW LIST", newList)
+  // data.insertList(newList) // Insert the list into our DB
+  ///////////////
+
+})
+
 
 
 // ==========================TWITTER ENDPOINT========================================
 
-function addMembers(params, clientNew) {
-  console.log("________________________________________addMembers params-", params)
-  console.log("________________________________________addMembers clientNew-", clientNew)
+// function addMembers(params, clientNew) {
+//   console.log("________________________________________addMembers params-", params)
+//   console.log("________________________________________addMembers clientNew-", clientNew)
 
-  clientNew.post('/lists/members/create_all', querystring.stringify(params), function (error, response) {
-    if (error) {
-      console.log("________________________________________addMembers error__________________________-", error)
-      return error
-    } else {
-      (response => {
-        console.log("________________________________________addMembers Response__________________________-", response)
-        response.json(response)
-      })
-      // res.status(200).json(response)
-    }
-  })
-}
+//   clientNew.post('/lists/members/create_all', querystring.stringify(params), function (error, response) {
+//     if (error) {
+//       console.log("________________________________________addMembers error__________________________-", error)
+//       return error
+//     } else {
+//       (response => {
+//         console.log("________________________________________addMembers Response__________________________-", response)
+//         response.json(response)
+//       })
+//       // res.status(200).json(response)
+//     }
+//   })
+// }
 
 router.post('/blocklist', (req, res) => {
   Users.findById(req.body.twitter_user_id)
