@@ -302,18 +302,8 @@ router.get('/timeline/:list_id', async (req, res) => {
 router.post('/create', async (req, res) => {
   let screen_name = req.body.screen_name
 
-<<<<<<< HEAD
   const newUser = await Users.findById(req.body.user_id)
   console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
-=======
-  const userInput = req.body
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-  const id = userInput.user_id
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++user", user)
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++id", id)
-  const newUser = await Users.findById(id)
-  // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
->>>>>>> origin
 
   let client = new Twitter({
     consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -493,7 +483,7 @@ router.post('/members/destroy', (req, res) => {
       })
       res.status(200).json({ message: "User removed from list" })
 
-<<<<<<< HEAD
+
 // 1 First we send the POST to the DS endpoint from REACT
 // 2 We wait about a minute for the response from DS and send it to REACT
 // 3 The user will choose which of the list members they want on the list in REACT
@@ -502,30 +492,16 @@ router.post('/members/destroy', (req, res) => {
 // 6 We will hit the Twitter API and make a list, 
 // 7 then add members to the newly created list with the Twitter API
 // 8 Add the new list to our DB
-=======
+
     })
 })
 // Build endpoint to take in post from react server to pass to ds endpoint
->>>>>>> origin
+
 
 
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
-<<<<<<< HEAD
-  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
-=======
-  // console.log("REQ BODY!!!!!!!!!!!!!!!!", req.body)
-
-  const newList = {
-    "list_name": req.body.name,
-    "twitter_id": req.body.user_id
-  }
-  console.log("NEW LIST", newList)
-  data.insertList(newList) // Insert the list into our DB
-
-  // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++USER INPUT", userInput)
->>>>>>> origin
   const newUser = await Users.findById(userInput.user_id)
   let dsParams = {
       "original_user": userInput.original_user,
@@ -549,13 +525,8 @@ router.post('/', async (req, res) => {
       console.log("_______________DS POST .THEN____________")
       console.log("_______________response.data", response.data)
       const listUsers = response.data.ranked_results
-<<<<<<< HEAD
       listUsersString = listUsers.toString();
-=======
-      console.log("________________________________________USER INPUT________________________________-", userInput)
-      let listUsersString = listUsers.toString();
-      console.log("________________________________________LIST USERS STRING__________________________-", listUsersString)
->>>>>>> origin
+
 
       const params = { screen_name: listUsersString }
       // Got the list of users back from DS, now need to get user objects for each one of them to send back to REACT
@@ -578,10 +549,6 @@ router.post('/', async (req, res) => {
 
 
 
-
-<<<<<<< HEAD
-
-
   ///////////
   // BAV - Add to the Step 8
   // const newList = {
@@ -594,14 +561,6 @@ router.post('/', async (req, res) => {
 
 })
 
-
-
-=======
-          // res.status(200).json(response.data.ranked_results)
-        })
-    })
-}
->>>>>>> origin
 
 
 // ==========================TWITTER ENDPOINT========================================
