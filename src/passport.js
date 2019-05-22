@@ -38,6 +38,9 @@ module.exports = function () {
         // If user exists it will trigger the else function
         //   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++USER NOT FOUND DONE")
       } else {
+        // console.log("profile", profile)
+        axios.post(`${url}/users/mega/${profile.username}`)
+        // console.log("after mega!!!!")
         // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++USER FOUND")
         //GET /users/:twitter_id
         axios.get(`${url}/users/${profile.id}`).then(res => {
@@ -49,9 +52,7 @@ module.exports = function () {
           }
           // axios put by twitter id insert modified user
           axios
-            .put(`${url}/users/${profile.id}`, modifiedUser).then(
-              axios.post(`${url}/users/mega/${profile.username}`)
-            )
+            .put(`${url}/users/${profile.id}`, modifiedUser)
           // console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++USER FOUND DONE")
         }).catch(error => {
           // console.log("++++++++++++++++++++++++++ERROR________________________________", error)
