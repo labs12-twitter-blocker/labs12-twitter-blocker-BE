@@ -154,12 +154,17 @@ router.post("/mega/:twitter_handle", (req, res) => {
 // Inserts the user's lists into the lists table
 function updateLists(params) {
   client.get("lists/list", params, function (error, lists, response) {
+    const listArr = []
+
     if (error) {
       console.log("user has no lists");
     } else {
+      const usersList = []
 
+      // console.log(lists)
       // For every list the user has, add it to the DB.
       lists.map(list => {
+        listArr.push(list.id_str)
 
         let new_list = {
           "twitter_list_id": list.id_str,
@@ -179,7 +184,8 @@ function updateLists(params) {
         if (list.mode != "public") {
           new_list.public = false
         };
-
+        // check if the lists exists in our db and not twitter
+        // console.log("LIST___________________++++++++++++++++++++++++__________________", listArr)
         // First test if the list is already in our DB
         Users.findListByTwitterListId(list.id_str)
           .then(list => {
@@ -189,7 +195,6 @@ function updateLists(params) {
                 .then(updated => {
                   if (updated) {
                     // res.status(201).json(user);
-
                     ////////////////////////////////////////////////////////
                     // Also update the members of the list
                     updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
@@ -224,8 +229,15 @@ function updateLists(params) {
           .catch(error => {
             console.log("error: ", error);
             res.status(500).json({ message: "There was an error while saving the list to the database" });
-          })
-
+          }).then(
+            data.getUserTwitterId(list.user.id_str).then(item =>
+              item.map(x => {
+                if (listArr.includes(x.twitter_list_id)) {
+                } else {
+                  data.deleteTwitterList(x.twitter_list_id)
+                }
+              })
+            ))
       });
       if (error) {
         console.log(error);
@@ -305,6 +317,7 @@ router.post("/", async (req, res) => {
 
 // POST friendships/create
 // Follow another user
+
 
 router.post("/follow", auth, async (req, res) => {
   const userId = req.body.twitter_id;

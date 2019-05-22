@@ -256,34 +256,34 @@ router.get('/points/block', (req, res) => {
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
-router.get('/timeline/:list_id', (req, res) => {
+
+router.post('/timeline/:list_id', (req, res) => {
   const id = req.params.list_id
   const params = { list_id: id }
   const userId = req.body.twitter_user_id;
   // Fetch data from twitter api
-  
+
   Users.findById(userId)
-  .then(newUser => {
-    let client = new Twitter({
-      consumer_key: process.env.TWITTER_CONSUMER_KEY,
-      consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-      access_token_key: newUser.token,
-      access_token_secret: newUser.token_secret
+    .then(newUser => {
+      let client = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret
+      })
+
+      client.get("/lists/statuses", params, function (error, response) {
+        // if (error) {
+        //   res.status(400).json('The list information could not be retrieved from twitter');
+        // } else {
+        (response => response.json(response))
+        res.status(200).json(response)
+        // }
+      })
     })
-
-  client.get("/lists/statuses", params, function (error, response) {
-    // if (error) {
-    //   res.status(400).json('The list information could not be retrieved from twitter');
-    // } else {
-      (response => response.json(response))
-      res.status(200).json(response)
-    // }
-  })
-})
-  .catch(err => {
-    res.status(500).json({error: 'The list timeline could not be retrieved.'})
-  })
-
+    .catch(err => {
+      res.status(500).json({ error: 'The list timeline could not be retrieved.' })
+    })
   // res.status(400).json(error);
 })
 
@@ -323,8 +323,8 @@ router.post('/create', async (req, res) => {
       console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++response from LIST CREATE", response)
       // We created the list on Twitter API, We now need to add members to it
       let memberCreateParams = {
-          list_id: response.id_str,
-          screen_name: screen_name
+        list_id: response.id_str,
+        screen_name: screen_name
       }
       console.log("memberCreateParams+++++++++++++++++++++++++++++++++", memberCreateParams);
 
@@ -346,7 +346,7 @@ router.post('/create', async (req, res) => {
       }) }, 1000)
 
     })
-       
+
   } else {
     res.status(400).json({ message: "list broken, please try again" })
   }
@@ -551,8 +551,6 @@ router.post('/members/destroy', (req, res) => {
       })
       res.status(200).json({ message: "User removed from list" })
 
-
-      
     })
   })
   
@@ -574,13 +572,13 @@ router.post('/', async (req, res) => {
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++newUser", newUser)
 
   let dsParams = {
-      "original_user": userInput.original_user,
-      "TWITTER_ACCESS_TOKEN": newUser.token,
-      "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
-      "search_users": userInput.search_users,
-      "return_limit": 20,
-      "last_level": 2,
-      "no_of_results": 50
+    "original_user": userInput.original_user,
+    "TWITTER_ACCESS_TOKEN": newUser.token,
+    "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
+    "search_users": userInput.search_users,
+    "return_limit": 20,
+    "last_level": 2,
+    "no_of_results": 50
   }
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++dsParams", dsParams)
   /////////////////
@@ -603,7 +601,7 @@ router.post('/', async (req, res) => {
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
         consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
         access_token_key: newUser.token,
-      access_token_secret: newUser.token_secret
+        access_token_secret: newUser.token_secret
       })
       client.get("users/lookup", params, function (error, response) {
         if (error) {
@@ -661,7 +659,7 @@ router.post('/blocklist', (req, res) => {
         "TWITTER_ACCESS_TOKEN": newUser.token,
         "TWITTER_ACCESS_TOKEN_SECRET": newUser.token_secret,
       }
-      // console.log("Params+++++++++++++++++++++++++++++++++", params)
+      console.log("Params+++++++++++++++++++++++++++++++++", params)
       axios.post('https://us-central1-twitter-bert-models.cloudfunctions.net/function-2', params, {
         headers: { 'Content-type': 'application/json' }
       }
