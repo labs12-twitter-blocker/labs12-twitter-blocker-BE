@@ -426,10 +426,11 @@ function updateListMembers(twitterClient, params) {
 // POST /lists/subscribers/create
 // Subscribe to a list with the twitter api
 //
-router.post('/subscribe', (req, res) => {
+router.post('/subscribe/:twitter_list_id/follow/:twitter_id', (req, res) => {
+  // router.post('/subscribe', (req, res) => {
 
-  const twitterListId = req.body.twitter_list_id
-  const userId = req.body.twitter_id;
+  const twitterListId = req.params.twitter_list_id
+  const userId = req.params.twitter_id;
   if (!twitterListId || !userId) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
   }
