@@ -2,10 +2,12 @@ const router = require('express').Router()
 const data = require('./listsModel')
 const axios = require('axios')
 require('dotenv').config()
-const User = require('../users/usersModel');
+const Users = require('../users/usersModel');
 const auth = require('../../middleware/authenticate')
 const querystring = require('querystring');
 const url = process.env.BACKEND_URL;
+// const updateLists = require("../users/usersRouter")
+
 let Twitter = require("twitter")
 let client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
@@ -325,26 +327,94 @@ router.post('/create', async (req, res) => {
           screen_name: screen_name
       }
       console.log("memberCreateParams+++++++++++++++++++++++++++++++++", memberCreateParams);
-      client.post('/lists/members/create_all', memberCreateParams, function (error, responseCreate) {
+
+      setTimeout(function () {client.post('/lists/members/create_all', memberCreateParams, function (error, responseCreate) {
         if (error) {
           console.log("________________________________________addMembers error__________________________-", error)
           return error
         } else {
           console.log("________________________________________addMembers Response__________________________-", response)
-          
-          axios.post(`${url}/mega/${responseCreate.user.screenname}`,)
-          .then(
-            // console.log("________________________________________MEGA__________________________-")
-            res.status(200).json(responseCreate)
-          )
+          console.log("________________________________________addMembers responseCreate__________________________-", responseCreate)
+
+          // Add the new list to our database
+          updateLists(client, responseCreate)
+
+          // Need to give the the DB add function time to add the list before we push the user to the list details page
+          setTimeout(function () {res.status(200).json(responseCreate)}, 1000)
+
         }
-      })
+      }) }, 1000)
+
     })
        
   } else {
     res.status(400).json({ message: "list broken, please try again" })
   }
 })
+
+// Inserts the user's lists into the lists table
+function updateLists(twitterClient, responseCreate) {
+
+  let new_list = {
+    "twitter_list_id": responseCreate.id_str,
+    "list_name": responseCreate.name,
+    "list_creation_date": responseCreate.created_at,
+    "member_count": responseCreate.member_count,
+    "subscriber_count": responseCreate.subscriber_count,
+    "public": responseCreate.mode,
+    "description": responseCreate.description,
+    "twitter_id": responseCreate.user.id_str,
+    "list_points": 0,
+    "is_block_list": false,
+    "created_with_hashtag": false,
+    "created_with_users": true,
+    "created_with_category": false
+  }
+  if (responseCreate.mode != "public") {
+    new_list.public = false
+  };
+  Users.insertMegaUserList(new_list)
+    .then(list => {
+
+      ////////////////////////////////////////////////////////
+      // Also update the members of the list
+      updateListMembers(twitterClient, { list_id: new_list.twitter_list_id, count: 5000 })
+      ////////////////////////////////////////////////////////
+    })
+    .catch(error => {
+      console.log("error: ", error);
+      res.status(500).json({ message: "There was an error while saving the list to the database" });
+    });
+
+};
+
+function updateListMembers(twitterClient, params) {
+  console.log("****************************************************************************************updateListMembers")
+  twitterClient.get("lists/members", params, function (error, members, response) {
+
+
+    //////////////////////////////////JSON//////////////////////
+    //There are no followers since the list is empty, so insert empty array to the DB
+    const no_followers=[]
+    Users.insertMegaUserListFollower(params.list_id, no_followers);
+
+
+    Users.removeAllListMembers(params.list_id)
+      .then(e => {
+        let json_member = [];
+        members.users.map(member => {
+          json_member.push({
+            "twitter_user_id": member.id_str,
+            "name": member.name,
+            "screen_name": member.screen_name,
+            "description": member.description,
+            "profile_img": member.profile_background_image_url_https
+          })
+        })
+        Users.insertMegaUserListMember(params.list_id, json_member);
+      })
+  })
+};
 
 
 
@@ -499,7 +569,10 @@ router.post('/members/destroy', (req, res) => {
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++userInput", userInput)
   const newUser = await Users.findById(userInput.user_id)
+  console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++newUser", newUser)
+
   let dsParams = {
       "original_user": userInput.original_user,
       "TWITTER_ACCESS_TOKEN": newUser.token,
@@ -512,7 +585,6 @@ router.post('/', async (req, res) => {
   console.log("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++dsParams", dsParams)
   /////////////////
   //POST req to DS server
-  // NOT WORKING TONIGHT REMOVE COMMENTS
   axios.post(`${process.env.DS_URL}`, dsParams, {
     headers: {
       'Content-type': 'application/json'
