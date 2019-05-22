@@ -244,29 +244,16 @@ function updateLists(params) {
           }).then(
             data.getUserTwitterId(list.user.id_str).then(item =>
               item.map(x => {
-                // console.log("XXXXX", x.twitter_list_id)
-                // console.log("245 listARR", listArr)
                 if (listArr.includes(x.twitter_list_id)) {
-                  // console.log("here in includes")
                 } else {
-                  // console.log("here in else deleting", x)
                   data.deleteTwitterList(x.twitter_list_id)
-
                 }
-                // usersList.push(x.twitter_list_id)
-                // usersList.push(item.twitter_id)
-                // console.log("Users List_)_)_)_)_)_)_)_)_)_", usersList)
               })
             ))
-        // console.log("245 listARR", listArr),
-        // console.log("Users Data_)_)_)_)_)_)_)_)_)_", usersList)
       });
-      if (listArr)
-        // console.log("Users List260_)_)_)_)_)_)_)_)_)_", usersList)
-
-        if (error) {
-          console.log(error);
-        }
+      if (error) {
+        console.log(error);
+      }
     }
   })
 };
