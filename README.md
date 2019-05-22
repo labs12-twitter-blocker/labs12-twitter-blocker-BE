@@ -20,6 +20,7 @@ Documentation for the endpoints on the backend server
   - GET /users/:user_id - Get a users by user_ID
 - POST
   - POST /users/ - Add a new user
+  - POST /users/follow - Follow another user
 - PUT
   - PUT /users/:user_id - Edit a user by user_ID
 - DELETE
