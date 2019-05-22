@@ -254,7 +254,7 @@ router.get('/points/block', (req, res) => {
 // GET /lists/timeline/:list_id
 // Gets the Twitter Timeline for the selected list_id
 
-router.get('/timeline/:list_id', (req, res) => {
+router.post('/timeline/:list_id', (req, res) => {
   const id = req.params.list_id
   const params = { list_id: id }
   const userId = req.body.twitter_user_id;
