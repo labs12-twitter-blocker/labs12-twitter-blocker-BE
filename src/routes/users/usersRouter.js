@@ -167,11 +167,12 @@ router.post("/mega/:twitter_handle", (req, res) => {
 function updateLists(params) {
   client.get("lists/list", params, function (error, lists, response) {
     const listArr = []
-    const usersList = []
 
     if (error) {
       console.log("user has no lists");
     } else {
+      const usersList = []
+
       // console.log(lists)
       // For every list the user has, add it to the DB.
       lists.map(list => {
@@ -206,7 +207,6 @@ function updateLists(params) {
                 .then(updated => {
                   if (updated) {
                     // res.status(201).json(user);
-
                     ////////////////////////////////////////////////////////
                     // Also update the members of the list
                     updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
@@ -241,20 +241,32 @@ function updateLists(params) {
           .catch(error => {
             console.log("error: ", error);
             res.status(500).json({ message: "There was an error while saving the list to the database" });
-          })
-        data.getUserTwitterId(list.user.id_str).then(item =>
-          // console.log("ITEM 0", item)
-          usersList.push(item.twitter_list_id)
-          // usersList.push(item.twitter_id)
-        )
+          }).then(
+            data.getUserTwitterId(list.user.id_str).then(item =>
+              item.map(x => {
+                // console.log("XXXXX", x.twitter_list_id)
+                // console.log("245 listARR", listArr)
+                if (listArr.includes(x.twitter_list_id)) {
+                  // console.log("here in includes")
+                } else {
+                  // console.log("here in else deleting", x)
+                  data.deleteTwitterList(x.twitter_list_id)
 
-        console.log("Users List_)_)_)_)_)_)_)_)_)_", usersList)
+                }
+                // usersList.push(x.twitter_list_id)
+                // usersList.push(item.twitter_id)
+                // console.log("Users List_)_)_)_)_)_)_)_)_)_", usersList)
+              })
+            ))
+        // console.log("245 listARR", listArr),
+        // console.log("Users Data_)_)_)_)_)_)_)_)_)_", usersList)
       });
       if (listArr)
-        console.log("245 listARR", listArr)
-      if (error) {
-        console.log(error);
-      }
+        // console.log("Users List260_)_)_)_)_)_)_)_)_)_", usersList)
+
+        if (error) {
+          console.log(error);
+        }
     }
   })
 };
