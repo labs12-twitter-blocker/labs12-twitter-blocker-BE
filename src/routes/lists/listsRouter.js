@@ -328,22 +328,24 @@ router.post('/create', async (req, res) => {
       }
       console.log("memberCreateParams+++++++++++++++++++++++++++++++++", memberCreateParams);
 
-      setTimeout(function () {client.post('/lists/members/create_all', memberCreateParams, function (error, responseCreate) {
-        if (error) {
-          console.log("________________________________________addMembers error__________________________-", error)
-          return error
-        } else {
-          console.log("________________________________________addMembers Response__________________________-", response)
-          console.log("________________________________________addMembers responseCreate__________________________-", responseCreate)
+      setTimeout(function () {
+        client.post('/lists/members/create_all', memberCreateParams, function (error, responseCreate) {
+          if (error) {
+            console.log("________________________________________addMembers error__________________________-", error)
+            return error
+          } else {
+            console.log("________________________________________addMembers Response__________________________-", response)
+            console.log("________________________________________addMembers responseCreate__________________________-", responseCreate)
 
-          // Add the new list to our database
-          updateLists(client, responseCreate)
+            // Add the new list to our database
+            updateLists(client, responseCreate)
 
-          // Need to give the the DB add function time to add the list before we push the user to the list details page
-          setTimeout(function () {res.status(200).json(responseCreate)}, 1000)
+            // Need to give the the DB add function time to add the list before we push the user to the list details page
+            setTimeout(function () { res.status(200).json(responseCreate) }, 1000)
 
-        }
-      }) }, 1000)
+          }
+        })
+      }, 1000)
 
     })
 
@@ -395,7 +397,7 @@ function updateListMembers(twitterClient, params) {
 
     //////////////////////////////////JSON//////////////////////
     //There are no followers since the list is empty, so insert empty array to the DB
-    const no_followers=[]
+    const no_followers = []
     Users.insertMegaUserListFollower(params.list_id, no_followers);
 
 
@@ -513,7 +515,7 @@ router.post('/:twitter_list_id/unfollow/:twitter_id', (req, res) => {
       //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
       //   })
     })
-    res.status(200).json({ message: "Unsubscribed from list" })
+  res.status(200).json({ message: "Unsubscribed from list" })
 })
 
 // Delete a user of a list with the twitter api
@@ -554,18 +556,18 @@ router.post('/members/destroy', (req, res) => {
       res.status(200).json({ message: "User removed from list" })
 
     })
-  })
-  
-  
-  // Build endpoint to take in post from react server to pass to ds endpoint
-  // 1 First we send the POST to the DS endpoint from REACT
-  // 2 We wait about a minute for the response from DS and send it to REACT
-  // 3 The user will choose which of the list members they want on the list in REACT
-  // 4 They will then submit the list members in REACT -> POST 
-  // 5 We take the input with the members, 
-  // 6 We will hit the Twitter API and make a list, 
-  // 7 then add members to the newly created list with the Twitter API
-  // 8 Add the new list to our DB
+})
+
+
+// Build endpoint to take in post from react server to pass to ds endpoint
+// 1 First we send the POST to the DS endpoint from REACT
+// 2 We wait about a minute for the response from DS and send it to REACT
+// 3 The user will choose which of the list members they want on the list in REACT
+// 4 They will then submit the list members in REACT -> POST
+// 5 We take the input with the members,
+// 6 We will hit the Twitter API and make a list,
+// 7 then add members to the newly created list with the Twitter API
+// 8 Add the new list to our DB
 // Create a new list (Create Block/Cool List; Public/Private List)**
 router.post('/', async (req, res) => {
   const userInput = req.body
@@ -653,6 +655,7 @@ router.post('/', async (req, res) => {
 // }
 
 router.post('/blocklist', (req, res) => {
+  const sendThis = []
   console.log("in blocklist")
   console.log(req.body.twitter_user_id)
   Users.findById(req.body.twitter_user_id)
@@ -670,12 +673,23 @@ router.post('/blocklist', (req, res) => {
       )
         .then(
           (response => {
-            console.log("RESPONSE DATA+++++++++++++++++++", response.data)
-            res.status(200).json(response.data)
+            // console.log("RESPONSE DATA+++++++++++++++++++", response.data)
+            response.data.map(item => {
+              // console.log("ITEM", item.bert_result)
+              let score = ((item.bert_result.toxic + item.bert_result.identity_hate + item.bert_result.insult +
+                item.bert_result.obscene + item.bert_result.severe_toxic + item.bert_result.threat) / 6) * 100
+              // console.log("score", score)
+              if (score > 10) {
 
+                sendThis.push(item)
+                console.log("Send THis", sendThis)
+              }
+            })
+
+            res.status(200).json(sendThis)
           }))
     }).catch(err => {
-      res.status(400).json({ error: err })
+      res.status(400).json({ error: "There was a problem getting your timeline", err })
     })
 }
 )
