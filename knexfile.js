@@ -13,28 +13,28 @@ const gcpPg = {
   host: `/cloudsql/twitter-list-blocker:us-west1:twitter-list-blocker`
 }
 
-let prodDbConnection = {}
+let prodDbConnection = gcpPg
 
-if (process.env.DB_ENV === 'production') {
-  console.log(process.env.DB_ENV)
-  prodDbConnection = gcpPg;
-} else {
-  console.log(process.env.DB_ENV)
-  prodDbConnection = localPg;
-}
+// if (process.env.DB_ENV === 'production') {
+//   console.log(process.env.DB_ENV)
+//   prodDbConnection = gcpPg;
+// } else {
+//   console.log(process.env.DB_ENV)
+//   prodDbConnection = localPg;
+// }
 
 module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: prodDbConnection,
+    connection: localPg,
     migrations: {
       directory: './src/data/migrations'
     },
     seeds: {
       directory: './src/data/seeds'
     },
-    debug: false
+    debug: true
   },
 
   staging: {
