@@ -78,10 +78,10 @@ server.use(passport.initialize());
 passport.serializeUser((user, done) => { done(null, user.id); });
 
 passport.deserializeUser((user, done) => {
-  const {id} = user.id
-  return knex('app_users').where({id}).first()
-  .then((user) => { done(null, user); })
-  .catch((err) => { done(err,null); });
+  const { id } = user.id
+  return knex('app_users').where({ id }).first()
+    .then((user) => { done(null, user); })
+    .catch((err) => { done(err, null); });
 });
 
 
@@ -94,7 +94,7 @@ let createToken = function (auth) {
     id: auth.auth.id,
     username: auth.user._json.screen_name,
     displayName: auth.user._json.name,
-    banner_img: auth.user._json.profile_background_image_url_https ,
+    banner_img: auth.user._json.profile_banner_url,
     profile_img: auth.user._json.profile_image_url_https
   }, process.env.SESSION_SECRET,
     {
