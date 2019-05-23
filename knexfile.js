@@ -9,18 +9,25 @@ const localPg = {
 const gcpPg = {
   database: 'twitbase',
   user: process.env.SQL_USER,
-  password: process.env.SQL_PASSWORD
+  password: process.env.SQL_PASSWORD,
+  host: `/cloudsql/twitter-list-blocker:us-west1:twitter-list-blocker`
 }
 
-const prodDbConnection = gcpPg // || localPg;
-// test
-gcpPg.host = `/cloudsql/twitter-list-blocker:us-west1:twitter-list-blocker`;
+let prodDbConnection = {}
+
+if (process.env.DB_ENV === 'production') {
+  console.log(process.env.DB_ENV)
+  prodDbConnection = gcpPg;
+} else {
+  console.log(process.env.DB_ENV)
+  prodDbConnection = localPg;
+}
 
 module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: localPg,
+    connection: prodDbConnection,
     migrations: {
       directory: './src/data/migrations'
     },

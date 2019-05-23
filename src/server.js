@@ -71,11 +71,11 @@ server.use(helmet());
 server.use(morgan('tiny'));
 server.use(session(sessionOptions));
 server.use(passport.initialize());
-server.use(passport.session());
+// server.use(passport.session());
 
 // passport.serializeUser(user.serialize);
 // passport.deserializeUser(user.deserialize);
-passport.serializeUser((user, done) => { done(null, user); });
+passport.serializeUser((user, done) => { done(null, user.id); });
 
 passport.deserializeUser((user, done) => {
   const {id} = user.id
