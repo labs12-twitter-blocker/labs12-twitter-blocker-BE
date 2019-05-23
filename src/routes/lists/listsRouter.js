@@ -653,9 +653,11 @@ router.post('/', async (req, res) => {
 // }
 
 router.post('/blocklist', (req, res) => {
+  console.log("in blocklist")
+  console.log(req.body.twitter_user_id)
   Users.findById(req.body.twitter_user_id)
     .then(newUser => {
-      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
       const params = {
         // "since_id": req.body.twitter_user_id,
         "TWITTER_ACCESS_TOKEN": newUser.token,
@@ -672,6 +674,8 @@ router.post('/blocklist', (req, res) => {
             res.status(200).json(response.data)
 
           }))
+    }).catch(err => {
+      res.status(400).json({ error: err })
     })
 }
 )

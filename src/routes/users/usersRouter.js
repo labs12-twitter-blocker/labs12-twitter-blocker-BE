@@ -397,11 +397,13 @@ router.delete("/:twitter_id", auth, async (req, res) => {
 
 // Block a user with twitter api
 // POST /users/blocks/create
-router.post("/blocks/create/:user_id", auth, async (req, res) => {
-  const twitter_id = req.body.twitter_id
+router.post("/blocks/create/:user_id/:twitter_id", async (req, res) => {
+  const twitter_id = req.params.twitter_id
   const params = {
     user_id: req.params.user_id
   }
+  console.log(params)
+  console.log(twitter_id)
   await Users.findById(twitter_id)
     .then(newUser => {
       console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
@@ -422,12 +424,13 @@ router.post("/blocks/create/:user_id", auth, async (req, res) => {
       res.status(200).json("User Blocked"))
 }
 )
-router.post("/blocks/destroy/:user_id", auth, async (req, res) => {
-  const twitter_id = req.body.twitter_id
+router.post("/blocks/destroy/:user_id/:twitter_id", async (req, res) => {
+  const twitter_id = req.params.twitter_id
   const params = {
     user_id: req.params.user_id
   }
-
+  console.log(params)
+  console.log(twitter_id)
   await Users.findById(twitter_id)
     .then(newUser => {
       // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
@@ -437,7 +440,7 @@ router.post("/blocks/destroy/:user_id", auth, async (req, res) => {
         access_token_key: newUser.token,
         access_token_secret: newUser.token_secret,
       })
-      client.post('/blocks/destroy', auth, params, function (response, error) {
+      client.post('/blocks/destroy', params, function (response, error) {
         if (error) {
           console.log(error)
         } else {
