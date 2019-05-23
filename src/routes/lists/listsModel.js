@@ -116,6 +116,7 @@ function getMembers(twitter_list_id) {
 function getAllByOrder() {
   return db('lists')
     .select('*')
+    .where('public', true)
     .orderBy('list_points', 'desc')
 }
 
@@ -124,6 +125,7 @@ function getFollowByOrder() {
   return db('lists')
     .select('*')
     .where('is_block_list', false)
+    .where('public', true)
     .orderBy('list_points', 'desc')
 }
 
@@ -132,6 +134,7 @@ function getBlockByOrder() {
   return db('lists')
     .select('*')
     .where('is_block_list', true)
+    .where('public', true)
     .orderBy('list_points', 'desc')
 }
 

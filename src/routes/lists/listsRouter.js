@@ -408,7 +408,7 @@ function updateListMembers(twitterClient, params) {
             "name": member.name,
             "screen_name": member.screen_name,
             "description": member.description,
-            "profile_img": member.profile_background_image_url_https
+            "profile_img": member.profile_image_url_https
           })
         })
         Users.insertMegaUserListMember(params.list_id, json_member);

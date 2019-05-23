@@ -261,7 +261,7 @@ function updateListFollowers(params) {
               "name": follower.name,
               "screen_name": follower.screen_name,
               "description": follower.description,
-              "profile_img": follower.profile_background_image_url_https
+              "profile_img": follower.profile_image_url_https
             })
           })
         } catch (error) { console.log("No subscribers to map") }
@@ -283,7 +283,7 @@ function updateListMembers(params) {
             "name": member.name,
             "screen_name": member.screen_name,
             "description": member.description,
-            "profile_img": member.profile_background_image_url_https
+            "profile_img": member.profile_image_url_https 
           })
         })
         Users.insertMegaUserListMember(params.list_id, json_member);
