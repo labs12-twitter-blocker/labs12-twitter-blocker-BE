@@ -464,7 +464,7 @@ router.post('/subscribe/:twitter_list_id/follow/:twitter_id', (req, res) => {
       //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
       //   })
     })
-  res.status(200).json({ message: "Subscribed from list" })
+  res.status(200).json({ message: "Subscribed to List" })
 
 })
 
@@ -475,10 +475,10 @@ router.post('/subscribe/:twitter_list_id/follow/:twitter_id', (req, res) => {
 // POST /lists/unsubscribe
 // Subscribe to a list with the twitter api
 //
-router.post('/unsubscribe', (req, res) => {
+router.post('/:twitter_list_id/unfollow/:twitter_id', (req, res) => {
 
-  const twitterListId = req.body.twitter_list_id
-  const userId = req.body.twitter_id;
+  const twitterListId = req.params.twitter_list_id
+  const userId = req.params.twitter_id;
   if (!twitterListId || !userId) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
   }
@@ -513,6 +513,7 @@ router.post('/unsubscribe', (req, res) => {
       //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
       //   })
     })
+    res.status(200).json({ message: "Unsubscribed from list" })
 })
 
 // Delete a user of a list with the twitter api
