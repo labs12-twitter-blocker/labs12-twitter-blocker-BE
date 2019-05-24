@@ -454,6 +454,13 @@ router.post('/subscribe/:twitter_list_id/follow/:twitter_id', (req, res) => {
       res.status(200).json({ message: "Subscribed to List" })
 
     })
+    data.subscribeToList(twitterListId, userId)
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The list information could not be retrieved.' })
+    })
   res.status(200).json({ message: "Subscribed to List" })
 
 })
@@ -490,8 +497,14 @@ router.post('/:twitter_list_id/unfollow/:twitter_id', (req, res) => {
           console.log(response)
         }
       })
-      res.status(200).json({ message: "Unsubscribed from list" })
 
+    })
+    data.unfollowList(twitterListId, userId)
+    .then(response => {
+      res.status(200).json(response)
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'The list information could not be retrieved.' })
     })
     res.status(200).json({ message: "Unsubscribed from list" })
 })
@@ -697,8 +710,8 @@ router.put('/:list_members_id', (req, res) => {
 
 // DELETE /lists/:list_id
 // Delete a list by the list_id
-router.delete('/', (req, res) => {
-  const twitterListId = req.body.twitter_list_id
+router.post('/:twitter_list_id', (req, res) => {
+  const twitterListId = req.params.twitter_list_id
   const userId = req.body.twitter_id;
   if (!twitterListId || !userId) {
     res.status(404).json({ error: 'The list with the specified ID does not exist.' })
@@ -724,14 +737,13 @@ router.delete('/', (req, res) => {
           console.log(response)
         }
       })
-      data.deleteTwitterList(twitterListId)
-        .then(response => {
-          res.status(200).json({ message: "List deleted successfully.", response })
-        })
-        .catch(err => {
-          res.status(500).json({ error: 'There was an error deleting the list.', err })
-        })
-
+    })
+    data.deleteTwitterList(twitterListId)
+    .then(response => {
+      res.status(200).json({ message: "List deleted successfully.", response })
+    })
+    .catch(err => {
+      res.status(500).json({ error: 'There was an error deleting the list.', err })
     })
 })
 
