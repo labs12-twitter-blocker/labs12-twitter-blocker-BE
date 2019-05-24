@@ -50,7 +50,7 @@ const corsOptions = {
 const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   cookie: {
-    maxAge: 24 * 60 * 60 * 100,
+    maxAge: 7 * 24 * 60 * 60 * 100,
     httpOnly: false
   },
   resave: false,
@@ -98,7 +98,7 @@ let createToken = function (auth) {
     profile_img: auth.user._json.profile_image_url_https
   }, process.env.SESSION_SECRET,
     {
-      expiresIn: 24 * 60 * 60 * 100
+      expiresIn: 7 * 24 * 60 * 60 * 100
     });
 };
 

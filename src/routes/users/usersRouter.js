@@ -89,7 +89,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
   
   Users.findByScreenName(params.screen_name)
   .then(newUser => {
-      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
       let tClient = new Twitter({
         consumer_key: process.env.TWITTER_CONSUMER_KEY,
         consumer_secret: process.env.TWITTER_CONSUMER_SECRET,

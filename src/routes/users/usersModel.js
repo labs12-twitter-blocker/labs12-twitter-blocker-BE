@@ -49,7 +49,9 @@ function findById(twitter_id) {
 }
 
 function findByScreenName(screen_name) {
-  return db("app_users").where({ screen_name }).first();
+  return db("app_users")
+  .where('screen_name', 'like', screen_name)
+  .first();
 }
 
 function findPremium() {

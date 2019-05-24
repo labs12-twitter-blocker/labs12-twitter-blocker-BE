@@ -292,8 +292,6 @@ router.post('/timeline/:list_id', (req, res) => {
 /////////////////////////////////////////////////////////////////////
 //////////////////////POST///////////////////////////////////////////
 
-// POST /lists/ -
-
 // ==========================TWITTER ENDPOINT========================================
 // POST /lists/create
 // Takes in the post from the Front end
@@ -392,8 +390,6 @@ function updateListMembers(twitterClient, params) {
   console.log("****************************************************************************************updateListMembers")
   twitterClient.get("lists/members", params, function (error, members, response) {
 
-
-    //////////////////////////////////JSON//////////////////////
     //There are no followers since the list is empty, so insert empty array to the DB
     const no_followers=[]
     Users.insertMegaUserListFollower(params.list_id, no_followers);
@@ -456,21 +452,12 @@ router.post('/subscribe/:twitter_list_id/follow/:twitter_id', (req, res) => {
         }
       })
       res.status(200).json({ message: "Subscribed to List" })
-      // data.subscribeToList(twitterListId)
-      //   .then(response => {
-      //     res.status(200).json({ message: "List subscribed to successfully.", response })
-      //   })
-      //   .catch(err => {
-      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
-      //   })
+
     })
   res.status(200).json({ message: "Subscribed to List" })
 
 })
 
-
-// Unsubscribe from a list with the twitter api
-// ============================== Still needs to be built ===========================================
 
 // POST /lists/unsubscribe
 // Subscribe to a list with the twitter api
@@ -505,13 +492,6 @@ router.post('/:twitter_list_id/unfollow/:twitter_id', (req, res) => {
       })
       res.status(200).json({ message: "Unsubscribed from list" })
 
-      // data.subscribeToList(twitterListId)
-      //   .then(response => {
-      //     res.status(200).json({ message: "List subscribed to successfully.", response })
-      //   })
-      //   .catch(err => {
-      //     res.status(500).json({ error: 'There was an error subscribing to the list.', err })
-      //   })
     })
     res.status(200).json({ message: "Unsubscribed from list" })
 })
@@ -616,41 +596,11 @@ router.post('/', async (req, res) => {
 
     })
 
-
-
-  ///////////
-  // BAV - Add to the Step 8
-  // const newList = {
-  //   "list_name": req.body.name,
-  //   "twitter_id": req.body.user_id
-  // }
-  // console.log("NEW LIST", newList)
-  // data.insertList(newList) // Insert the list into our DB
-  ///////////////
-
 })
 
 
 
 // ==========================TWITTER ENDPOINT========================================
-
-// function addMembers(params, clientNew) {
-//   console.log("________________________________________addMembers params-", params)
-//   console.log("________________________________________addMembers clientNew-", clientNew)
-
-//   clientNew.post('/lists/members/create_all', querystring.stringify(params), function (error, response) {
-//     if (error) {
-//       console.log("________________________________________addMembers error__________________________-", error)
-//       return error
-//     } else {
-//       (response => {
-//         console.log("________________________________________addMembers Response__________________________-", response)
-//         response.json(response)
-//       })
-//       // res.status(200).json(response)
-//     }
-//   })
-// }
 
 router.post('/blocklist', (req, res) => {
   console.log("in blocklist")
