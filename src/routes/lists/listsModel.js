@@ -72,14 +72,14 @@ function getByIdUser(userId, list_name) {
 // get all/cool lists created by user
 function getByUserCreated(userId) {
   return db('lists as l')
-    .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
+    // .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
     .where('l.twitter_id', userId)
 }
 
 // get all /public lists created by user
 function getPublicByUserCreated(userId) {
   return db('lists as l')
-    .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
+    // .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
     .where('l.twitter_id', userId)
     .where('public', true)
 }
@@ -87,7 +87,7 @@ function getPublicByUserCreated(userId) {
 // get all /private lists created by user
 function getPrivateByUserCreated(userId) {
   return db('lists as l')
-    .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
+    // .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
     .where('l.twitter_id', userId)
     .where('public', false)
 }
@@ -95,7 +95,7 @@ function getPrivateByUserCreated(userId) {
 //get all /block lists created by user
 function getBlockByUserCreated(userId) {
   return db('lists as l')
-    .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
+    // .join('twitter_users as tu', 'tu.twitter_id', "l.twitter_id")
     .where('l.twitter_id', userId)
     .where('is_block_list', true)
 }
