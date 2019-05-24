@@ -7,6 +7,7 @@ module.exports = {
   find,
   findBy,
   findById,
+  findByScreenName,
   findPremium,
   findListByTwitterListId,
   findTwitterUserByTwitterId,
@@ -45,6 +46,10 @@ function findBy(filter) {
 
 function findById(twitter_id) {
   return db("app_users").where({ twitter_id }).first();
+}
+
+function findByScreenName(screen_name) {
+  return db("app_users").where({ screen_name }).first();
 }
 
 function findPremium() {

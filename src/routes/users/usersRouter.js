@@ -6,12 +6,12 @@ const data = require('../lists/listsModel')
 const auth = require('../../middleware/authenticate')
 // https://www.npmjs.com/package/twitter
 let Twitter = require("twitter");
-let client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.ACCESS_TOKEN_KEY,
-  access_token_secret: process.env.ACCESS_TOKEN_SECRET
-});
+// let client = new Twitter({
+//   consumer_key: process.env.TWITTER_CONSUMER_KEY,
+//   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+//   // access_token_key: process.env.ACCESS_TOKEN_KEY,
+//   // access_token_secret: process.env.ACCESS_TOKEN_SECRET
+// });
 
 
 /////////////////////////////////////////////////////////////////////
@@ -84,11 +84,22 @@ router.get("/premium", auth, (req, res) => {
 router.post("/mega/:twitter_handle", (req, res) => {
 
   console.log("req.params.twitter_handle-----------------------------------------------------", req.params.twitter_handle)
-  console.log("client-----------------------------------------------------", client)
   const params = { screen_name: req.params.twitter_handle };
 
-  // Inserts the user into the twitter_users table
-  client.get("users/show", params, function (error, user, response) {
+  
+  Users.findByScreenName(params.screen_name)
+  .then(newUser => {
+      // console.log("NEW USER+++++++++++++++++++++++++++++++++", newUser);
+      let tClient = new Twitter({
+        consumer_key: process.env.TWITTER_CONSUMER_KEY,
+        consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
+        access_token_key: newUser.token,
+        access_token_secret: newUser.token_secret,
+      })
+      
+      console.log("tClient-----------------------------------------------------", tClient)
+      // Inserts the user into the twitter_users table
+    tClient.get("users/show", params, function (error, user, response) {
     // console.log("Twitter users/show Response-------------------------------", response)
     let new_user = {
       twitter_id: user.id_str,
@@ -119,7 +130,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
 
                 ///////////////////////////////////////
                 // Also add the users lists to the DB
-                updateLists(params);
+                updateLists(params, tClient);
                 //////////////////////////////////////
               } else {
                 res.status(404).json({ message: "User not found." });
@@ -137,7 +148,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
 
               ///////////////////////////////////////
               // Also add the users lists to the DB
-              updateLists(params);
+              updateLists(params, tClient);
               //////////////////////////////////////
             }).then(done => { res.status(201).json(done); })  // Finished the functions on new user so res.status
             .catch(error => {
@@ -153,11 +164,17 @@ router.post("/mega/:twitter_handle", (req, res) => {
 
     if (!error) { console.log("error", error); }
   });
+
+
+    })
+
+
+  
 });
 
 // Inserts the user's lists into the lists table
-function updateLists(params) {
-  client.get("lists/list", params, function (error, lists, response) {
+function updateLists(params, tClient) {
+  tClient.get("lists/list", params, function (error, lists, response) {
     const listArr = []
 
     if (error) {
@@ -201,8 +218,8 @@ function updateLists(params) {
                     // res.status(201).json(user);
                     ////////////////////////////////////////////////////////
                     // Also update the members of the list
-                    updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
-                    updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
+                    updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 }, tClient)
+                    updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 }, tClient)
                     ////////////////////////////////////////////////////////
                   } else {
                     res.status(404).json({ message: "List not found." });
@@ -220,8 +237,8 @@ function updateLists(params) {
 
                   ////////////////////////////////////////////////////////
                   // Also update the members and followers of the list
-                  updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 })
-                  updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 })
+                  updateListFollowers({ list_id: new_list.twitter_list_id, count: 5000 }, tClient)
+                  updateListMembers({ list_id: new_list.twitter_list_id, count: 5000 }, tClient)
                   ////////////////////////////////////////////////////////
                 })
                 .catch(error => {
@@ -250,9 +267,9 @@ function updateLists(params) {
   })
 };
 
-function updateListFollowers(params) {
+function updateListFollowers(params, tClient) {
   console.log("****************************************************************************************updateListFollowers", params.list_id)
-  client.get("lists/subscribers", params, function (error, subscribers, response) {
+  tClient.get("lists/subscribers", params, function (error, subscribers, response) {
     console.log("updateListFollowers, list id, subscribers", params.list_id, subscribers)
 
     Users.removeAllListFollowers(params.list_id)
@@ -276,9 +293,9 @@ function updateListFollowers(params) {
   })
 };
 
-function updateListMembers(params) {
+function updateListMembers(params, tClient) {
   console.log("****************************************************************************************updateListMembers  ", params.list_id)
-  client.get("lists/members", params, function (error, members, response) {
+  tClient.get("lists/members", params, function (error, members, response) {
 
     Users.removeAllListMembers(params.list_id)
       .then(e => {
