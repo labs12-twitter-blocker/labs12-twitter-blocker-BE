@@ -83,13 +83,13 @@ router.get("/premium", auth, (req, res) => {
 // (YES: lists, twitter_users, list_followers. NO: app_users, tweets, twitter_followers )
 router.post("/mega/:twitter_handle", (req, res) => {
 
-  const userInfo = req.body;
-  console.log("USER INFO-----------------------------------------------------", userInfo)
+  console.log("req.params.twitter_handle-----------------------------------------------------", req.params.twitter_handle)
+  console.log("client-----------------------------------------------------", client)
   const params = { screen_name: req.params.twitter_handle };
 
   // Inserts the user into the twitter_users table
   client.get("users/show", params, function (error, user, response) {
-
+    // console.log("Twitter users/show Response-------------------------------", response)
     let new_user = {
       twitter_id: user.id_str,
       name: user.name,
@@ -103,17 +103,20 @@ router.post("/mega/:twitter_handle", (req, res) => {
       protected: user.protected,
       verified: user.verified
     };
-    console.log("here")
+    console.log("~~~~~~new_user", new_user)
     // First test if the user is already in out DB
     Users.findTwitterUserByTwitterId(user.id_str)
       .then(user => {
         // If we find the twitter user, update their info
         if (user) {
+          console.log("~~~~~~found the new_user", user)
           Users.updateMegaUser(user.twitter_users_id, new_user)
             .then(updated => {
               if (updated) {
                 // res.status(200).json(updated);
                 console.log("here")
+                console.log("updated", updated)
+
                 ///////////////////////////////////////
                 // Also add the users lists to the DB
                 updateLists(params);
@@ -128,6 +131,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
             });
         } else {
           // No user found So go ahead and Add them to the DB
+          console.log("~~~~~~no user found", new_user)
           Users.insertMegaUser(new_user)
             .then(user => {
 
@@ -147,7 +151,7 @@ router.post("/mega/:twitter_handle", (req, res) => {
         res.status(500).json({ message: "There was an error while saving the user to the database" });
       });
 
-    if (!error) { console.log(error); }
+    if (!error) { console.log("error", error); }
   });
 });
 
@@ -221,8 +225,8 @@ function updateLists(params) {
                   ////////////////////////////////////////////////////////
                 })
                 .catch(error => {
-                  console.log("error: ", error);
-                  res.status(500).json({ message: "There was an error while saving the list to the database" });
+                  console.log("error+: ", error);
+                  response.status(500).json({ message: "There was an error while saving the list to the database" });
                 });
             }
           })
@@ -240,19 +244,20 @@ function updateLists(params) {
             ))
       });
       if (error) {
-        console.log(error);
+        console.log("error*", error);
       }
     }
   })
 };
 
 function updateListFollowers(params) {
-  console.log("****************************************************************************************updateListFollowers")
+  console.log("****************************************************************************************updateListFollowers", params.list_id)
   client.get("lists/subscribers", params, function (error, subscribers, response) {
+    console.log("updateListFollowers, list id, subscribers", params.list_id, subscribers)
 
     Users.removeAllListFollowers(params.list_id)
       .then(e => {
-        console.log("****************************************************************************************removeAllListFollowers")
+        console.log("****************************************************************************************removeAllListFollowers", params.list_id)
         let json_follower = [];
         try {
           subscribers.users.map(follower => {
@@ -264,6 +269,7 @@ function updateListFollowers(params) {
               "profile_img": follower.profile_image_url_https
             })
           })
+          console.log("removeAllListFollowers, list id, json_follower", params.list_id, json_follower)
         } catch (error) { console.log("No subscribers to map") }
         Users.insertMegaUserListFollower(params.list_id, json_follower);
       })
@@ -271,7 +277,7 @@ function updateListFollowers(params) {
 };
 
 function updateListMembers(params) {
-  console.log("****************************************************************************************updateListMembers")
+  console.log("****************************************************************************************updateListMembers  ", params.list_id)
   client.get("lists/members", params, function (error, members, response) {
 
     Users.removeAllListMembers(params.list_id)
@@ -451,7 +457,7 @@ router.post("/blocks/destroy/:user_id/:twitter_id", async (req, res) => {
     })
 })
 router.delete("/delete/:user_id", async (req, res) => {
-
+  const twitter_id = req.params.user_id.toString()
   await Users.deleteUser(twitter_id);
   res.status(200).json("success");
 })
