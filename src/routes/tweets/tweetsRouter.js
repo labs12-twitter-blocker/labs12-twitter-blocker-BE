@@ -30,10 +30,12 @@ require('dotenv').config();
 router.post('/', (req, res) => {
   const newStatus = req.body.status;
   const newId = req.body.twitter_user_id
+  console.log(newId)
+  console.log(newStatus)
   res.status(200).json({ message: 'Tweet will post in 60 seconds' });
-  // slowTweet = setTimeout(function () {
-  postTweet(newStatus, newId)
-  // }, 1000)
+  slowTweet = setTimeout(function () {
+    postTweet(newStatus, newId)
+  }, 1000 * 120)
 });
 
 function postTweet(newStatus, newId) {
